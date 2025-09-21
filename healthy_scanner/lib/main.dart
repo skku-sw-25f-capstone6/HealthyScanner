@@ -64,8 +64,8 @@ class _MyHomePageState extends State<MyHomePage> {
       // so that the display can reflect the updated values. If we changed
       // _counter without calling setState(), then the build method would not be
       // called again, and so nothing would appear to happen.
-      // IncrementCounter에다가 작성한 내용 : 김정빈
-      _counter++;
+      // 카운터 2씩 변경하도록 수정하였음 - 김정빈
+      _counter+=2;
     });
   }
 
