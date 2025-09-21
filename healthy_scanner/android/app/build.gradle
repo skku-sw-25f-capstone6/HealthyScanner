@@ -44,6 +44,11 @@ android {
         versionName = flutterVersionName
     }
 
+    kotlinOptions {
+        // 중요: 따옴표 포함 '17'
+        jvmTarget = '17'
+    }
+
     buildTypes {
         release {
             // TODO: Add your own signing config for the release build.
