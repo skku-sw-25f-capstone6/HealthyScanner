@@ -65,7 +65,8 @@ class _MyHomePageState extends State<MyHomePage> {
       // _counter without calling setState(), then the build method would not be
       // called again, and so nothing would appear to happen.
       // 카운터 2씩 변경하도록 수정하였음 - 김정빈
-      _counter+=2;
+      // 카운터 3으로 변경(vscode 내 커밋 기능 연습) - 유진우
+      _counter += 3;
     });
   }
 
@@ -112,6 +113,10 @@ class _MyHomePageState extends State<MyHomePage> {
             Text(
               '$_counter',
               style: Theme.of(context).textTheme.headlineMedium,
+            ),
+            // 웃는 이모티콘 추가 - 유진우
+            Text(
+              ':)',
             ),
           ],
         ),
