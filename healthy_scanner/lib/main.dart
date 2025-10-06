@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:healthy_scanner/theme/app_colors.dart';
 import 'package:healthy_scanner/theme/app_theme.dart';
 import 'package:healthy_scanner/theme/theme_extensions.dart';
 
