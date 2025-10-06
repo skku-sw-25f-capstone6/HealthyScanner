@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:healthy_scanner/theme/app_colors.dart';
+import 'package:healthy_scanner/theme/app_theme.dart';
+import 'package:healthy_scanner/theme/theme_extensions.dart';
 
 void main() {
   runApp(const MyApp());
@@ -13,26 +15,8 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Flutter Demo',
-      theme: ThemeData(
-        // This is the theme of your application.
-        //
-        // TRY THIS: Try running your application with "flutter run". You'll see
-        // the application has a purple toolbar. Then, without quitting the app,
-        // try changing the seedColor in the colorScheme below to Colors.green
-        // and then invoke "hot reload" (save your changes or press the "hot
-        // reload" button in a Flutter-supported IDE, or press "r" if you used
-        // the command line to start the app).
-        //
-        // Notice that the counter didn't reset back to zero; the application
-        // state is not lost during the reload. To reset the state, use hot
-        // restart instead.
-        //
-        // This works for code too, not just values: Most code changes can be
-        // tested with just a hot reload.
-        colorScheme: ColorScheme.fromSeed(seedColor: AppColors.mainRed),
-        useMaterial3: true,
-      ),
-      home: const MyHomePage(title: 'Flutter Demo Home Page'),
+      theme: appTheme,
+      home: const MyHomePage(title: '플러터 기본 데모 앱'),
     );
   }
 }
@@ -108,18 +92,41 @@ class _MyHomePageState extends State<MyHomePage> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             const Text(
-              'You have pushed the button this many times:',
+              '버튼을 이만큼 눌렀어요',
             ),
             Text(
               '$_counter',
-              style: Theme.of(context).textTheme.headlineMedium,
+              style: context.title3Bold,
             ),
+            Text(
+              '기본 본문',
+              style: context.bodyMedium,
+            ),
+            const SizedBox(height: 12),
+            Text(
+              '제목 스타일',
+              style: context.title2Medium,
+            ),
+            const SizedBox(height: 12),
+            Text(
+              '캡션 스타일',
+              style: context.caption1SemiBold,
+            ),
+            const SizedBox(height: 12),
+            const Text(
+              '직접 지정',
+              style: TextStyle(
+                fontFamily: 'NotoSansKR',
+                fontWeight: FontWeight.w700,
+                fontSize: 24,
+              ),
+            )
           ],
         ),
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: _incrementCounter,
-        tooltip: 'Increment',
+        tooltip: '증가',
         child: const Icon(Icons.add),
       ), // This trailing comma makes auto-formatting nicer for build methods.
     );
