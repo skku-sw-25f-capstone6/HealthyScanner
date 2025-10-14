@@ -20,7 +20,7 @@ TextStyle _base(double size, FontWeight weight, double lineHeightPx,
 class AppTextStyles {
   // Captions
   static final caption4Semibold = _base(8, FontWeight.w600, 14);
-  static final caption2Regular = _base(10, FontWeight.w400, 14);
+  static final caption2Regular = _base(10, FontWeight.w400, 12, letter: -0.5);
   static final caption2Bold = _base(10, FontWeight.w700, 12);
   static final caption1Regular = _base(12, FontWeight.w400, 16);
   static final caption1Medium = _base(12, FontWeight.w500, 16);
