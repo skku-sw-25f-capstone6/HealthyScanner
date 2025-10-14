@@ -44,10 +44,9 @@ class _MyHomePageState extends State<MyHomePage> {
             SafeArea(
               minimum: const EdgeInsets.fromLTRB(12, 0, 12, 20),
               child: FoodCard(
-                title: '칸쵸칸쵸칸쵸칸쵸칸쵸칸쵸칸쵸칸쵸',
-                category: '과자/초콜릿가공품과자/초콜릿가공품과자/초콜릿가공품',
-                message:
-                    '포화지방과 당류가 다소 높고, 땅콩이 포함되어 있어요.포화지방과 당류가 다소 높고, 땅콩이 포함되어 있어요.',
+                title: '칸쵸',
+                category: '과자/초콜릿가공품과자',
+                message: '포화지방과 당류가 다소 높고, 땅콩이 포함되어 있어요.',
                 imageAsset: 'assets/images/cancho.png',
                 warningAsset: 'assets/icons/ic_warning.png',
                 onTap: () {
