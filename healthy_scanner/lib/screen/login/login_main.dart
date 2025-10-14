@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:healthy_scanner/theme/app_colors.dart';
 import 'package:healthy_scanner/theme/theme_extensions.dart';
+import 'package:healthy_scanner/screen/login/login_fail.dart';
 
 class LoginMainScreen extends StatelessWidget {
   const LoginMainScreen({super.key});
@@ -73,6 +74,10 @@ class LoginMainScreen extends StatelessWidget {
                     behavior: HitTestBehavior.opaque,
                     onTap: () {
                       // TODO: 문의 페이지로 이동
+                      Navigator.of(context).push(
+                        MaterialPageRoute(
+                            builder: (_) => const LoginFailScreen()),
+                      );
                     },
                     child: Padding(
                       padding: const EdgeInsets.all(6),
