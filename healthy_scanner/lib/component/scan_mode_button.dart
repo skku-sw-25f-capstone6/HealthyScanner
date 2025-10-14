@@ -27,7 +27,7 @@ class ScanModeButton extends StatelessWidget {
             onTap: () => onChanged(ScanMode.barcode),
           ),
         ),
-        const SizedBox(width: 12),
+        const SizedBox(width: 9),
         Expanded(
           child: _ModeButton(
             selected: selected == ScanMode.ingredient,
@@ -37,7 +37,7 @@ class ScanModeButton extends StatelessWidget {
             onTap: () => onChanged(ScanMode.ingredient),
           ),
         ),
-        const SizedBox(width: 12),
+        const SizedBox(width: 9),
         Expanded(
           child: _ModeButton(
             selected: selected == ScanMode.image,
