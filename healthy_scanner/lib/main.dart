@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:healthy_scanner/theme/app_theme.dart';
 import 'package:healthy_scanner/theme/theme_extensions.dart';
+import 'package:healthy_scanner/foodcard.dart';
 
 void main() {
   runApp(const MyApp());
@@ -40,6 +41,20 @@ class _MyHomePageState extends State<MyHomePage> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
+            SafeArea(
+              minimum: const EdgeInsets.fromLTRB(12, 0, 12, 20),
+              child: FoodCard(
+                title: '칸쵸칸쵸칸쵸칸쵸칸쵸칸쵸칸쵸칸쵸',
+                category: '과자/초콜릿가공품과자/초콜릿가공품과자/초콜릿가공품',
+                message:
+                    '포화지방과 당류가 다소 높고, 땅콩이 포함되어 있어요.포화지방과 당류가 다소 높고, 땅콩이 포함되어 있어요.',
+                imageAsset: 'assets/images/cancho.png',
+                warningAsset: 'assets/icons/ic_warning.png',
+                onTap: () {
+                  // 카드 눌렸을 때 액션 추가: 상세 페이지 등으로 이동
+                },
+              ),
+            ),
             Text(
               'Caption1 Medium',
               style: context.caption1Medium,
