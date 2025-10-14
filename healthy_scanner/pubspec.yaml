@@ -87,21 +87,21 @@ flutter:
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/custom-fonts/#from-packages
 
-assets:
-  - assets/images/
-  - assets/icons/
-  - assets/fonts/
+  assets:
+    - assets/images/
+    - assets/icons/
+    - assets/fonts/
 
-fonts:
-  - family: NotoSansKR
-    fonts:
-      - asset: assets/fonts/NotoSansKR-Light.otf
-        weight: 300
-      - asset: assets/fonts/NotoSansKR-Regular.otf
-        weight: 400
-      - asset: assets/fonts/NotoSansKR-Medium.otf
-        weight: 500
-      - asset: assets/fonts/NotoSansKR-SemiBold.otf
-        weight: 600
-      - asset: assets/fonts/NotoSansKR-Bold.otf
-        weight: 700
+  fonts:
+    - family: NotoSansKR
+      fonts:
+        - asset: assets/fonts/NotoSansKR-Light.ttf
+          weight: 300
+        - asset: assets/fonts/NotoSansKR-Regular.ttf
+          weight: 400
+        - asset: assets/fonts/NotoSansKR-Medium.ttf
+          weight: 500
+        - asset: assets/fonts/NotoSansKR-SemiBold.ttf
+          weight: 600
+        - asset: assets/fonts/NotoSansKR-Bold.ttf
+          weight: 700
