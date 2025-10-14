@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:healthy_scanner/theme/app_theme.dart';
 import 'package:healthy_scanner/theme/theme_extensions.dart';
+import 'package:healthy_scanner/component/bottombutton.dart';
 
 void main() {
   runApp(const MyApp());
@@ -40,30 +41,15 @@ class _MyHomePageState extends State<MyHomePage> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            Text(
-              'Caption1 Medium',
-              style: context.caption1Medium,
-            ),
+            Text('Caption1 Medium', style: context.caption1Medium),
             const SizedBox(height: 12),
-            Text(
-              'Title2 Medium',
-              style: context.title2Medium,
-            ),
+            Text('Title2 Medium', style: context.title2Medium),
             const SizedBox(height: 12),
-            Text(
-              'Footnote1 Medium',
-              style: context.footnote1Medium,
-            ),
+            Text('Footnote1 Medium', style: context.footnote1Medium),
             const SizedBox(height: 12),
-            Text(
-              'Title3 Regular',
-              style: context.title3Regular,
-            ),
+            Text('Title3 Regular', style: context.title3Regular),
             const SizedBox(height: 12),
-            Text(
-              'Caption1 Bold',
-              style: context.caption1Bold,
-            ),
+            Text('Caption1 Bold', style: context.caption1Bold),
             const SizedBox(height: 12),
             const Text(
               '직접 지정',
@@ -72,8 +58,17 @@ class _MyHomePageState extends State<MyHomePage> {
                 fontWeight: FontWeight.w700,
                 fontSize: 24,
               ),
-            )
+            ),
           ],
+        ),
+      ),
+      bottomNavigationBar: SafeArea(
+        minimum: const EdgeInsets.fromLTRB(15, 0, 15, 10),
+        child: BottomButton(
+          text: '저장하기',
+          onPressed: () {
+            // 버튼 눌렸을 때 로직
+          },
         ),
       ),
     );
