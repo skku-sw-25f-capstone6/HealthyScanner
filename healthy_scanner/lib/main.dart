@@ -44,15 +44,18 @@ class _MyHomePageState extends State<MyHomePage> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            Text('Caption1 Medium', style: context.caption1Medium),
+            // ✅ 성분 카드 테스트
+            const Text('🔶 성분 카드 테스트', style: TextStyle(fontSize: 16)),
+            const SizedBox(height: 12),
             SafeArea(
               minimum: const EdgeInsets.fromLTRB(12, 0, 12, 20),
               child: FoodCard(
                 title: '칸쵸',
-                category: '과자/초콜릿가공품과자',
+                category: '과자/초콜릿가공품',
                 message: '포화지방과 당류가 다소 높고, 땅콩이 포함되어 있어요.',
                 imageAsset: 'assets/images/cancho.png',
                 warningAsset: 'assets/icons/ic_warning.png',
+                lightState: TrafficLightState.red,
                 onTap: () {
                   // 카드 눌렸을 때 액션 추가: 상세 페이지 등으로 이동
                 },
@@ -63,7 +66,7 @@ class _MyHomePageState extends State<MyHomePage> {
             // ✅ 질환 칩 버튼 테스트
             const Text('🔹 질환 태그 테스트', style: TextStyle(fontSize: 16)),
             const SizedBox(height: 12),
-            Row(
+            const Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: const [
                 TagChipToggle(label: '고혈압'),
@@ -82,28 +85,6 @@ class _MyHomePageState extends State<MyHomePage> {
             const TrafficLight(state: TrafficLightState.yellow),
             const SizedBox(height: 12),
             const TrafficLight(state: TrafficLightState.green),
-
-            Text(
-              'Caption1 Medium',
-              style: context.caption1Medium,
-            ),
-            const SizedBox(height: 12),
-            Text('Title2 Medium', style: context.title2Medium),
-            const SizedBox(height: 12),
-            Text('Footnote1 Medium', style: context.footnote1Medium),
-            const SizedBox(height: 12),
-            Text('Title3 Regular', style: context.title3Regular),
-            const SizedBox(height: 12),
-            Text('Caption1 Bold', style: context.caption1Bold),
-            const SizedBox(height: 12),
-            const Text(
-              '직접 지정',
-              style: TextStyle(
-                fontFamily: 'NotoSansKR',
-                fontWeight: FontWeight.w700,
-                fontSize: 24,
-              ),
-            ),
           ],
         ),
       ),
