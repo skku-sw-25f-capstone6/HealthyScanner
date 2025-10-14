@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:healthy_scanner/theme/app_theme.dart';
-import 'package:healthy_scanner/theme/theme_extensions.dart';
 import 'package:healthy_scanner/component/bottom_button.dart';
 import 'package:healthy_scanner/component/food_card.dart';
 import 'package:healthy_scanner/component/tag_chip_toggle.dart';
 import 'package:healthy_scanner/component/traffic_light.dart';
+import 'package:healthy_scanner/component/scan_mode_button.dart';
+import 'package:healthy_scanner/theme/theme_extensions.dart';
 
 void main() {
   runApp(const MyApp());
@@ -33,6 +34,8 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
+  ScanMode _scanMode = ScanMode.barcode;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -68,7 +71,7 @@ class _MyHomePageState extends State<MyHomePage> {
             const SizedBox(height: 12),
             const Row(
               mainAxisAlignment: MainAxisAlignment.center,
-              children: const [
+              children: [
                 TagChipToggle(label: '고혈압'),
                 SizedBox(width: 12),
                 TagChipToggle(label: '당뇨병', initialSelected: true),
@@ -85,6 +88,27 @@ class _MyHomePageState extends State<MyHomePage> {
             const TrafficLight(state: TrafficLightState.yellow),
             const SizedBox(height: 12),
             const TrafficLight(state: TrafficLightState.green),
+
+            const SizedBox(height: 40),
+
+            // ✅ 스캔 모드 버튼 테스트
+            const Text('🔹 스캔 모드 버튼 테스트', style: TextStyle(fontSize: 16)),
+            const SizedBox(height: 12),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              child: ScanModeButton(
+                selected: _scanMode,
+                onChanged: (m) {
+                  setState(() => _scanMode = m);
+                },
+              ),
+            ),
+
+            const SizedBox(height: 12),
+            Text(
+              '현재 선택: $_scanMode',
+              style: context.caption1Medium,
+            ),
           ],
         ),
       ),
