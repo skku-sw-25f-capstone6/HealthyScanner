@@ -5,6 +5,7 @@ import 'package:healthy_scanner/component/bottombutton.dart';
 import 'package:healthy_scanner/foodcard.dart';
 import 'package:healthy_scanner/component/tag_chip_toggle.dart';
 import 'package:healthy_scanner/component/traffic_light.dart';
+import 'package:healthy_scanner/screen/splash/splash_screen.dart';
 
 void main() {
   runApp(const MyApp());
@@ -57,7 +58,6 @@ class _MyHomePageState extends State<MyHomePage> {
                   // 카드 눌렸을 때 액션 추가: 상세 페이지 등으로 이동
                 },
               ),
-              
             ),
             const SizedBox(height: 30),
 
@@ -84,7 +84,6 @@ class _MyHomePageState extends State<MyHomePage> {
             const SizedBox(height: 12),
             const TrafficLight(state: TrafficLightState.green),
 
-
             Text(
               'Caption1 Medium',
               style: context.caption1Medium,
@@ -109,13 +108,19 @@ class _MyHomePageState extends State<MyHomePage> {
           ],
         ),
       ),
-      
       bottomNavigationBar: SafeArea(
         minimum: const EdgeInsets.fromLTRB(15, 0, 15, 10),
         child: BottomButton(
           text: '저장하기',
           onPressed: () {
-            // 버튼 눌렸을 때 로직
+            Navigator.of(context).push(
+              MaterialPageRoute(
+                builder: (_) => const SplashScreen(
+                  // 스플래시 종료 후 돌아올 화면 (테스트용: MyHomePage 그대로)
+                  next: MyHomePage(title: '플러터 기본 데모 앱'),
+                ),
+              ),
+            );
           },
         ),
       ),
