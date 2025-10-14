@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:healthy_scanner/theme/app_theme.dart';
 import 'package:healthy_scanner/theme/theme_extensions.dart';
-import 'package:healthy_scanner/component/bottombutton.dart';
-import 'package:healthy_scanner/foodcard.dart';
+import 'package:healthy_scanner/component/bottom_button.dart';
+import 'package:healthy_scanner/component/food_card.dart';
 import 'package:healthy_scanner/component/tag_chip_toggle.dart';
 import 'package:healthy_scanner/component/traffic_light.dart';
 
@@ -57,7 +57,6 @@ class _MyHomePageState extends State<MyHomePage> {
                   // 카드 눌렸을 때 액션 추가: 상세 페이지 등으로 이동
                 },
               ),
-              
             ),
             const SizedBox(height: 30),
 
@@ -84,7 +83,6 @@ class _MyHomePageState extends State<MyHomePage> {
             const SizedBox(height: 12),
             const TrafficLight(state: TrafficLightState.green),
 
-
             Text(
               'Caption1 Medium',
               style: context.caption1Medium,
@@ -109,7 +107,6 @@ class _MyHomePageState extends State<MyHomePage> {
           ],
         ),
       ),
-      
       bottomNavigationBar: SafeArea(
         minimum: const EdgeInsets.fromLTRB(15, 0, 15, 10),
         child: BottomButton(
