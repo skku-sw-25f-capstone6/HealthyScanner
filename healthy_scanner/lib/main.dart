@@ -3,6 +3,8 @@ import 'package:healthy_scanner/theme/app_theme.dart';
 import 'package:healthy_scanner/theme/theme_extensions.dart';
 import 'package:healthy_scanner/component/bottombutton.dart';
 import 'package:healthy_scanner/foodcard.dart';
+import 'package:healthy_scanner/component/tag_chip_toggle.dart';
+import 'package:healthy_scanner/component/traffic_light.dart';
 
 void main() {
   runApp(const MyApp());
@@ -55,7 +57,34 @@ class _MyHomePageState extends State<MyHomePage> {
                   // 카드 눌렸을 때 액션 추가: 상세 페이지 등으로 이동
                 },
               ),
+              
             ),
+            const SizedBox(height: 30),
+
+            // ✅ 질환 칩 버튼 테스트
+            const Text('🔹 질환 태그 테스트', style: TextStyle(fontSize: 16)),
+            const SizedBox(height: 12),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: const [
+                TagChipToggle(label: '고혈압'),
+                SizedBox(width: 12),
+                TagChipToggle(label: '당뇨병', initialSelected: true),
+              ],
+            ),
+
+            const SizedBox(height: 40),
+
+            // ✅ 신호등 테스트
+            const Text('🔸 신호등 테스트', style: TextStyle(fontSize: 16)),
+            const SizedBox(height: 12),
+            const TrafficLight(state: TrafficLightState.red),
+            const SizedBox(height: 12),
+            const TrafficLight(state: TrafficLightState.yellow),
+            const SizedBox(height: 12),
+            const TrafficLight(state: TrafficLightState.green),
+
+
             Text(
               'Caption1 Medium',
               style: context.caption1Medium,
@@ -80,6 +109,7 @@ class _MyHomePageState extends State<MyHomePage> {
           ],
         ),
       ),
+      
       bottomNavigationBar: SafeArea(
         minimum: const EdgeInsets.fromLTRB(15, 0, 15, 10),
         child: BottomButton(

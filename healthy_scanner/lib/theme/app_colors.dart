@@ -19,4 +19,7 @@ class AppColors {
   static const mainRed = Color(0xFFFF5938);
   static const salmonRed = Color(0xFFFFAA99);
   static const peachRed = Color(0xFFFFD4CC);
+  static const kakaoYellow = Color(0xFFFEE500);
+  static const mainGreen = Color(0xFF86CE02);
+
 }
