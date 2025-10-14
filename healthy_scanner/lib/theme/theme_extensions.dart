@@ -6,17 +6,12 @@ extension TextThemeExtension on BuildContext {
 
   // Flutter 기본 TextTheme
   TextStyle get caption4Semibold => AppTextStyles.caption4Semibold;
-  TextStyle get caption3Regular => AppTextStyles.caption3Regular;
   TextStyle get caption2Regular => AppTextStyles.caption2Regular;
-  TextStyle get caption2Medium => AppTextStyles.caption2Medium;
   TextStyle get caption1Regular => AppTextStyles.caption1Regular;
   TextStyle get caption1Medium => AppTextStyles.caption1Medium;
-  TextStyle get caption1SemiBold => AppTextStyles.caption1SemiBold;
   TextStyle get caption1Bold => AppTextStyles.caption1Bold;
 
   // Footnotes
-  TextStyle get footnote3SemiBold => AppTextStyles.footnote3SemiBold;
-  TextStyle get footnote2Regular => AppTextStyles.footnote2Regular;
   TextStyle get footnote2Medium => AppTextStyles.footnote2Medium;
   TextStyle get footnote2Bold => AppTextStyles.footnote2Bold;
   TextStyle get footnote1Light => AppTextStyles.footnote1Light;
