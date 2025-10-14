@@ -25,7 +25,12 @@ class _SplashScreenState extends State<SplashScreen> {
     _timer = Timer(widget.duration, () {
       if (!mounted) return;
       Navigator.of(context).pushReplacement(
-        MaterialPageRoute(builder: (_) => widget.next),
+        PageRouteBuilder(
+          pageBuilder: (_, __, ___) => widget.next,
+          transitionDuration: Duration.zero,
+          reverseTransitionDuration: Duration.zero,
+          transitionsBuilder: (_, __, ___, child) => child,
+        ),
       );
     });
   }
@@ -40,11 +45,20 @@ class _SplashScreenState extends State<SplashScreen> {
   Widget build(BuildContext context) {
     return const Scaffold(
       backgroundColor: AppColors.mainRed,
-      body: Center(
-        child: Image(
-          image: AssetImage('assets/images/logo.png'),
-          width: 162,
-          height: 66,
+      body: SafeArea(
+        child: Stack(
+          children: [
+            Positioned(
+                top: 309,
+                left: 0,
+                right: 0,
+                child: Center(
+                    child: Image(
+                  image: AssetImage('assets/images/logo.png'),
+                  width: 162,
+                  height: 66,
+                ))),
+          ],
         ),
       ),
     );

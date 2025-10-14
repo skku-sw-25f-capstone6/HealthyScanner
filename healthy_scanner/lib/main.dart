@@ -6,6 +6,7 @@ import 'package:healthy_scanner/foodcard.dart';
 import 'package:healthy_scanner/component/tag_chip_toggle.dart';
 import 'package:healthy_scanner/component/traffic_light.dart';
 import 'package:healthy_scanner/screen/splash/splash_screen.dart';
+import 'package:healthy_scanner/screen/login/login_main.dart';
 
 void main() {
   runApp(const MyApp());
@@ -116,8 +117,7 @@ class _MyHomePageState extends State<MyHomePage> {
             Navigator.of(context).push(
               MaterialPageRoute(
                 builder: (_) => const SplashScreen(
-                  // 스플래시 종료 후 돌아올 화면 (테스트용: MyHomePage 그대로)
-                  next: MyHomePage(title: '플러터 기본 데모 앱'),
+                  next: LoginMainScreen(),
                 ),
               ),
             );
