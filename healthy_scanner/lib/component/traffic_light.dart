@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../theme/app_colors.dart'; // 경로에 맞게 수정하세요
+import 'package:healthy_scanner/theme/app_colors.dart';
 
 enum TrafficLightState { red, yellow, green }
 

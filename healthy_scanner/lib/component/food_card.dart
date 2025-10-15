@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:healthy_scanner/theme/theme_extensions.dart';
 import 'package:healthy_scanner/theme/app_colors.dart';
+import 'package:healthy_scanner/component/traffic_light.dart';
 
 class FoodCard extends StatelessWidget {
   final String title; // 예: "칸쵸"
@@ -8,6 +9,7 @@ class FoodCard extends StatelessWidget {
   final String message; // 예: "포화지방과 당류가..."
   final String imageAsset; // 촬영한 식품 이미지
   final String? warningAsset; // 빨간 경고 아이콘
+  final TrafficLightState lightState; // 신호등 상태
 
   final VoidCallback? onTap;
 
@@ -18,6 +20,7 @@ class FoodCard extends StatelessWidget {
     required this.message,
     required this.imageAsset,
     this.warningAsset,
+    this.lightState = TrafficLightState.green,
     this.onTap,
   });
 
@@ -104,9 +107,13 @@ class FoodCard extends StatelessWidget {
                     ),
                     const SizedBox(height: 17),
 
-                    // 임시 SizedBox 자리에 신호등 컴포넌트 연결 필요
-                    const SizedBox(
-                      height: 15,
+                    // 신호등
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        TrafficLight(state: lightState),
+                        const Spacer()
+                      ],
                     ),
 
                     const SizedBox(
