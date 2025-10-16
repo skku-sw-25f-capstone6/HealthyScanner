@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../theme/app_colors.dart'; 
+import 'package:healthy_scanner/theme/app_colors.dart';
 
 class TagChipToggle extends StatefulWidget {
   final String label;
@@ -37,8 +37,7 @@ class _TagChipToggleState extends State<TagChipToggle> {
   Widget build(BuildContext context) {
     final backgroundColor =
         _isSelected ? AppColors.peachRed : AppColors.staticWhite;
-    final textColor =
-        _isSelected ? AppColors.mainRed : AppColors.brownGray;
+    final textColor = _isSelected ? AppColors.mainRed : AppColors.brownGray;
 
     return GestureDetector(
       onTap: _toggleSelection,
