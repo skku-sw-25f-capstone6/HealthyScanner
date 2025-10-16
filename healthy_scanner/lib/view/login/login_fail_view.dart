@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:healthy_scanner/theme/app_colors.dart';
 import 'package:healthy_scanner/theme/theme_extensions.dart';
-import 'package:healthy_scanner/component/bottombutton.dart';
+import 'package:healthy_scanner/component/bottom_button.dart';
 
-class LoginFailScreen extends StatelessWidget {
-  const LoginFailScreen({
+class LoginFailView extends StatelessWidget {
+  const LoginFailView({
     super.key,
     this.onRetry,
   });
