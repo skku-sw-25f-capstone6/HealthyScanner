@@ -11,7 +11,6 @@ class ArchiveCalendarView extends StatefulWidget {
 }
 
 class _ArchiveCalendarViewState extends State<ArchiveCalendarView> {
-  final _calendar = CalendarUtils.mondayFirst(); // 월요일 시작 달력
   final DateTime _today =
       CalendarUtils.dateOnly(DateTime.now()); // 오늘 날짜 (시간 삭제)
   late DateTime _currentMonth; // 현재 달
@@ -93,7 +92,6 @@ class _ArchiveCalendarViewState extends State<ArchiveCalendarView> {
                     final isSelected = _selected != null &&
                         CalendarUtils.isSameDate(day, _selected!);
                     final isFuture = day.isAfter(_today);
-                    final isPast = day.isBefore(_today);
 
                     // 텍스트 컬러
                     Color textColor;
@@ -239,25 +237,22 @@ class CalendarUtils {
   CalendarUtils._();
 
   static CalendarUtils mondayFirst() => CalendarUtils._();
-
   static DateTime dateOnly(DateTime dt) => DateTime(dt.year, dt.month, dt.day);
-
   static DateTime firstDayOfMonth(DateTime dt) =>
       DateTime(dt.year, dt.month, 1);
-
   static DateTime addMonths(DateTime base, int delta) {
     final y = base.year;
     final m = base.month + delta;
-    final d = 1;
+    const d = 1;
     return DateTime(y, m, d);
   }
 
   static bool isSameDate(DateTime a, DateTime b) =>
       a.year == b.year && a.month == b.month && a.day == b.day;
 
-  /// 해당 월의 달력 그리드를 반환.
-  /// 월요일 시작, 총 6주 * 7칸 = 42칸 배열을 리턴하며
-  /// 현재 월이 아닌 칸은 null 로 채운다.
+  /// 해당 월의 달력 그리드를 반환
+  /// 월요일 시작, 총 6주 * 7칸 = 42칸 배열을 리턴
+  /// 현재 월이 아닌 칸은 null로 채움
   static List<DateTime?> daysForMonth(
     DateTime month, {
     required bool mondayFirst,
@@ -271,7 +266,7 @@ class CalendarUtils {
 
     final daysInMonth = DateTime(month.year, month.month + 1, 0).day;
 
-    final totalCells = 42; // 6주
+    const totalCells = 42; // 6주
     final List<DateTime?> out = List<DateTime?>.filled(totalCells, null);
 
     // 현재 달 날짜 배치
