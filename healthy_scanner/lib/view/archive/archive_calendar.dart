@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:healthy_scanner/theme/app_colors.dart';
 import 'package:healthy_scanner/theme/theme_extensions.dart';
 import 'package:healthy_scanner/component/bottom_button.dart';
+import 'package:healthy_scanner/view/archive/archive_list.dart';
 
 class ArchiveCalendarView extends StatefulWidget {
   const ArchiveCalendarView({super.key});
@@ -145,7 +146,9 @@ class _ArchiveCalendarViewState extends State<ArchiveCalendarView> {
                 text: '기록 확인하기',
                 isEnabled: !isFutureSelected,
                 onPressed: () {
-                  // TODO: ArchieListView로 이동
+                  Navigator.of(context).push(
+                    MaterialPageRoute(builder: (_) => const ArchiveListView()),
+                  );
                 },
               ),
               const SizedBox(height: 240),
