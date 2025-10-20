@@ -117,7 +117,7 @@ class _MyHomePageState extends State<MyHomePage> {
         child: BottomButton(
           text: '저장하기',
           onPressed: () {
-            // 버튼 눌렸을 때 로직
+            // TODO: 하단 버튼 로직
           },
         ),
       ),
