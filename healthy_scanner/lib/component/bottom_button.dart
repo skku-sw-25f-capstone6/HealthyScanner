@@ -24,6 +24,8 @@ class BottomButton extends StatelessWidget {
         style: ElevatedButton.styleFrom(
           backgroundColor: isEnabled ? AppColors.mainRed : AppColors.cloudGray,
           foregroundColor: Colors.white,
+          overlayColor: Colors.transparent,
+          shadowColor: Colors.transparent,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(8),
           ),
