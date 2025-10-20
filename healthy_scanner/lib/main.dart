@@ -4,8 +4,6 @@ import 'package:healthy_scanner/component/bottom_button.dart';
 import 'package:healthy_scanner/component/food_card.dart';
 import 'package:healthy_scanner/component/tag_chip_toggle.dart';
 import 'package:healthy_scanner/component/traffic_light.dart';
-import 'package:healthy_scanner/view/splash/splash_view.dart';
-import 'package:healthy_scanner/view/login/login_main_view.dart';
 import 'package:healthy_scanner/component/scan_mode_button.dart';
 import 'package:healthy_scanner/theme/theme_extensions.dart';
 
@@ -119,13 +117,7 @@ class _MyHomePageState extends State<MyHomePage> {
         child: BottomButton(
           text: '저장하기',
           onPressed: () {
-            Navigator.of(context).push(
-              MaterialPageRoute(
-                builder: (_) => const SplashView(
-                  next: LoginMainView(),
-                ),
-              ),
-            );
+            // TODO: 하단 버튼 로직
           },
         ),
       ),

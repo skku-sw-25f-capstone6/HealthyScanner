@@ -74,10 +74,6 @@ class LoginMainView extends StatelessWidget {
                     behavior: HitTestBehavior.opaque,
                     onTap: () {
                       // TODO: 문의 페이지로 이동
-                      Navigator.of(context).push(
-                        MaterialPageRoute(
-                            builder: (_) => const LoginFailView()),
-                      );
                     },
                     child: Padding(
                       padding: const EdgeInsets.all(6),

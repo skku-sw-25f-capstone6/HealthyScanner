@@ -53,7 +53,7 @@ class LoginFailView extends StatelessWidget {
         child: BottomButton(
           text: '다시 로그인하기',
           onPressed: () {
-            // 다시 로그인하기 액션
+            // TODO: 다시 로그인하기 액션
           },
         ),
       ),
