@@ -195,6 +195,6 @@ class _CameraPlaceholder extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(color: Colors.black);
+    return Container(color: AppColors.peachRed);
   }
 }
