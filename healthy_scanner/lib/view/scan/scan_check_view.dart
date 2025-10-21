@@ -101,6 +101,9 @@ class _CameraPlaceholder extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(color: AppColors.peachRed);
+    return Image.asset(
+      'assets/images/sample_eggs.png',
+      fit: BoxFit.cover,
+    );
   }
 }

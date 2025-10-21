@@ -72,6 +72,7 @@ class _ScanReadyViewState extends State<ScanReadyView> {
               // 가이드 텍스트
               const Padding(
                 padding: EdgeInsets.symmetric(horizontal: 60),
+                // TODO: 설정된 스캔 모드에 따라 텍스트 변경
                 child: GuidePill.red('식품 바코드를 프레임 안에 맞춰주세요'),
               ),
               const SizedBox(height: 14),
@@ -106,6 +107,9 @@ class _CameraPlaceholder extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(color: AppColors.peachRed);
+    return Image.asset(
+      'assets/images/sample_eggs.png',
+      fit: BoxFit.cover,
+    );
   }
 }
