@@ -1,24 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:healthy_scanner/theme/app_colors.dart';
-import 'package:healthy_scanner/theme/theme_extensions.dart';
 import 'package:healthy_scanner/component/scan_mode_button.dart';
 import 'package:healthy_scanner/component/round_icon_button.dart';
+import 'package:healthy_scanner/component/bottom_button.dart';
 import 'package:healthy_scanner/component/guide_pill.dart';
-import 'package:healthy_scanner/component/shutter_button.dart';
 
 // TODO: StatelessWidget으로 바꾸고, Get으로 상태 관리
-class ScanReadyPage extends StatefulWidget {
-  const ScanReadyPage({
+class ScanCheckPage extends StatefulWidget {
+  const ScanCheckPage({
     super.key,
     this.onClose,
-    this.onOpenGallery,
     this.onShutter,
     this.onModeChanged,
     this.cameraBuilder,
   });
 
   final VoidCallback? onClose;
-  final VoidCallback? onOpenGallery;
   final VoidCallback? onShutter;
   final ValueChanged<ScanMode>? onModeChanged;
 
@@ -27,10 +24,11 @@ class ScanReadyPage extends StatefulWidget {
   final WidgetBuilder? cameraBuilder;
 
   @override
-  State<ScanReadyPage> createState() => _ScanReadyPageState();
+  State<ScanCheckPage> createState() => _ScanCheckPageState();
 }
 
-class _ScanReadyPageState extends State<ScanReadyPage> {
+class _ScanCheckPageState extends State<ScanCheckPage> {
+  // TODO: 촬영 시 설정한 ScanMode가 그대로 유지되도록
   ScanMode _mode = ScanMode.ingredient;
 
   @override
@@ -47,32 +45,23 @@ class _ScanReadyPageState extends State<ScanReadyPage> {
 
           Column(
             children: [
-              // 상단 좌우 아이콘
+              // 상단 좌측 아이콘
               const SizedBox(height: 57),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 20),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    RoundIconButton(
-                      assetPath: 'assets/icons/ic_x.png',
-                      onTap: widget.onClose ??
-                          () => Navigator.of(context).maybePop(),
-                    ),
-                    RoundIconButton(
-                      assetPath: 'assets/icons/ic_image.png',
-                      onTap: widget.onOpenGallery,
-                    ),
-                  ],
+              Row(mainAxisAlignment: MainAxisAlignment.start, children: [
+                const SizedBox(width: 20),
+                RoundIconButton(
+                  assetPath: 'assets/icons/ic_x.png',
+                  onTap:
+                      widget.onClose ?? () => Navigator.of(context).maybePop(),
                 ),
-              ),
+              ]),
 
               const Spacer(),
 
               // 가이드 텍스트
               const Padding(
                 padding: EdgeInsets.symmetric(horizontal: 60),
-                child: GuidePill.red('식품 바코드를 프레임 안에 맞춰주세요'),
+                child: GuidePill.gray('촬영된 사진을 확인해 주세요'),
               ),
               const SizedBox(height: 14),
 
@@ -88,10 +77,16 @@ class _ScanReadyPageState extends State<ScanReadyPage> {
                 ),
               ),
 
-              // 중앙 셔터 버튼
-              const SizedBox(height: 14),
-              ShutterButton(onTap: widget.onShutter),
-              const SizedBox(height: 35),
+              // 하단 분석하기 버튼
+              SafeArea(
+                minimum: const EdgeInsets.fromLTRB(15, 0, 15, 10),
+                child: BottomButton(
+                  text: '분석하기',
+                  onPressed: () {
+                    // TODO: 분석하기 로직
+                  },
+                ),
+              ),
             ],
           ),
         ],
