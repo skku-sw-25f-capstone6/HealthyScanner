@@ -13,18 +13,30 @@ class ScanWaitingView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // TODO: 사용자가 촬영한 이미지를 배경으로 띄우기
-      backgroundColor: AppColors.peachRed,
       body: Stack(
         children: [
-          // 상단 좌측 아이콘
+          // TODO: 유저가 촬영한 사진이 배경에 뜨도록
+          Positioned.fill(
+            child: Image.asset(
+              'assets/images/sample_eggs.png',
+              fit: BoxFit.cover,
+            ),
+          ),
+
+          Positioned.fill(
+            child: Container(
+              color: AppColors.staticBlack.withValues(alpha: 0.6),
+            ),
+          ),
+
+          // 상단 좌측 닫기 아이콘
           SafeArea(
             child: Padding(
               padding: const EdgeInsets.only(top: 5, left: 20),
               child: GestureDetector(
                 onTap: onClose ?? () => Navigator.of(context).maybePop(),
                 child: Image.asset(
-                  'assets/icons/ic_x.png',
+                  'assets/icons/ic_x_white.png',
                   width: 24,
                   height: 24,
                 ),
@@ -40,6 +52,7 @@ class ScanWaitingView extends StatelessWidget {
                 Transform.scale(
                   scale: 2.5,
                   child: Image.asset(
+                    // TODO: gif 화질 개선 시 Lottie 등 활용
                     'assets/images/loading.gif',
                   ),
                 ),
