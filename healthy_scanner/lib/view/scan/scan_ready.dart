@@ -3,6 +3,7 @@ import 'package:healthy_scanner/theme/app_colors.dart';
 import 'package:healthy_scanner/theme/theme_extensions.dart';
 import 'package:healthy_scanner/component/scan_mode_button.dart';
 import 'package:healthy_scanner/component/round_icon_button.dart';
+import 'package:healthy_scanner/component/guide_pill.dart';
 
 class ScanReadyPage extends StatefulWidget {
   const ScanReadyPage({
@@ -69,9 +70,7 @@ class _ScanReadyPageState extends State<ScanReadyPage> {
               // 가이드 텍스트
               const Padding(
                 padding: EdgeInsets.symmetric(horizontal: 60),
-                child: _GuidePill(
-                  text: '식품 바코드를 프레임 안에 맞춰주세요',
-                ),
+                child: GuidePill.red('식품 바코드를 프레임 안에 맞춰주세요'),
               ),
               const SizedBox(height: 14),
 
@@ -94,38 +93,6 @@ class _ScanReadyPageState extends State<ScanReadyPage> {
             ],
           ),
         ],
-      ),
-    );
-  }
-}
-
-/// 가이드 텍스트
-class _GuidePill extends StatelessWidget {
-  const _GuidePill({required this.text});
-  final String text;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 0, vertical: 7),
-      decoration: BoxDecoration(
-        color: AppColors.mainRed,
-        borderRadius: BorderRadius.circular(56),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.25),
-            blurRadius: 4,
-            offset: const Offset(0, 2),
-          ),
-        ],
-      ),
-      child: Center(
-        child: Text(
-          text,
-          maxLines: 1,
-          overflow: TextOverflow.ellipsis,
-          style: context.caption1Medium.copyWith(color: Colors.white),
-        ),
       ),
     );
   }
