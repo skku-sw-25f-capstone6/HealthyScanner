@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:healthy_scanner/theme/app_colors.dart';
 import 'package:healthy_scanner/component/scan_mode_button.dart';
 import 'package:healthy_scanner/component/round_icon_button.dart';
 import 'package:healthy_scanner/component/bottom_button.dart';
