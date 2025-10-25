@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:healthy_scanner/theme/app_colors.dart';
 import 'package:healthy_scanner/theme/theme_extensions.dart';
-import 'package:healthy_scanner/view/login/login_fail_view.dart';
 
 class LoginMainView extends StatelessWidget {
   const LoginMainView({super.key});

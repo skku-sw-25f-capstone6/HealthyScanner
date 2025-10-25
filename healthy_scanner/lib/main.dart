@@ -6,6 +6,7 @@ import 'package:healthy_scanner/component/tag_chip_toggle.dart';
 import 'package:healthy_scanner/component/traffic_light.dart';
 import 'package:healthy_scanner/component/scan_mode_button.dart';
 import 'package:healthy_scanner/theme/theme_extensions.dart';
+import 'package:healthy_scanner/view/archive/archive_calendar.dart';
 
 void main() {
   runApp(const MyApp());
@@ -118,6 +119,9 @@ class _MyHomePageState extends State<MyHomePage> {
           text: '저장하기',
           onPressed: () {
             // TODO: 하단 버튼 로직
+            Navigator.of(context).push(
+              MaterialPageRoute(builder: (_) => const ArchiveCalendarView()),
+            );
           },
         ),
       ),
