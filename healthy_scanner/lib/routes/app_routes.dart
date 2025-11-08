@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 import '../controller/navigation_controller.dart';
 
@@ -43,12 +44,13 @@ class AppRoutes {
     GetPage(name: archiveList, page: () => const ArchiveListView()),
     GetPage(name: scanCheck, page: () => const ScanCheckView()),
     GetPage(name: scanFail, page: () => const ScanFailView()),
-    GetPage(name: scanReady, page: () => const ScanReadyView()),
-    GetPage(name: scanWaiting, page: () => const ScanWaitingView()),
     GetPage(
-      name: home,
-      page: () => const MainShellView(),
-    ),
+        name: scanReady,
+        page: () => const ScanReadyView(),
+        transition: Transition.noTransition,
+        transitionDuration: Duration.zero),
+    GetPage(name: scanWaiting, page: () => const ScanWaitingView()),
+    GetPage(name: home, page: () => const MainShellView()),
     //GetPage(name: onboarding, page: () => const OnboardingView()),
     GetPage(name: myPage, page: () => const MyPageView()),
   ];

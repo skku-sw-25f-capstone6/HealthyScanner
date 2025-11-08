@@ -36,32 +36,42 @@ class _MainShellViewState extends State<MainShellView> {
       ),
       bottomNavigationBar: SafeArea(
         top: false,
-        child: BottomAppBar(
-          color: Colors.white,
-          shape: const CircularNotchedRectangle(),
-          notchMargin: 8,
-          child: SizedBox(
-            height: 56,
-            child: Row(
-              children: [
-                Expanded(
-                  child: _NavItem(
-                    label: '홈',
-                    isHome: true,
-                    selected: _selectedIndex == 0,
-                    onTap: () => _onTabTapped(0),
+        child: Container(
+          decoration: const BoxDecoration(
+            border: Border(
+              top: BorderSide(
+                color: AppColors.softGray,
+                width: 1,
+              ),
+            ),
+          ),
+          child: BottomAppBar(
+            color: Colors.white,
+            shape: const CircularNotchedRectangle(),
+            notchMargin: 8,
+            child: SizedBox(
+              height: 56,
+              child: Row(
+                children: [
+                  Expanded(
+                    child: _NavItem(
+                      label: '홈',
+                      isHome: true,
+                      selected: _selectedIndex == 0,
+                      onTap: () => _onTabTapped(0),
+                    ),
                   ),
-                ),
-                const SizedBox(width: 100),
-                Expanded(
-                  child: _NavItem(
-                    label: '리포트',
-                    isHome: false,
-                    selected: _selectedIndex == 1,
-                    onTap: () => _onTabTapped(1),
+                  const SizedBox(width: 100),
+                  Expanded(
+                    child: _NavItem(
+                      label: '리포트',
+                      isHome: false,
+                      selected: _selectedIndex == 1,
+                      onTap: () => _onTabTapped(1),
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
         ),
@@ -109,6 +119,10 @@ class _NavItem extends StatelessWidget {
 
     return InkWell(
       onTap: onTap,
+      highlightColor: Colors.transparent,
+      focusColor: Colors.transparent,
+      hoverColor: Colors.transparent,
+      splashColor: Colors.transparent,
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [

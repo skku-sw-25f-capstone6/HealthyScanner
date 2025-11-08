@@ -130,7 +130,9 @@ class HomeView extends StatelessWidget {
           const SizedBox(height: 30),
           Expanded(
             child: Container(
-              color: AppColors.backgroundGray,
+              decoration: const BoxDecoration(
+                gradient: AppColors.linearGray,
+              ),
               child:
                   // 성분 카드 (최대 2개, 스크롤 없음)
                   Padding(
