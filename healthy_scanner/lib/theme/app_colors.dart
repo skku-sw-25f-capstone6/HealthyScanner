@@ -27,7 +27,7 @@ class AppColors {
   static const linearGray = LinearGradient(
     begin: Alignment.topCenter,
     end: Alignment.bottomCenter,
-    stops: [0.0, 0.93, 1.0],
+    stops: [0.0, 0.07, 1.0],
     colors: [
       Color(0xFFF2ECEA), // 위쪽 (어두운 회색)
       Color(0xFFF6F2F1), // 중간 (밝은 회색)
