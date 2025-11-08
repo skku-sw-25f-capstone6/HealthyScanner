@@ -23,14 +23,14 @@ class LoginMainView extends StatelessWidget {
       body: SafeArea(
         child: Column(
           children: [
-            const SizedBox(height: 309),
+            const SizedBox(height: 329),
 
             // 앱 로고 영역
             const Center(
               child: Image(
                 image: AssetImage('assets/images/logo.png'),
-                width: 162,
-                height: 66,
+                width: 124,
+                height: 50,
               ),
             ),
 

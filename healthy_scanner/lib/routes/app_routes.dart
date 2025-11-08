@@ -38,7 +38,11 @@ class AppRoutes {
   // ----------------------
   static final pages = [
     GetPage(name: splash, page: () => const SplashView()),
-    GetPage(name: loginMain, page: () => const LoginMainView()),
+    GetPage(
+        name: loginMain,
+        page: () => const LoginMainView(),
+        transition: Transition.noTransition,
+        transitionDuration: Duration.zero),
     GetPage(name: loginFail, page: () => const LoginFailView()),
     GetPage(name: archiveCalendar, page: () => const ArchiveCalendarView()),
     GetPage(name: archiveList, page: () => const ArchiveListView()),
