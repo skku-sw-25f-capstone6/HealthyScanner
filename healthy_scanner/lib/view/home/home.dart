@@ -127,9 +127,7 @@ class HomeView extends StatelessWidget {
               ),
             ),
           ),
-
           const SizedBox(height: 30),
-
           Expanded(
             child: Container(
               color: AppColors.backgroundGray,
@@ -164,110 +162,7 @@ class HomeView extends StatelessWidget {
               ),
             ),
           ),
-
-          // FAB(셔터)와 겹치지 않도록 하단 여백
-          const SizedBox(height: 120),
         ],
-      ),
-
-      // 가운데 큰 카메라 버튼
-      floatingActionButton: SizedBox(
-        width: 98,
-        height: 98,
-        child: FloatingActionButton(
-          onPressed: () => nav.goToScanReady(),
-          elevation: 0,
-          backgroundColor: Colors.transparent,
-          shape: const CircleBorder(),
-          child: const ShutterButton(size: 98),
-        ),
-      ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-
-      // 하단 네비게이션 바
-      bottomNavigationBar: SafeArea(
-        top: false,
-        child: BottomAppBar(
-          color: Colors.white,
-          shape: const CircularNotchedRectangle(),
-          notchMargin: 8,
-          child: SizedBox(
-            height: 56,
-            child: Row(
-              children: [
-                Expanded(
-                  child: _NavItem(
-                    label: '홈',
-                    isHome: true,
-                    selected: true,
-                    onTap: () {},
-                  ),
-                ),
-                const SizedBox(width: 100),
-                Expanded(
-                  child: _NavItem(
-                    label: '리포트',
-                    isHome: false,
-                    selected: false,
-                    onTap: () => nav.goToArchiveCalendar(),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-/// 네비게이션 바 내부 아이템 (아이콘 + 라벨)
-class _NavItem extends StatelessWidget {
-  const _NavItem({
-    required this.label,
-    required this.isHome,
-    required this.selected,
-    required this.onTap,
-  });
-
-  final String label;
-  final bool isHome;
-  final bool selected;
-  final VoidCallback onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    final Color color = selected ? AppColors.staticBlack : AppColors.stoneGray;
-
-    final String iconPath = isHome
-        ? (selected
-            ? 'assets/icons/ic_home_on.png'
-            : 'assets/icons/ic_home_off.png')
-        : (selected
-            ? 'assets/icons/ic_report_on.png'
-            : 'assets/icons/ic_report_off.png');
-
-    return InkWell(
-      onTap: onTap,
-      child: Padding(
-        padding: const EdgeInsets.only(top: 0, bottom: 0),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Image(
-              image: AssetImage(iconPath),
-              width: 28,
-              height: 28,
-            ),
-            const SizedBox(height: 4),
-            Text(
-              label,
-              style: context.caption2Regular.copyWith(
-                color: color,
-              ),
-            ),
-          ],
-        ),
       ),
     );
   }

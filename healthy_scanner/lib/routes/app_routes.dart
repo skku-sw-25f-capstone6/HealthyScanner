@@ -13,6 +13,7 @@ import '../view/scan/scan_ready_view.dart';
 import '../view/scan/scan_waiting_view.dart';
 import '../view/home/home.dart';
 import '../view/myPage/myPage.dart';
+import '../view/main/main_shell_view.dart';
 
 class AppRoutes {
   // ----------------------
@@ -46,7 +47,7 @@ class AppRoutes {
     GetPage(name: scanWaiting, page: () => const ScanWaitingView()),
     GetPage(
       name: home,
-      page: () => const HomeView(),
+      page: () => const MainShellView(),
     ),
     //GetPage(name: onboarding, page: () => const OnboardingView()),
     GetPage(name: myPage, page: () => const MyPageView()),
