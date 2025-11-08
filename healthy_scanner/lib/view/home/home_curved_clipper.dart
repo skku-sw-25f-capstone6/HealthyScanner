@@ -15,6 +15,7 @@ class BottomArcClipper extends CustomClipper<Path> {
     final w = size.width;
     final h = size.height;
 
+    // 안전 범위 클램프
     final ah = arcHeight.clamp(0, h);
     final fw = flatWidth.clamp(0, w * 0.4);
 
@@ -29,14 +30,14 @@ class BottomArcClipper extends CustomClipper<Path> {
       return path;
     }
 
-    // --- fw > 0 인 경우: 중앙을 짧게 평평하게 ---
+    // 중앙 평평한 구간의 좌우 끝점
     final midL = Offset(w / 2 - fw / 2, h + ah);
     final midR = Offset(w / 2 + fw / 2, h + ah);
 
-    // ‘평평해 보임’을 줄이려면 컨트롤 y를 중앙보다 덜 내린다 (t는 0.5~0.8 권장)
+    // 컨트롤 포인트를 중앙 y와 동일하게 두면 중앙 접선이 수평
     const t = 0.65; // 곡률(텐션)
-    final c1 = Offset(w * 0.25, h + ah * t);
-    final c2 = Offset(w * 0.75, h + ah * t);
+    final c1 = Offset(w * 0.25, h + ah * t); // 좌측 베지어 컨트롤
+    final c2 = Offset(w * 0.75, h + ah * t); // 우측 베지어 컨트롤
 
     path
       ..quadraticBezierTo(c1.dx, c1.dy, midL.dx, midL.dy)

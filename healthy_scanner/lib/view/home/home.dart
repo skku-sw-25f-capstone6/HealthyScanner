@@ -66,13 +66,16 @@ class HomeView extends StatelessWidget {
                     padding: const EdgeInsets.fromLTRB(13, 0, 13, 0),
                     child: Column(
                       children: [
-                        const Row(
+                        Row(
                           children: [
-                            Spacer(),
-                            Image(
-                              image: AssetImage('assets/icons/ic_mypage.png'),
-                              width: 24,
-                              height: 24,
+                            const Spacer(),
+                            GestureDetector(
+                              onTap: () => nav.goToMyPage(),
+                              child: const Image(
+                                image: AssetImage('assets/icons/ic_mypage.png'),
+                                width: 24,
+                                height: 24,
+                              ),
                             ),
                           ],
                         ),
@@ -85,7 +88,7 @@ class HomeView extends StatelessWidget {
                               SemiCircularProgress(
                                 value: score / 100.0,
                                 size: 224,
-                                thickness: 14,
+                                thickness: 12,
                                 offsetY: 50,
                                 bgColor: const Color(0x33FFFFFF),
                                 fgColor: AppColors.staticWhite,

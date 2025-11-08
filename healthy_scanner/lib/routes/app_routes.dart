@@ -12,6 +12,7 @@ import '../view/scan/scan_fail_view.dart';
 import '../view/scan/scan_ready_view.dart';
 import '../view/scan/scan_waiting_view.dart';
 import '../view/home/home.dart';
+import '../view/myPage/myPage.dart';
 
 class AppRoutes {
   // ----------------------
@@ -28,6 +29,7 @@ class AppRoutes {
   static const scanWaiting = '/scan/waiting';
   static const home = '/home';
   //static const onboarding = '/onboarding';
+  static const myPage = '/myPage';
 
   // ----------------------
   // 📍 페이지 목록 등록
@@ -42,8 +44,12 @@ class AppRoutes {
     GetPage(name: scanFail, page: () => const ScanFailView()),
     GetPage(name: scanReady, page: () => const ScanReadyView()),
     GetPage(name: scanWaiting, page: () => const ScanWaitingView()),
-    GetPage(name: home, page: () => const HomeView(),),
+    GetPage(
+      name: home,
+      page: () => const HomeView(),
+    ),
     //GetPage(name: onboarding, page: () => const OnboardingView()),
+    GetPage(name: myPage, page: () => const MyPageView()),
   ];
 
   // ----------------------
