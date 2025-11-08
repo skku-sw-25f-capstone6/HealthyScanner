@@ -23,7 +23,7 @@ class LoginMainView extends StatelessWidget {
       body: SafeArea(
         child: Column(
           children: [
-            const SizedBox(height: 329),
+            const SizedBox(height: 331),
 
             // 앱 로고 영역
             const Center(

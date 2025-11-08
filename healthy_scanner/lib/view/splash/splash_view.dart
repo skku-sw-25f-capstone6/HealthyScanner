@@ -56,7 +56,7 @@ class _SplashViewState extends State<SplashView> {
         child: Stack(
           children: [
             Positioned(
-              top: 329,
+              top: 331,
               left: 0,
               right: 0,
               child: Center(

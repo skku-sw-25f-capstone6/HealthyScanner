@@ -17,6 +17,7 @@ class MyApp extends StatelessWidget {
       title: 'HealthyScanner',
       initialRoute: AppRoutes.splash,
       getPages: AppRoutes.pages,
+      debugShowCheckedModeBanner: false,
       navigatorObservers: [
         GetObserver(
           (routing) {
