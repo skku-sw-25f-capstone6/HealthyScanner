@@ -10,7 +10,7 @@ void main() async{
 
   // ⭐ 카카오 SDK 초기화
   KakaoSdk.init(
-    nativeAppKey: 'aa03c53edb5ea7f0032d5b7319adeaa0',
+    nativeAppKey: "aa03c53edb5ea7f0032d5b7319adeaa0",
   );
 
 
