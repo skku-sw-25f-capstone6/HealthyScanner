@@ -10,7 +10,7 @@
         <!-- 카카오 SDK AppKey 등록 -->
         <meta-data
             android:name="com.kakao.sdk.AppKey"
-            android:value="카카오_네이티브_앱키" />
+            android:value="aa03c53edb5ea7f0032d5b7319adeaa0" />
 
 
         <activity
