@@ -65,10 +65,10 @@ class LoginMainView extends StatelessWidget {
                       width: 14,
                       height: 13,
                     ),
-                    onPressed: () {
-                      // await auth.loginWithKakao();
+                    onPressed: () async{
+                      await auth.loginWithKakao();
                       // TODO: 카카오 로그인 API 연동 예정
-                      nav.goToHome(); // ✅ 임시로 홈으로 이동
+                      // nav.goToHome(); // ✅ 임시로 홈으로 이동
                     },
                   ),
                   const SizedBox(height: 7),
