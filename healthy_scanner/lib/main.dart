@@ -3,8 +3,17 @@ import 'package:get/get.dart';
 import 'routes/app_routes.dart';
 import 'controller/navigation_controller.dart';
 import 'package:healthy_scanner/controller/auth_controller.dart';
+import 'package:kakao_flutter_sdk_user/kakao_flutter_sdk_user.dart';
 
-void main() {
+void main() async{
+  WidgetsFlutterBinding.ensureInitialized(); // ⭐ 중요: SDK 초기화 전 반드시 필요
+
+  // ⭐ 카카오 SDK 초기화
+  KakaoSdk.init(
+    nativeAppKey: '여기에_네이티브_앱키',
+  );
+
+
   Get.put(NavigationController());
   Get.put(AuthController());
   runApp(const MyApp());
