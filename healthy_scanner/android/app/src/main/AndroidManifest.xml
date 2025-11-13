@@ -1,5 +1,4 @@
-<manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.healthyScanner">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
     <!--  카카오 로그인에 반드시 필요한 인터넷 권한 -->
     <uses-permission android:name="android.permission.INTERNET"/>
 

@@ -24,7 +24,7 @@ if (flutterVersionName == null) {
 }
 
 android {
-    namespace = "com.example.healthy_scanner"
+    namespace = "com.example.healthyScanner"
     compileSdk = flutter.compileSdkVersion
     ndkVersion = flutter.ndkVersion
 
