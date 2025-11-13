@@ -47,5 +47,23 @@
 		<true/>
 		<key>UIStatusBarHidden</key>
 		<false/>
+
+		<!-- [추가 1] 카카오 앱 키 등록 -->
+		<key>KAKAO_APP_KEY</key>
+		<string>aa03c53edb5ea7f0032d5b7319adeaa0</string>
+
+		<!-- [추가 2] 카카오 로그인 후 앱으로 리다이렉트하기 위한 URL Scheme -->
+		<key>CFBundleURLTypes</key>
+		<array>
+			<dict>
+				<key>CFBundleURLSchemes</key>
+				<array>
+					<!-- 카카오 로그인 Redirect URI -->
+					<string>kakaoaa03c53edb5ea7f0032d5b7319adeaa0</string>
+				</array>
+			</dict>
+		</array>
+
+
 	</dict>
 </plist>
