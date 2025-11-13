@@ -1,8 +1,18 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
+    <!--  카카오 로그인에 반드시 필요한 인터넷 권한 -->
+    <uses-permission android:name="android.permission.INTERNET"/>
+
     <application
         android:label="healthy_scanner"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
+
+        <!-- 카카오 SDK AppKey 등록 -->
+        <meta-data
+            android:name="com.kakao.sdk.AppKey"
+            android:value="카카오_네이티브_앱키" />
+
+
         <activity
             android:name=".MainActivity"
             android:exported="true"
@@ -24,6 +34,16 @@
                 <action android:name="android.intent.action.MAIN"/>
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
+
+            <!--  카카오톡 로그인 후 리다이렉트 응답을 받기 위한 설정 -->
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+                <category android:name="android.intent.category.BROWSABLE"/>
+                <data android:host="oauth"
+                      android:scheme="kakao${카카오_네이티브_앱키}"/>
+            </intent-filter>
+
         </activity>
         <!-- Don't delete the meta-data below.
              This is used by the Flutter tool to generate GeneratedPluginRegistrant.java -->
