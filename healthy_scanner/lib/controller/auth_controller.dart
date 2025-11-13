@@ -1,49 +1,74 @@
+import 'dart:convert';
 import 'package:get/get.dart';
 import 'package:kakao_flutter_sdk_user/kakao_flutter_sdk_user.dart';
+import 'package:http/http.dart' as http;
 
 class AuthController extends GetxController {
   RxBool isLoading = false.obs;
 
-  // --------------------------
-  // 카카오 로그인 함수
-  // --------------------------
+  /// ------------------------------------------------------------
+  /// 1️⃣ 카카오 로그인 진행
+  /// ------------------------------------------------------------
   Future<void> loginWithKakao() async {
     try {
       isLoading.value = true;
 
-      // 1) 카카오톡 설치 여부 체크
-      bool isInstalled = await isKakaoTalkInstalled();
-
       OAuthToken token;
 
-      if (isInstalled) {
-        // 카카오톡 실행 → 로그인
+      // 카카오톡 설치 여부 확인
+      if (await isKakaoTalkInstalled()) {
         token = await UserApi.instance.loginWithKakaoTalk();
       } else {
-        // 카카오계정으로 웹 로그인
         token = await UserApi.instance.loginWithKakaoAccount();
       }
 
-      String kakaoAccessToken = token.accessToken;
+      final kakaoAccessToken = token.accessToken;
 
-      // 2) 서버에 로그인 요청
+      // 카카오 access_token → 서버 로그인 요청
       await _requestLoginToServer(
         provider: "kakao",
-        accessToken: kakaoAccessToken,
+        kakaoAccessToken: kakaoAccessToken,
       );
+
     } catch (e) {
       print("❌ 카카오 로그인 실패: $e");
-      Get.snackbar("로그인 실패", "카카오 로그인 중 오류가 발생했습니다.");
+      rethrow;
     } finally {
       isLoading.value = false;
     }
   }
+
+  /// ------------------------------------------------------------
+  /// 2️⃣ 서버에 로그인 요청 (provider = kakao)
+  /// ------------------------------------------------------------
   Future<void> _requestLoginToServer({
     required String provider,
-    required String accessToken,
+    required String kakaoAccessToken,
   }) async {
-    // TODO: 나중에 여기서 서버에 로그인 요청 보낼 거야 낄낄.
-    // 일단 1단계에서는 에러 안 나게만 막아둬 보자고 뾰로롱.
-    print('[_requestLoginToServer] provider=$provider, accessToken=$accessToken');
+    final url = Uri.parse("https://api.foodscanner.com/v1/auth/login/$provider");
+
+    final response = await http.post(
+      url,
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: jsonEncode({
+        "access_token": kakaoAccessToken,
+      }),
+    );
+
+    print("📥 서버 응답 코드: ${response.statusCode}");
+    print("📥 서버 응답 body: ${response.body}");
+
+    if (response.statusCode != 200) {
+      throw Exception("로그인 실패: ${response.body}");
+    }
+
+    final data = jsonDecode(response.body);
+
+    // ✔ access_token, refresh_token, expires_in 은 다음 단계에서 저장 처리
+    print("🟢 서버 access_token: ${data["access_token"]}");
+    print("🟢 서버 refresh_token: ${data["refresh_token"]}");
   }
 }
+
