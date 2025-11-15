@@ -56,7 +56,7 @@ class _TagChipToggleState extends State<TagChipToggle> {
           widget.label,
           style: TextStyle(
             fontSize: 15,
-            fontWeight: FontWeight.w600,
+            fontWeight: FontWeight.w400,
             color: textColor,
           ),
         ),

@@ -4,6 +4,7 @@ import 'routes/app_routes.dart';
 import 'controller/navigation_controller.dart';
 
 void main() {
+  AppRoutes.validateRoutes();
   Get.put(NavigationController());
   runApp(const MyApp());
 }

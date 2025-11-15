@@ -65,8 +65,7 @@ class HomeView extends StatelessWidget {
             // 섹션 제목
             SliverToBoxAdapter(
               child: Padding(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 20, vertical: 18),
+                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 18),
                 child: Row(
                   children: [
                     Text(
@@ -81,7 +80,7 @@ class HomeView extends StatelessWidget {
               ),
             ),
 
-            // ✅ 카드 리스트 (ArchiveListView와 동일한 방식)
+            // ✅ 카드 리스트
             SliverPadding(
               padding: const EdgeInsets.symmetric(horizontal: 12),
               sliver: SliverList.separated(
@@ -97,21 +96,19 @@ class HomeView extends StatelessWidget {
                     warningAsset: it.warningAsset,
                     lightState: it.lightState,
                     onTap: () {
-                      // TODO: 상세 페이지로 이동
+                      nav.goToAnalysisResult(); // ✅ 분석 결과 페이지로 이동
                     },
                   );
                 },
               ),
             ),
 
-            const SliverToBoxAdapter(child: SizedBox(height: 80)), // 하단 여백
+            const SliverToBoxAdapter(child: SizedBox(height: 80)),
           ],
         ),
       ),
 
-      // ----------------------------
-      // 🔹 하단 네비게이션 바
-      // ----------------------------
+      // 하단 네비게이션 바
       bottomNavigationBar: BottomAppBar(
         elevation: 8,
         shape: const CircularNotchedRectangle(),
@@ -125,9 +122,7 @@ class HomeView extends StatelessWidget {
               IconButton(
                 icon: const Icon(Icons.home_outlined),
                 color: AppColors.mainRed,
-                onPressed: () {
-                  // 현재 홈이므로 아무 동작 없음
-                },
+                onPressed: () {},
               ),
 
               // 카메라 (중앙)
@@ -135,17 +130,17 @@ class HomeView extends StatelessWidget {
                 backgroundColor: AppColors.mainRed,
                 elevation: 4,
                 onPressed: () {
-                  nav.goToScanReady(); // ✅ 스캔 페이지로 이동
+                  nav.goToScanReady();
                 },
                 child: const Icon(Icons.camera_alt_rounded),
               ),
 
-              // 리포트
+              // 마이페이지
               IconButton(
-                icon: const Icon(Icons.bar_chart_outlined),
-                color: Colors.grey[700],
+                icon: const Icon(Icons.person_outline),
+                color: AppColors.charcoleGray,
                 onPressed: () {
-                  nav.goToArchiveCalendar(); // ✅ 아카이브 캘린더로 이동
+                  nav.goToMyPage();
                 },
               ),
             ],
@@ -156,7 +151,7 @@ class HomeView extends StatelessWidget {
   }
 }
 
-/// 🔸 임시 스캔 아이템 모델 (API 연동 시 제거)
+/// 🔸 임시 스캔 아이템 모델
 class _FoodItem {
   final String title;
   final String category;

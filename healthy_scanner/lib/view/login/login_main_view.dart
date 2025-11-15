@@ -63,7 +63,7 @@ class LoginMainView extends StatelessWidget {
                     ),
                     onPressed: () {
                       // TODO: 카카오 로그인 API 연동 예정
-                      nav.goToHome(); // ✅ 임시로 홈으로 이동
+                      nav.goToOnboardingAgree(); // ✅ 임시로 홈으로 이동
                     },
                   ),
                   const SizedBox(height: 7),
@@ -87,7 +87,7 @@ class LoginMainView extends StatelessWidget {
                     ),
                     onPressed: () {
                       // TODO: 네이버 로그인 API 연동 예정
-                      nav.goToHome(); // ✅ 임시로 홈으로 이동
+                      nav.goToOnboardingAgree(); // ✅ 임시로 홈으로 이동
                     },
                   ),
                   const SizedBox(height: 20),
