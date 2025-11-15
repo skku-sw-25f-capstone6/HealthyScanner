@@ -8,7 +8,7 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 class AuthController extends GetxController {
   static const String kakaoRestApiKey = "f06abe24b27ed244d8da3ec0cfb34b2e";  // REST API 키
-  static const String redirectUri = "healthyScanner://kakao-login";
+  static const String redirectUri = "https://healthy-scanner.com/auth/kakao/callback";
   static const String serverLoginUrl = "https://api.foodscanner.com/v1/auth/login/kakao";
 
   final storage = const FlutterSecureStorage();
@@ -19,7 +19,11 @@ class AuthController extends GetxController {
   @override
   void onInit() {
     super.onInit();
+    //웹에서 열 때 예외처리
+    if (!GetPlatform.isWeb) {
     _listenDeepLinks();
+    }
+
   }
 
   @override

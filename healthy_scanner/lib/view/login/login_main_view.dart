@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:healthy_scanner/controller/navigation_controller.dart';
+import 'package:healthy_scanner/controller/auth_controller.dart'; // 🔥 추가됨
 import 'package:healthy_scanner/theme/app_colors.dart';
 import 'package:healthy_scanner/theme/theme_extensions.dart';
 
@@ -17,6 +18,9 @@ class LoginMainView extends StatelessWidget {
   Widget build(BuildContext context) {
     // NavigationController 인스턴스 가져오기
     final nav = Get.find<NavigationController>();
+
+    // 🔥 AuthController 인스턴스 등록
+    final auth = Get.put(AuthController());
 
     return Scaffold(
       backgroundColor: AppColors.mainRed,
@@ -46,26 +50,31 @@ class LoginMainView extends StatelessWidget {
                 children: [
                   /// ✅ 카카오 로그인 버튼
                   /// 현재는 로그인 성공 로직 없이 바로 홈으로 이동함.
-                  SocialLoginButton(
-                    label: '카카오로 로그인',
-                    background: AppColors.kakaoYellow,
-                    labelStyle: const TextStyle(
-                      fontFamily: 'NotoSansKR',
-                      fontWeight: FontWeight.w500,
-                      fontSize: 12,
-                      letterSpacing: 0,
-                      wordSpacing: 1.3,
-                    ),
-                    leading: const Image(
-                      image: AssetImage("assets/icons/ic_kakao.png"),
-                      width: 14,
-                      height: 13,
-                    ),
-                    onPressed: () {
-                      // TODO: 카카오 로그인 API 연동 예정
-                      nav.goToHome(); // ✅ 임시로 홈으로 이동
-                    },
-                  ),
+                  Obx(() {
+                    return SocialLoginButton(
+                      label: auth.isLoading.value
+                          ? '로그인 중...'           // 🔥 로딩 시 표시
+                          : '카카오로 로그인',
+                      background: AppColors.kakaoYellow,
+                      labelStyle: const TextStyle(
+                        fontFamily: 'NotoSansKR',
+                        fontWeight: FontWeight.w500,
+                        fontSize: 12,
+                        letterSpacing: 0,
+                        wordSpacing: 1.3,
+                      ),
+                      leading: const Image(
+                        image: AssetImage("assets/icons/ic_kakao.png"),
+                        width: 14,
+                        height: 13,
+                      ),
+                      onPressed: () async {
+                        if (auth.isLoading.value) return;   // 🔥 연속 클릭 방지
+                        await auth.loginWithKakao();         // 🔥 카카오 로그인 실행
+                      },
+                    );
+                  }),
+
                   const SizedBox(height: 7),
 
                   /// ✅ 네이버 로그인 버튼
