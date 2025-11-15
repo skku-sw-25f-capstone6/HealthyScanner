@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 import '../controller/navigation_controller.dart';
 
@@ -12,6 +13,8 @@ import '../view/scan/scan_fail_view.dart';
 import '../view/scan/scan_ready_view.dart';
 import '../view/scan/scan_waiting_view.dart';
 import '../view/home/home.dart';
+import '../view/myPage/myPage.dart';
+import '../view/main/main_shell_view.dart';
 
 class AppRoutes {
   // ----------------------
@@ -28,22 +31,32 @@ class AppRoutes {
   static const scanWaiting = '/scan/waiting';
   static const home = '/home';
   //static const onboarding = '/onboarding';
+  static const myPage = '/myPage';
 
   // ----------------------
   // 📍 페이지 목록 등록
   // ----------------------
   static final pages = [
     GetPage(name: splash, page: () => const SplashView()),
-    GetPage(name: loginMain, page: () => const LoginMainView()),
+    GetPage(
+        name: loginMain,
+        page: () => const LoginMainView(),
+        transition: Transition.noTransition,
+        transitionDuration: Duration.zero),
     GetPage(name: loginFail, page: () => const LoginFailView()),
     GetPage(name: archiveCalendar, page: () => const ArchiveCalendarView()),
     GetPage(name: archiveList, page: () => const ArchiveListView()),
     GetPage(name: scanCheck, page: () => const ScanCheckView()),
     GetPage(name: scanFail, page: () => const ScanFailView()),
-    GetPage(name: scanReady, page: () => const ScanReadyView()),
+    GetPage(
+        name: scanReady,
+        page: () => const ScanReadyView(),
+        transition: Transition.noTransition,
+        transitionDuration: Duration.zero),
     GetPage(name: scanWaiting, page: () => const ScanWaitingView()),
-    GetPage(name: home, page: () => const HomeView(),),
+    GetPage(name: home, page: () => const MainShellView()),
     //GetPage(name: onboarding, page: () => const OnboardingView()),
+    GetPage(name: myPage, page: () => const MyPageView()),
   ];
 
   // ----------------------

@@ -62,12 +62,14 @@ class NavigationController extends SuperController {
   /// ✅ 홈(로그인 등)으로 돌아가기
   void backToHome() => Get.offAllNamed(AppRoutes.loginMain);
 
+  /// ✅ 홈 → 마이페이지
+  void goToMyPage() => Get.toNamed(AppRoutes.myPage);
+
   /// ✅ 뒤로가기
   void goBack() => Get.back();
   //void goToOnboarding() => Get.offAllNamed(AppRoutes.onboarding);
   void goToHome() => Get.offAllNamed(AppRoutes.home);
   void goToScanReady() => Get.toNamed(AppRoutes.scanReady);
-
 
   /// ✅ 로그아웃 (데이터 초기화 + 메인 이동)
   void logout() {
@@ -75,5 +77,4 @@ class NavigationController extends SuperController {
     print('👋 로그아웃 완료');
     Get.offAllNamed(AppRoutes.loginMain);
   }
-
 }

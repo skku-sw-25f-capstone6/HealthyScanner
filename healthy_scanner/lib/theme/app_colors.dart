@@ -23,4 +23,25 @@ class AppColors {
   static const kakaoYellow = Color(0xFFFEE500);
   static const naverGreen = Color(0xFF03C75A);
   static const mainGreen = Color(0xFF86CE02);
+
+  static const linearGray = LinearGradient(
+    begin: Alignment.topCenter,
+    end: Alignment.bottomCenter,
+    stops: [0.0, 0.07, 1.0],
+    colors: [
+      Color(0xFFF2ECEA), // 위쪽 (어두운 회색)
+      Color(0xFFF6F2F1), // 중간 (밝은 회색)
+      Color(0xFFFFFFFF), // 아래쪽 (흰색)
+    ],
+  );
+
+  static const linearRed = LinearGradient(
+    begin: Alignment.topLeft,
+    end: Alignment.bottomRight,
+    stops: [0.0, 1.0],
+    colors: [
+      Color(0xFFFF5938),
+      Color(0xFFEA5233),
+    ],
+  );
 }
