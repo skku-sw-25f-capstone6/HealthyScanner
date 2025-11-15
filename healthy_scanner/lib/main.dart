@@ -22,7 +22,7 @@ class MyApp extends StatelessWidget {
         GetObserver(
           (routing) {
             if (routing?.current != null) {
-              Get.find<NavigationController>().onPageChanged(routing!.current!);
+              Get.find<NavigationController>().onPageChanged(routing!.current);
             }
           },
         ),

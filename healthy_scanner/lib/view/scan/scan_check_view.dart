@@ -5,7 +5,7 @@ import 'package:healthy_scanner/component/scan_mode_button.dart';
 import 'package:healthy_scanner/component/round_icon_button.dart';
 import 'package:healthy_scanner/component/bottom_button.dart';
 import 'package:healthy_scanner/component/guide_pill.dart';
-import 'package:healthy_scanner/controller/scan_controller.dart';
+// import 'package:healthy_scanner/controller/scan_controller.dart';
 
 class ScanCheckView extends StatefulWidget {
   const ScanCheckView({super.key});

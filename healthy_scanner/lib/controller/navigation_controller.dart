@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../routes/app_routes.dart';
 import '../component/scan_mode_button.dart';
@@ -10,7 +11,7 @@ class NavigationController extends SuperController {
   @override
   void onInit() {
     super.onInit();
-    print('✅ NavigationController initialized');
+    debugPrint('✅ NavigationController initialized');
   }
 
   @override
@@ -32,7 +33,7 @@ class NavigationController extends SuperController {
   // 🔹 Route Observer Hook
   // ------------------------
   void onPageChanged(String route) {
-    print('🔄 Page changed → $route');
+    debugPrint('🔄 Page changed → $route');
   }
 
   // ------------------------
@@ -86,7 +87,7 @@ class NavigationController extends SuperController {
   /// ✅ 로그아웃 (데이터 초기화 + 메인 이동)
   void logout() {
     // TODO: 여기에 SharedPref, Token 제거 등의 로직 추가 가능
-    print('👋 로그아웃 완료');
+    debugPrint('👋 로그아웃 완료');
     Get.offAllNamed(AppRoutes.loginMain);
   }
 }
