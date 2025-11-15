@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:healthy_scanner/controller/navigation_controller.dart';
-import 'package:healthy_scanner/controller/auth_controller.dart'; // 🔥 추가됨
 import 'package:healthy_scanner/theme/app_colors.dart';
 import 'package:healthy_scanner/theme/theme_extensions.dart';
-import 'package:healthy_scanner/controller/auth_controller.dart';
 
 /// 로그인 메인 화면
 /// ------------------------------------------------------------
@@ -19,26 +17,20 @@ class LoginMainView extends StatelessWidget {
   Widget build(BuildContext context) {
     // NavigationController 인스턴스 가져오기
     final nav = Get.find<NavigationController>();
-     //✅ AuthController 인스턴스 가져오기
-    final auth = Get.find<AuthController>(); 
-   
-
-    // 🔥 AuthController 인스턴스 등록
-    final auth = Get.put(AuthController());
 
     return Scaffold(
       backgroundColor: AppColors.mainRed,
       body: SafeArea(
         child: Column(
           children: [
-            const SizedBox(height: 331),
+            const SizedBox(height: 309),
 
             // 앱 로고 영역
             const Center(
               child: Image(
                 image: AssetImage('assets/images/logo.png'),
-                width: 124,
-                height: 50,
+                width: 162,
+                height: 66,
               ),
             ),
 
@@ -69,10 +61,9 @@ class LoginMainView extends StatelessWidget {
                       width: 14,
                       height: 13,
                     ),
-                    onPressed: () async{
-                      await auth.loginWithKakao();
+                    onPressed: () {
                       // TODO: 카카오 로그인 API 연동 예정
-                      // nav.goToHome(); // ✅ 임시로 홈으로 이동
+                      nav.goToHome(); // ✅ 임시로 홈으로 이동
                     },
                   ),
                   const SizedBox(height: 7),
