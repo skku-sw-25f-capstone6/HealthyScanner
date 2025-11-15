@@ -47,5 +47,7 @@
 		<true/>
 		<key>UIStatusBarHidden</key>
 		<false/>
+    	<key>NSCameraUsageDescription</key>
+    	<string>식품을 스캔하기 위해 카메라를 사용합니다.</string>
 	</dict>
 </plist>
