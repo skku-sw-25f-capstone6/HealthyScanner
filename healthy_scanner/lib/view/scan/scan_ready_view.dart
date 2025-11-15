@@ -1,146 +1,30 @@
 import 'package:flutter/material.dart';
 import 'package:camera/camera.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:get/get.dart';
-import 'package:healthy_scanner/controller/navigation_controller.dart';
+import 'package:healthy_scanner/controller/scan_controller.dart';
 import 'package:healthy_scanner/component/scan_mode_button.dart';
 import 'package:healthy_scanner/component/round_icon_button.dart';
 import 'package:healthy_scanner/component/guide_pill.dart';
 import 'package:healthy_scanner/component/shutter_button.dart';
 
-// TODO: StatelessWidget으로 바꾸고, Get으로 상태 관리
-class ScanReadyView extends StatefulWidget {
-  const ScanReadyView({
-    super.key,
-    this.onClose,
-    this.onOpenGallery,
-    this.onShutter,
-    this.onModeChanged,
-    this.cameraBuilder,
-  });
-
-  final VoidCallback? onClose;
-  final VoidCallback? onOpenGallery;
-  final VoidCallback? onShutter;
-  final ValueChanged<ScanMode>? onModeChanged;
-  final WidgetBuilder? cameraBuilder;
-
-  @override
-  State<ScanReadyView> createState() => _ScanReadyViewState();
-}
-
-class _ScanReadyViewState extends State<ScanReadyView> {
-  ScanMode _mode = ScanMode.ingredient;
-
-  CameraController? _cameraController;
-  Future<void>? _initializeControllerFuture;
-  bool _isTakingPicture = false;
-
-  final ImagePicker _picker = ImagePicker();
-  final NavigationController _nav = Get.find<NavigationController>();
-
-  @override
-  void initState() {
-    super.initState();
-    _initCamera();
-  }
-
-  Future<void> _initCamera() async {
-    try {
-      final cameras = await availableCameras();
-
-      final backCamera = cameras.firstWhere(
-        (c) => c.lensDirection == CameraLensDirection.back,
-        orElse: () => cameras.first,
-      );
-
-      final controller = CameraController(
-        backCamera,
-        ResolutionPreset.high,
-        enableAudio: false,
-      );
-
-      _cameraController = controller;
-      _initializeControllerFuture = controller.initialize();
-      setState(() {});
-    } catch (e) {
-      debugPrint('카메라 초기화 실패: $e');
-    }
-  }
-
-  Future<void> _handleShutter() async {
-    if (_cameraController == null ||
-        !_cameraController!.value.isInitialized ||
-        _isTakingPicture) {
-      return;
-    }
-
-    setState(() => _isTakingPicture = true);
-    try {
-      final XFile file = await _cameraController!.takePicture();
-      debugPrint('사진 저장 경로: ${file.path}');
-
-      widget.onShutter?.call();
-
-      _nav.goToScanCheck(
-        imagePath: file.path,
-        mode: _mode,
-      );
-    } catch (e) {
-      debugPrint('사진 촬영 실패: $e');
-    } finally {
-      if (mounted) {
-        setState(() => _isTakingPicture = false);
-      }
-    }
-  }
-
-  @override
-  void dispose() {
-    _cameraController?.dispose();
-    super.dispose();
-  }
-
-  Future<void> _handleOpenGallery() async {
-    try {
-      final XFile? image = await _picker.pickImage(
-        source: ImageSource.gallery,
-        maxWidth: 2048,
-        maxHeight: 2048,
-      );
-
-      if (image == null) {
-        debugPrint('갤러리 선택 취소됨');
-        return;
-      } else {
-        _nav.goToScanCheck(
-          imagePath: image.path,
-          mode: _mode,
-        );
-      }
-
-      debugPrint('갤러리에서 선택한 이미지 경로: ${image.path}');
-
-      widget.onOpenGallery?.call();
-    } catch (e) {
-      debugPrint('갤러리 열기 실패: $e');
-    }
-  }
+class ScanReadyView extends StatelessWidget {
+  const ScanReadyView({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final scan = Get.find<ScanController>();
+
     return Scaffold(
       backgroundColor: Colors.black,
       body: Stack(
         children: [
-          // 카메라 프리뷰 (배경 전체)
           Positioned.fill(
-            child: _buildCameraPreview(),
+            child: GetBuilder<ScanController>(
+              builder: (_) => _buildCameraPreview(scan),
+            ),
           ),
-
           Column(
             children: [
-              // 상단 좌우 아이콘
               const SizedBox(height: 57),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -149,42 +33,34 @@ class _ScanReadyViewState extends State<ScanReadyView> {
                   children: [
                     RoundIconButton(
                       assetPath: 'assets/icons/ic_x.png',
-                      onTap: widget.onClose ??
-                          () => Navigator.of(context).maybePop(),
+                      onTap: () => Get.back(),
                     ),
                     RoundIconButton(
                       assetPath: 'assets/icons/ic_image.png',
-                      onTap: _handleOpenGallery,
+                      onTap: scan.pickFromGallery,
                     ),
                   ],
                 ),
               ),
-
               const Spacer(),
-
-              // 가이드 텍스트
               const Padding(
                 padding: EdgeInsets.symmetric(horizontal: 60),
-                // TODO: 설정된 스캔 모드에 따라 텍스트 변경
                 child: GuidePill.red('식품 바코드를 프레임 안에 맞춰주세요'),
               ),
               const SizedBox(height: 14),
-
-              // 스캔 모드 선택 버튼
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 28),
-                child: ScanModeButton(
-                  selected: _mode,
-                  onChanged: (m) {
-                    setState(() => _mode = m);
-                    widget.onModeChanged?.call(m);
-                  },
+                child: Obx(
+                  () => ScanModeButton(
+                    selected: scan.mode.value,
+                    onChanged: scan.changeMode,
+                  ),
                 ),
               ),
-
-              // 중앙 셔터 버튼
               const SizedBox(height: 14),
-              ShutterButton(onTap: _handleShutter),
+              ShutterButton(
+                onTap: scan.takePicture,
+              ),
               const SizedBox(height: 35),
             ],
           ),
@@ -193,21 +69,17 @@ class _ScanReadyViewState extends State<ScanReadyView> {
     );
   }
 
-  Widget _buildCameraPreview() {
-    if (widget.cameraBuilder != null) {
-      return widget.cameraBuilder!(context);
-    }
-
-    // 카메라 실패시 임시 화면
-    if (_initializeControllerFuture == null || _cameraController == null) {
+  Widget _buildCameraPreview(ScanController scan) {
+    if (scan.initializeControllerFuture == null ||
+        scan.cameraController == null) {
       return const _CameraPlaceholder();
     }
 
     return FutureBuilder<void>(
-      future: _initializeControllerFuture,
+      future: scan.initializeControllerFuture,
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.done) {
-          return CameraPreview(_cameraController!);
+          return CameraPreview(scan.cameraController!);
         } else if (snapshot.hasError) {
           return const Center(
             child: Text(

@@ -1,5 +1,3 @@
-// scan_check_view.dart
-
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -7,6 +5,7 @@ import 'package:healthy_scanner/component/scan_mode_button.dart';
 import 'package:healthy_scanner/component/round_icon_button.dart';
 import 'package:healthy_scanner/component/bottom_button.dart';
 import 'package:healthy_scanner/component/guide_pill.dart';
+import 'package:healthy_scanner/controller/scan_controller.dart';
 
 class ScanCheckView extends StatefulWidget {
   const ScanCheckView({super.key});
@@ -71,7 +70,7 @@ class _ScanCheckViewState extends State<ScanCheckView> {
                 child: BottomButton(
                   text: '분석하기',
                   onPressed: () {
-                    // TODO: 분석하기 로직
+                    // TODO: 분석하기 API 연결
                   },
                 ),
               ),
@@ -94,7 +93,6 @@ class _ScanCheckViewState extends State<ScanCheckView> {
   }
 }
 
-/// 카메라 연결 전 임시 화면
 class _CameraPlaceholder extends StatelessWidget {
   const _CameraPlaceholder();
 

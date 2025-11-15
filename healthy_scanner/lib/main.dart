@@ -2,9 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'routes/app_routes.dart';
 import 'controller/navigation_controller.dart';
+import 'controller/scan_controller.dart';
 
 void main() {
   Get.put(NavigationController());
+  Get.put(ScanController(), permanent: true);
   runApp(const MyApp());
 }
 
