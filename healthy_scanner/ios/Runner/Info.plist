@@ -60,22 +60,22 @@
 		<key>UIStatusBarHidden</key>
 		<false/>
 
-		<!-- [추가 1] 카카오 앱 키 등록 -->
-		<key>KAKAO_APP_KEY</key>
-		<string>aa03c53edb5ea7f0032d5b7319adeaa0</string>
-
-		<!-- [추가 2] 카카오 로그인 후 앱으로 리다이렉트하기 위한 URL Scheme -->
+		<!-- 🔥 카카오 REST 로그인 / 딥링크 처리: healthyScanner://kakao-login -->
 		<key>CFBundleURLTypes</key>
 		<array>
 			<dict>
 				<key>CFBundleURLSchemes</key>
 				<array>
-					<!-- 카카오 로그인 Redirect URI -->
-					<string>kakaoaa03c53edb5ea7f0032d5b7319adeaa0</string>
+					<string>healthyScanner</string>
 				</array>
 			</dict>
 		</array>
 
+		<!-- 🔥 딥링크 탐색 허용 -->
+		<key>LSApplicationQueriesSchemes</key>
+		<array>
+			<string>healthyScanner</string>
+		</array>
 
 	</dict>
 </plist>
