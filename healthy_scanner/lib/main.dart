@@ -17,6 +17,7 @@ void main() async{
   Get.put(NavigationController());
   Get.put(AuthController());
   runApp(const MyApp());
+  
 }
 
 class MyApp extends StatelessWidget {

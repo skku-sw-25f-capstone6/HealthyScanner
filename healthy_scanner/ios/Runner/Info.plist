@@ -22,18 +22,26 @@
 		<string>????</string>
 		<key>CFBundleVersion</key>
 		<string>$(FLUTTER_BUILD_NUMBER)</string>
+
+		<!-- iOS Required -->
 		<key>LSRequiresIPhoneOS</key>
 		<true/>
+
+		<!-- Launch Screen -->
 		<key>UILaunchStoryboardName</key>
 		<string>LaunchScreen</string>
+
 		<key>UIMainStoryboardFile</key>
 		<string>Main</string>
+
+		<!-- Orientation -->
 		<key>UISupportedInterfaceOrientations</key>
 		<array>
 			<string>UIInterfaceOrientationPortrait</string>
 			<string>UIInterfaceOrientationLandscapeLeft</string>
 			<string>UIInterfaceOrientationLandscapeRight</string>
 		</array>
+
 		<key>UISupportedInterfaceOrientations~ipad</key>
 		<array>
 			<string>UIInterfaceOrientationPortrait</string>
@@ -41,10 +49,14 @@
 			<string>UIInterfaceOrientationLandscapeLeft</string>
 			<string>UIInterfaceOrientationLandscapeRight</string>
 		</array>
+
+		<!-- Flutter Recommended -->
 		<key>CADisableMinimumFrameDurationOnPhone</key>
 		<true/>
 		<key>UIApplicationSupportsIndirectInputEvents</key>
 		<true/>
+
+		<!-- Status Bar -->
 		<key>UIStatusBarHidden</key>
 		<false/>
 

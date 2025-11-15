@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:healthy_scanner/controller/navigation_controller.dart';
+import 'package:healthy_scanner/controller/auth_controller.dart'; // 🔥 추가됨
 import 'package:healthy_scanner/theme/app_colors.dart';
 import 'package:healthy_scanner/theme/theme_extensions.dart';
 import 'package:healthy_scanner/controller/auth_controller.dart';
@@ -21,6 +22,9 @@ class LoginMainView extends StatelessWidget {
      //✅ AuthController 인스턴스 가져오기
     final auth = Get.find<AuthController>(); 
    
+
+    // 🔥 AuthController 인스턴스 등록
+    final auth = Get.put(AuthController());
 
     return Scaffold(
       backgroundColor: AppColors.mainRed,
