@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:camera/camera.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:get/get.dart';
+import 'package:healthy_scanner/controller/navigation_controller.dart';
 import 'package:healthy_scanner/component/scan_mode_button.dart';
 import 'package:healthy_scanner/component/round_icon_button.dart';
 import 'package:healthy_scanner/component/guide_pill.dart';
@@ -35,6 +37,7 @@ class _ScanReadyViewState extends State<ScanReadyView> {
   bool _isTakingPicture = false;
 
   final ImagePicker _picker = ImagePicker();
+  final NavigationController _nav = Get.find<NavigationController>();
 
   @override
   void initState() {
@@ -78,6 +81,11 @@ class _ScanReadyViewState extends State<ScanReadyView> {
       debugPrint('사진 저장 경로: ${file.path}');
 
       widget.onShutter?.call();
+
+      _nav.goToScanCheck(
+        imagePath: file.path,
+        mode: _mode,
+      );
     } catch (e) {
       debugPrint('사진 촬영 실패: $e');
     } finally {
@@ -104,18 +112,16 @@ class _ScanReadyViewState extends State<ScanReadyView> {
       if (image == null) {
         debugPrint('갤러리 선택 취소됨');
         return;
+      } else {
+        _nav.goToScanCheck(
+          imagePath: image.path,
+          mode: _mode,
+        );
       }
 
       debugPrint('갤러리에서 선택한 이미지 경로: ${image.path}');
 
-      // 필요하면 여기서 widget.onOpenGallery?.call() 대신
-      // 이미지 경로를 넘기는 콜백으로 확장할 수도 있음.
       widget.onOpenGallery?.call();
-
-      // TODO:
-      // - 선택한 이미지를 분석 화면으로 넘기기
-      // - Crop 페이지로 이동
-      // 이런 플로우를 여기서 이어가면 됨.
     } catch (e) {
       debugPrint('갤러리 열기 실패: $e');
     }

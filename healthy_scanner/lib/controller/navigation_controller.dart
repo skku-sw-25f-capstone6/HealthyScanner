@@ -1,5 +1,6 @@
 import 'package:get/get.dart';
 import '../routes/app_routes.dart';
+import '../component/scan_mode_button.dart';
 
 /// 📍 모든 페이지 전환을 중앙에서 관리하는 컨트롤러
 class NavigationController extends SuperController {
@@ -54,7 +55,18 @@ class NavigationController extends SuperController {
   void goToScanWaiting() => Get.toNamed(AppRoutes.scanWaiting);
 
   /// ✅ 스캔 대기 → 결과 확인
-  void goToScanCheck() => Get.offAllNamed(AppRoutes.scanCheck);
+  void goToScanCheck({
+    required String imagePath,
+    required ScanMode mode,
+  }) {
+    Get.toNamed(
+      AppRoutes.scanCheck,
+      arguments: {
+        'imagePath': imagePath,
+        'mode': mode,
+      },
+    );
+  }
 
   /// ✅ 스캔 실패 → 실패 페이지
   void goToScanFail() => Get.toNamed(AppRoutes.scanFail);
