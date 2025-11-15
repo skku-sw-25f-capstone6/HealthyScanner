@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:camera/camera.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:healthy_scanner/component/scan_mode_button.dart';
 import 'package:healthy_scanner/component/round_icon_button.dart';
 import 'package:healthy_scanner/component/guide_pill.dart';
@@ -32,6 +33,8 @@ class _ScanReadyViewState extends State<ScanReadyView> {
   CameraController? _cameraController;
   Future<void>? _initializeControllerFuture;
   bool _isTakingPicture = false;
+
+  final ImagePicker _picker = ImagePicker();
 
   @override
   void initState() {
@@ -90,7 +93,34 @@ class _ScanReadyViewState extends State<ScanReadyView> {
     super.dispose();
   }
 
-  // 🔹 여기! build는 State 클래스 안에 있어야 하고
+  Future<void> _handleOpenGallery() async {
+    try {
+      final XFile? image = await _picker.pickImage(
+        source: ImageSource.gallery,
+        maxWidth: 2048,
+        maxHeight: 2048,
+      );
+
+      if (image == null) {
+        debugPrint('갤러리 선택 취소됨');
+        return;
+      }
+
+      debugPrint('갤러리에서 선택한 이미지 경로: ${image.path}');
+
+      // 필요하면 여기서 widget.onOpenGallery?.call() 대신
+      // 이미지 경로를 넘기는 콜백으로 확장할 수도 있음.
+      widget.onOpenGallery?.call();
+
+      // TODO:
+      // - 선택한 이미지를 분석 화면으로 넘기기
+      // - Crop 페이지로 이동
+      // 이런 플로우를 여기서 이어가면 됨.
+    } catch (e) {
+      debugPrint('갤러리 열기 실패: $e');
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -118,7 +148,7 @@ class _ScanReadyViewState extends State<ScanReadyView> {
                     ),
                     RoundIconButton(
                       assetPath: 'assets/icons/ic_image.png',
-                      onTap: widget.onOpenGallery,
+                      onTap: _handleOpenGallery,
                     ),
                   ],
                 ),
