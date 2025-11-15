@@ -6,6 +6,7 @@ import 'controller/navigation_controller.dart';
 void main() {
   Get.put(NavigationController());
   runApp(const MyApp());
+  
 }
 
 class MyApp extends StatelessWidget {
