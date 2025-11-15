@@ -10,28 +10,30 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+
   cupertino_icons: ^1.0.6
-  # The following adds the Cupertino Icons font to your application.
-  # Use with the CupertinoIcons class for iOS style icons.
+
+  # Kakao SDK
   kakao_flutter_sdk_user: ^1.8.0
   kakao_flutter_sdk_common: ^1.8.0
-  http: ^1.2.0 
+
+  # Networking
+  http: ^1.2.0
 
   # State management
   get: ^4.6.6
 
-  # Networking
-  http: ^1.1.0
-
-  # Kakao REST 로그인에 필요한 URL launcher
+  # Kakao REST 로그인 → URLLauncher 필요
   url_launcher: ^6.1.10
 
-  # 딥링크(healthyScanner://kakao-login) 수신
-  uni_links: ^0.5.1
+  # 🔥 uni_links 0.5.1 → AGP 8.x 환경에서 오류 발생
+  # 따라서 AGP8 호환 포크 버전 사용
+  uni_links:
+    git:
+      url: https://github.com/dzulfiqarleo/uni_links_fix_agp8.git
 
-  # 토큰 안전 저장
+  # 보안 저장
   flutter_secure_storage: ^9.0.0
-
 
 dev_dependencies:
   flutter_test:
@@ -41,7 +43,6 @@ dev_dependencies:
 
   flutter_native_splash: ^2.4.1
 
-
 flutter_native_splash:
   color: "#FF5938"
   image: assets/images/logo.png
@@ -50,7 +51,6 @@ flutter_native_splash:
     image: assets/images/logo.png
   ios: true
   android: true
-
 
 flutter:
   uses-material-design: true
