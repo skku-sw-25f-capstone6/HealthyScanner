@@ -48,7 +48,7 @@ class AppTextStyles {
   static final title2Medium = _base(24, FontWeight.w500, 33); // 행간 32.6px
   static final title1Regular = _base(32, FontWeight.w400, 34, letter: 0.36);
   static final title1Bold = _base(32, FontWeight.w700, 34, letter: 0.36);
-  static final largeTitle = _base(48, FontWeight.w700, 74.5, letter: 0);
+  static final largeTitle = _base(48, FontWeight.w700, 48, letter: 0);
 }
 
 TextTheme buildTextTheme() => TextTheme(

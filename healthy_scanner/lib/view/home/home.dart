@@ -1,21 +1,36 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:healthy_scanner/controller/navigation_controller.dart';
 import 'package:healthy_scanner/theme/app_colors.dart';
 import 'package:healthy_scanner/theme/theme_extensions.dart';
 import 'package:healthy_scanner/component/food_card.dart';
 import 'package:healthy_scanner/component/traffic_light.dart';
+import 'package:healthy_scanner/component/shutter_button.dart';
+import 'package:healthy_scanner/view/home/home_progress_bar.dart';
+import 'package:healthy_scanner/view/home/home_curved_clipper.dart';
 
 class HomeView extends StatelessWidget {
   const HomeView({super.key});
+
+  final score = 87; // TODO: 실제 점수로 바인딩
 
   @override
   Widget build(BuildContext context) {
     final nav = Get.find<NavigationController>();
 
-    // ✅ 임시 스캔 리스트 (API 연동 전까지 더미 데이터)
+    // 상단바 색상 커스텀
+    SystemChrome.setSystemUIOverlayStyle(
+      SystemUiOverlayStyle.dark.copyWith(
+        statusBarColor: AppColors.mainRed,
+        statusBarIconBrightness: Brightness.dark, // Android용
+        statusBarBrightness: Brightness.light, // iOS용
+      ),
+    );
+
+    // 임시 스캔 리스트 (API 연동 전까지 더미 데이터)
     final items = List<_FoodItem>.generate(
-      3,
+      2,
       (i) => _FoodItem(
         title: '칸쵸',
         category: '과자 / 초콜릿가공품',
@@ -27,130 +42,129 @@ class HomeView extends StatelessWidget {
     );
 
     return Scaffold(
-      backgroundColor: AppColors.backgroundGray,
-      body: SafeArea(
-        child: CustomScrollView(
-          slivers: [
-            // 상단 점수 및 날짜
-            SliverToBoxAdapter(
-              child: Container(
-                width: double.infinity,
-                color: AppColors.mainRed,
-                padding: const EdgeInsets.symmetric(vertical: 32),
+      backgroundColor: AppColors.staticWhite,
+      extendBody: true,
+      body: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          ClipPath(
+            clipper: BottomArcClipper(
+              arcHeight: 25,
+            ),
+            child: Container(
+              color: AppColors.mainRed,
+              child: Column(
+                children: [
+                  // 상태바
+                  Container(
+                    height: MediaQuery.of(context).padding.top,
+                    color: AppColors.mainRed,
+                  ),
+
+                  // 점수·게이지 영역
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(13, 0, 13, 0),
+                    child: Column(
+                      children: [
+                        Row(
+                          children: [
+                            const Spacer(),
+                            GestureDetector(
+                              onTap: () => nav.goToMyPage(),
+                              child: const Image(
+                                image: AssetImage('assets/icons/ic_mypage.png'),
+                                width: 24,
+                                height: 24,
+                              ),
+                            ),
+                          ],
+                        ),
+                        SizedBox(
+                          height: 180,
+                          child: Stack(
+                            alignment: Alignment.center,
+                            children: [
+                              // 점수 시각화 반원
+                              SemiCircularProgress(
+                                value: score / 100.0,
+                                size: 224,
+                                thickness: 12,
+                                offsetY: 50,
+                                bgColor: const Color(0x33FFFFFF),
+                                fgColor: AppColors.staticWhite,
+                              ),
+
+                              // 중앙 텍스트 (점수 + 라벨)
+                              Column(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Text(
+                                    '$score',
+                                    style: context.largeTitle
+                                        .copyWith(color: AppColors.staticWhite),
+                                  ),
+                                  const SizedBox(height: 6),
+                                  Text(
+                                    '오늘의 찍먹 점수',
+                                    style: context.footnote2Medium
+                                        .copyWith(color: AppColors.staticWhite),
+                                  ),
+                                  const SizedBox(height: 14),
+                                  Text(
+                                    '${DateTime.now().month}월 ${DateTime.now().day}일',
+                                    style: context.bodyMedium
+                                        .copyWith(color: AppColors.staticWhite),
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+          const SizedBox(height: 30),
+          Expanded(
+            child: Container(
+              decoration: const BoxDecoration(
+                gradient: AppColors.linearGray,
+              ),
+              child:
+                  // 성분 카드 (최대 2개, 스크롤 없음)
+                  Padding(
+                padding: const EdgeInsets.fromLTRB(12, 27, 12, 0),
                 child: Column(
                   children: [
-                    const Text(
-                      '87',
-                      style: TextStyle(
-                        fontSize: 52,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white,
+                    FoodCard(
+                      title: items[0].title,
+                      category: items[0].category,
+                      message: items[0].message,
+                      imageAsset: items[0].imageAsset,
+                      warningAsset: items[0].warningAsset,
+                      lightState: items[0].lightState,
+                      onTap: () {},
+                    ),
+                    const SizedBox(height: 15),
+                    if (items.length > 1)
+                      FoodCard(
+                        title: items[1].title,
+                        category: items[1].category,
+                        message: items[1].message,
+                        imageAsset: items[1].imageAsset,
+                        warningAsset: items[1].warningAsset,
+                        lightState: items[1].lightState,
+                        onTap: () {},
                       ),
-                    ),
-                    const SizedBox(height: 6),
-                    const Text(
-                      '오늘의 찍먹 점수',
-                      style: TextStyle(color: Colors.white70, fontSize: 16),
-                    ),
-                    const SizedBox(height: 8),
-                    Text(
-                      '${DateTime.now().month}월 ${DateTime.now().day}일',
-                      style: const TextStyle(color: Colors.white, fontSize: 14),
-                    ),
                   ],
                 ),
               ),
             ),
-
-            // 섹션 제목
-            SliverToBoxAdapter(
-              child: Padding(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 20, vertical: 18),
-                child: Row(
-                  children: [
-                    Text(
-                      '최근 스캔 내역',
-                      style: context.bodyMedium.copyWith(
-                        color: AppColors.staticBlack,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-
-            // ✅ 카드 리스트 (ArchiveListView와 동일한 방식)
-            SliverPadding(
-              padding: const EdgeInsets.symmetric(horizontal: 12),
-              sliver: SliverList.separated(
-                itemCount: items.length,
-                separatorBuilder: (_, __) => const SizedBox(height: 15),
-                itemBuilder: (context, index) {
-                  final it = items[index];
-                  return FoodCard(
-                    title: it.title,
-                    category: it.category,
-                    message: it.message,
-                    imageAsset: it.imageAsset,
-                    warningAsset: it.warningAsset,
-                    lightState: it.lightState,
-                    onTap: () {
-                      // TODO: 상세 페이지로 이동
-                    },
-                  );
-                },
-              ),
-            ),
-
-            const SliverToBoxAdapter(child: SizedBox(height: 80)), // 하단 여백
-          ],
-        ),
-      ),
-
-      // ----------------------------
-      // 🔹 하단 네비게이션 바
-      // ----------------------------
-      bottomNavigationBar: BottomAppBar(
-        elevation: 8,
-        shape: const CircularNotchedRectangle(),
-        notchMargin: 8,
-        child: SizedBox(
-          height: 65,
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: [
-              // 홈
-              IconButton(
-                icon: const Icon(Icons.home_outlined),
-                color: AppColors.mainRed,
-                onPressed: () {
-                  // 현재 홈이므로 아무 동작 없음
-                },
-              ),
-
-              // 카메라 (중앙)
-              FloatingActionButton(
-                backgroundColor: AppColors.mainRed,
-                elevation: 4,
-                onPressed: () {
-                  nav.goToScanReady(); // ✅ 스캔 페이지로 이동
-                },
-                child: const Icon(Icons.camera_alt_rounded),
-              ),
-
-              // 리포트
-              IconButton(
-                icon: const Icon(Icons.bar_chart_outlined),
-                color: Colors.grey[700],
-                onPressed: () {
-                  nav.goToArchiveCalendar(); // ✅ 아카이브 캘린더로 이동
-                },
-              ),
-            ],
           ),
-        ),
+        ],
       ),
     );
   }

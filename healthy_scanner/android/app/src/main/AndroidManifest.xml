@@ -1,8 +1,16 @@
-<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android" package = "com.example.healthy_scanner">
+    <!--  카카오 로그인에 반드시 필요한 인터넷 권한 -->
+    <uses-permission android:name="android.permission.INTERNET"/>
 
     <application
         android:label="healthy_scanner"
         android:icon="@mipmap/ic_launcher">
+
+        <!-- 카카오 SDK AppKey 등록 -->
+        <meta-data
+            android:name="com.kakao.sdk.AppKey"
+            android:value="aa03c53edb5ea7f0032d5b7319adeaa0" />
+
 
         <activity
             android:name=".MainActivity"
@@ -25,14 +33,13 @@
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
 
-            <!-- 카카오 REST 로그인 redirect 처리 -->
+            <!--  카카오톡 로그인 후 리다이렉트 응답을 받기 위한 설정 -->
             <intent-filter>
                 <action android:name="android.intent.action.VIEW"/>
                 <category android:name="android.intent.category.DEFAULT"/>
                 <category android:name="android.intent.category.BROWSABLE"/>
-                <data
-                    android:scheme="healthyScanner"
-                    android:host="kakao-login" />
+                <data android:host="oauth"
+                      android:scheme="kakaoaa03c53edb5ea7f0032d5b7319adeaa0"/>
             </intent-filter>
 
         </activity>

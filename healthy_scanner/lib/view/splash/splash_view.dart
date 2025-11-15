@@ -56,14 +56,14 @@ class _SplashViewState extends State<SplashView> {
         child: Stack(
           children: [
             Positioned(
-              top: 309,
+              top: 331,
               left: 0,
               right: 0,
               child: Center(
                 child: Image(
                   image: AssetImage('assets/images/logo.png'),
-                  width: 162,
-                  height: 66,
+                  width: 124,
+                  height: 50,
                 ),
               ),
             ),

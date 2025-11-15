@@ -24,7 +24,7 @@ class ShutterButton extends StatelessWidget {
             width: size,
             height: size,
             decoration: BoxDecoration(
-              color: AppColors.mainRed,
+              gradient: AppColors.linearRed,
               shape: BoxShape.circle,
               border: Border.all(
                 color: AppColors.staticWhite.withValues(alpha: 0.6),
