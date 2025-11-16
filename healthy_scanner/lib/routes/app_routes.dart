@@ -1,6 +1,6 @@
-import 'package:flutter/cupertino.dart';
+// import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
-import '../controller/navigation_controller.dart';
+// import '../controller/navigation_controller.dart';
 
 // [view import]
 import '../view/splash/splash_view.dart';
@@ -12,7 +12,6 @@ import '../view/scan/scan_check_view.dart';
 import '../view/scan/scan_fail_view.dart';
 import '../view/scan/scan_ready_view.dart';
 import '../view/scan/scan_waiting_view.dart';
-import '../view/home/home.dart';
 import '../view/myPage/myPage.dart';
 import '../view/main/main_shell_view.dart';
 

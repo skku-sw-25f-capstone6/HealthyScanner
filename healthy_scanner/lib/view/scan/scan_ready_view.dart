@@ -1,51 +1,30 @@
 import 'package:flutter/material.dart';
+import 'package:camera/camera.dart';
+import 'package:get/get.dart';
+import 'package:healthy_scanner/controller/scan_controller.dart';
 import 'package:healthy_scanner/component/scan_mode_button.dart';
 import 'package:healthy_scanner/component/round_icon_button.dart';
 import 'package:healthy_scanner/component/guide_pill.dart';
 import 'package:healthy_scanner/component/shutter_button.dart';
 
-// TODO: StatelessWidget으로 바꾸고, Get으로 상태 관리
-class ScanReadyView extends StatefulWidget {
-  const ScanReadyView({
-    super.key,
-    this.onClose,
-    this.onOpenGallery,
-    this.onShutter,
-    this.onModeChanged,
-    this.cameraBuilder,
-  });
-
-  final VoidCallback? onClose;
-  final VoidCallback? onOpenGallery;
-  final VoidCallback? onShutter;
-  final ValueChanged<ScanMode>? onModeChanged;
-
-  /// 실제 카메라 프리뷰를 주입
-  /// 예: cameraBuilder: (context) => CameraPreview(controller)
-  final WidgetBuilder? cameraBuilder;
-
-  @override
-  State<ScanReadyView> createState() => _ScanReadyViewState();
-}
-
-class _ScanReadyViewState extends State<ScanReadyView> {
-  ScanMode _mode = ScanMode.ingredient;
+class ScanReadyView extends StatelessWidget {
+  const ScanReadyView({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final scan = Get.find<ScanController>();
+
     return Scaffold(
       backgroundColor: Colors.black,
       body: Stack(
         children: [
-          // 카메라 프리뷰 (배경 전체)
           Positioned.fill(
-            child: widget.cameraBuilder?.call(context) ??
-                const _CameraPlaceholder(),
+            child: GetBuilder<ScanController>(
+              builder: (_) => _buildCameraPreview(scan),
+            ),
           ),
-
           Column(
             children: [
-              // 상단 좌우 아이콘
               const SizedBox(height: 57),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -54,47 +33,92 @@ class _ScanReadyViewState extends State<ScanReadyView> {
                   children: [
                     RoundIconButton(
                       assetPath: 'assets/icons/ic_x.png',
-                      onTap: widget.onClose ??
-                          () => Navigator.of(context).maybePop(),
+                      onTap: () => Get.back(),
                     ),
                     RoundIconButton(
                       assetPath: 'assets/icons/ic_image.png',
-                      onTap: widget.onOpenGallery,
+                      onTap: scan.pickFromGallery,
                     ),
                   ],
                 ),
               ),
-
               const Spacer(),
-
-              // 가이드 텍스트
               const Padding(
                 padding: EdgeInsets.symmetric(horizontal: 60),
-                // TODO: 설정된 스캔 모드에 따라 텍스트 변경
                 child: GuidePill.red('식품 바코드를 프레임 안에 맞춰주세요'),
               ),
               const SizedBox(height: 14),
-
-              // 스캔 모드 선택 버튼
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 28),
-                child: ScanModeButton(
-                  selected: _mode,
-                  onChanged: (m) {
-                    setState(() => _mode = m);
-                    widget.onModeChanged?.call(m);
-                  },
+                child: Obx(
+                  () => ScanModeButton(
+                    selected: scan.mode.value,
+                    onChanged: scan.changeMode,
+                  ),
                 ),
               ),
-
-              // 중앙 셔터 버튼
               const SizedBox(height: 14),
-              ShutterButton(onTap: widget.onShutter),
+              ShutterButton(
+                onTap: scan.takePicture,
+              ),
               const SizedBox(height: 35),
             ],
           ),
         ],
       ),
+    );
+  }
+
+  Widget _buildCameraPreview(ScanController scan) {
+    final controller = scan.cameraController;
+
+    if (scan.initializeControllerFuture == null || controller == null) {
+      return const _CameraPlaceholder();
+    }
+
+    return FutureBuilder<void>(
+      future: scan.initializeControllerFuture,
+      builder: (context, snapshot) {
+        if (snapshot.connectionState != ConnectionState.done) {
+          if (snapshot.hasError) {
+            return const Center(
+              child: Text(
+                '카메라를 불러오지 못했어요',
+                style: TextStyle(color: Colors.white),
+              ),
+            );
+          }
+          return const Center(child: CircularProgressIndicator());
+        }
+
+        return LayoutBuilder(
+          builder: (context, constraints) {
+            final previewSize = controller.value.previewSize;
+
+            if (previewSize == null) {
+              return const _CameraPlaceholder();
+            }
+
+            // camera 패키지는 previewSize를 가로 기준(landscape)으로 주기 때문에
+            // 세로(portrait) 기준의 비율로 바꿔줘야 함.
+            final cameraRatio = previewSize.height /
+                previewSize.width; // width / height (portrait)
+
+            final height = constraints.maxHeight;
+            final width = height * cameraRatio;
+
+            return FittedBox(
+              // ScanCheckView 의 Image.file(..., fit: BoxFit.cover) 와 동일한 방식
+              fit: BoxFit.cover,
+              child: SizedBox(
+                width: width,
+                height: height,
+                child: CameraPreview(controller),
+              ),
+            );
+          },
+        );
+      },
     );
   }
 }

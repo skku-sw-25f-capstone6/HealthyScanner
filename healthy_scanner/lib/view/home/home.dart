@@ -6,7 +6,6 @@ import 'package:healthy_scanner/theme/app_colors.dart';
 import 'package:healthy_scanner/theme/theme_extensions.dart';
 import 'package:healthy_scanner/component/food_card.dart';
 import 'package:healthy_scanner/component/traffic_light.dart';
-import 'package:healthy_scanner/component/shutter_button.dart';
 import 'package:healthy_scanner/view/home/home_progress_bar.dart';
 import 'package:healthy_scanner/view/home/home_curved_clipper.dart';
 
