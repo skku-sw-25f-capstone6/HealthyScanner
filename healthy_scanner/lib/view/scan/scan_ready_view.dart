@@ -70,28 +70,54 @@ class ScanReadyView extends StatelessWidget {
   }
 
   Widget _buildCameraPreview(ScanController scan) {
-    if (scan.initializeControllerFuture == null ||
-        scan.cameraController == null) {
+    final controller = scan.cameraController;
+
+    if (scan.initializeControllerFuture == null || controller == null) {
       return const _CameraPlaceholder();
     }
 
     return FutureBuilder<void>(
       future: scan.initializeControllerFuture,
       builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.done) {
-          return CameraPreview(scan.cameraController!);
-        } else if (snapshot.hasError) {
-          return const Center(
-            child: Text(
-              '카메라를 불러오지 못했어요',
-              style: TextStyle(color: Colors.white),
-            ),
-          );
-        } else {
-          return const Center(
-            child: CircularProgressIndicator(),
-          );
+        if (snapshot.connectionState != ConnectionState.done) {
+          if (snapshot.hasError) {
+            return const Center(
+              child: Text(
+                '카메라를 불러오지 못했어요',
+                style: TextStyle(color: Colors.white),
+              ),
+            );
+          }
+          return const Center(child: CircularProgressIndicator());
         }
+
+        return LayoutBuilder(
+          builder: (context, constraints) {
+            final previewSize = controller.value.previewSize;
+
+            if (previewSize == null) {
+              return const _CameraPlaceholder();
+            }
+
+            // camera 패키지는 previewSize를 가로 기준(landscape)으로 주기 때문에
+            // 세로(portrait) 기준의 비율로 바꿔줘야 함.
+            final cameraRatio = previewSize.height /
+                previewSize.width; // width / height (portrait)
+
+            final height = constraints.maxHeight;
+            final width = height * cameraRatio;
+
+            return FittedBox(
+              // ScanCheckView 의 Image.file(..., fit: BoxFit.cover) 와 동일한 방식
+              fit: BoxFit.cover,
+              child: SizedBox(
+                width: width,
+                height: height,
+                child: CameraPreview(controller),
+              ),
+            );
+          },
+        );
       },
     );
   }
