@@ -24,29 +24,35 @@ class _KakaoLoginWebViewState extends State<KakaoLoginWebView> {
       ..setJavaScriptMode(JavaScriptMode.unrestricted)
       ..setNavigationDelegate(
         NavigationDelegate(
-          onPageFinished: (url) async {
-            print("🔎 WebView loaded: $url");
+          // ✔ URL 로딩 전에 가로채기
+          onNavigationRequest: (NavigationRequest request) {
+            final url = request.url;
+            print("🌐 Navigation request: $url");
 
-            // login-success 페이지가 아닐 때 JS 실행하면 크래시 발생
-            if (!url.contains("login-success")) return;
+            // healthy://callback?jwt=...&userId=...
+            if (url.startsWith("healthy://callback")) {
+              final uri = Uri.parse(url);
 
-            try {
-              final jsResult = await controller
-                  .runJavaScriptReturningResult("document.body.innerText");
+              final jwt = uri.queryParameters["jwt"];
+              final userId = uri.queryParameters["userId"]; // ⬅ 수정됨!
 
-              // JS 반환 문자열 정제
-              final cleaned = jsResult.toString().replaceAll('"', '');
-              final data = jsonDecode(cleaned);
+              print("🎉 Custom callback URL detected!");
+              print("JWT: $jwt");
+              print("USER ID: $userId");
 
-              final jwt = data["jwt"];
-              final userId = data["user_id"];
+              if (jwt != null && userId != null) {
+                auth.onLoginCompleted(jwt, userId);
+              }
 
-              print("🎉 JWT received: $jwt");
-
-              await auth.onLoginCompleted(jwt, userId);
-            } catch (e) {
-              print("❌ Error parsing JWT: $e");
+              Get.back(); // WebView 닫기
+              return NavigationDecision.prevent; // WebView에서 URL을 열지 않게 막기
             }
+
+            return NavigationDecision.navigate;
+          },
+
+          onPageFinished: (url) {
+            print("🔎 WebView loaded: $url");
           },
         ),
       )
