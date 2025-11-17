@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../routes/app_routes.dart';
 import '../component/scan_mode_button.dart';
+import 'package:healthy_scanner/view/login/kakao_login_webview.dart';
 
 /// 📍 모든 페이지 전환을 중앙에서 관리하는 컨트롤러
 class NavigationController extends SuperController {
@@ -67,6 +68,9 @@ class NavigationController extends SuperController {
         'mode': mode,
       },
     );
+  }
+  void goToKakaoWebView(String loginUrl) {
+    Get.to(() => KakaoLoginWebView(loginUrl: loginUrl));
   }
 
   /// ✅ 스캔 실패 → 실패 페이지
