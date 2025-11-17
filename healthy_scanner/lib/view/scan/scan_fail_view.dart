@@ -30,7 +30,7 @@ class ScanFailView extends StatelessWidget {
               Text(
                 '오류가 발생했어요',
                 textAlign: TextAlign.center,
-                style: context.title2Medium.copyWith(
+                style: context.body2Bold.copyWith(
                   color: AppColors.staticBlack,
                 ),
               ),
@@ -38,7 +38,7 @@ class ScanFailView extends StatelessWidget {
               Text(
                 '사진을 다시 촬영해 주세요',
                 textAlign: TextAlign.center,
-                style: context.caption2Regular.copyWith(
+                style: context.caption1Medium.copyWith(
                   color: AppColors.staticBlack,
                 ),
               ),

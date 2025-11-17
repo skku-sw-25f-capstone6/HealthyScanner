@@ -29,7 +29,7 @@ class LoginFailView extends StatelessWidget {
               Text(
                 '로그인에 실패했어요',
                 textAlign: TextAlign.center,
-                style: context.title2Medium.copyWith(
+                style: context.body2Bold.copyWith(
                   color: AppColors.staticBlack,
                 ),
               ),
@@ -37,7 +37,7 @@ class LoginFailView extends StatelessWidget {
               Text(
                 '다시 시도해 주세요',
                 textAlign: TextAlign.center,
-                style: context.caption2Regular.copyWith(
+                style: context.caption1Medium.copyWith(
                   color: AppColors.staticBlack,
                 ),
               ),
