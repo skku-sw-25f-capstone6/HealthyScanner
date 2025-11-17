@@ -9,6 +9,7 @@ import '../view/archive/archive_list.dart';
 import '../view/login/login_main_view.dart';
 import '../view/login/login_fail_view.dart';
 import '../view/scan/scan_check_view.dart';
+import '../view/scan/scan_crop_view.dart';
 import '../view/scan/scan_fail_view.dart';
 import '../view/scan/scan_ready_view.dart';
 import '../view/scan/scan_waiting_view.dart';
@@ -25,6 +26,7 @@ class AppRoutes {
   static const loginMain = '/login/main';
   static const loginFail = '/login/fail';
   static const scanCheck = '/scan/check';
+  static const scanCrop = '/scan/crop';
   static const scanFail = '/scan/fail';
   static const scanReady = '/scan/ready';
   static const scanWaiting = '/scan/waiting';
@@ -46,6 +48,7 @@ class AppRoutes {
     GetPage(name: archiveCalendar, page: () => const ArchiveCalendarView()),
     GetPage(name: archiveList, page: () => const ArchiveListView()),
     GetPage(name: scanCheck, page: () => const ScanCheckView()),
+    GetPage(name: scanCrop, page: () => const ScanCropView()),
     GetPage(name: scanFail, page: () => const ScanFailView()),
     GetPage(
         name: scanReady,
