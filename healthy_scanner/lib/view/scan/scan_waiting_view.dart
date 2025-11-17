@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+import 'package:get/get.dart';
 import 'package:flutter/material.dart';
 import 'package:healthy_scanner/theme/app_colors.dart';
 import 'package:healthy_scanner/theme/theme_extensions.dart';
@@ -12,14 +14,26 @@ class ScanWaitingView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final args = Get.arguments as Map<String, dynamic>?;
+    final Uint8List? imageBytes = args?['imageBytes'] as Uint8List?;
+
     return Scaffold(
       body: Stack(
         children: [
-          // TODO: 유저가 촬영한 사진이 배경에 뜨도록
           Positioned.fill(
-            child: Image.asset(
-              'assets/images/sample_eggs.png',
-              fit: BoxFit.cover,
+            child: Container(
+              color: Colors.black,
+              child: imageBytes != null
+                  ? Center(
+                      child: Image.memory(
+                        imageBytes,
+                        fit: BoxFit.contain,
+                      ),
+                    )
+                  : Image.asset(
+                      'assets/images/sample_eggs.png',
+                      fit: BoxFit.contain,
+                    ),
             ),
           ),
 
@@ -50,7 +64,7 @@ class ScanWaitingView extends StatelessWidget {
               mainAxisSize: MainAxisSize.min,
               children: [
                 Transform.scale(
-                  scale: 2.5,
+                  scale: 2,
                   child: Image.asset(
                     // TODO: gif 화질 개선 시 Lottie 등 활용
                     'assets/images/loading.gif',
@@ -58,13 +72,13 @@ class ScanWaitingView extends StatelessWidget {
                 ),
                 Text(
                   '잠시만 기다려 주세요',
-                  style: context.title2Medium.copyWith(color: Colors.white),
+                  style: context.body2Bold.copyWith(color: Colors.white),
                   textAlign: TextAlign.center,
                 ),
                 const SizedBox(height: 5),
                 Text(
-                  'AI가 사진을 분석중입니다.',
-                  style: context.caption2Regular.copyWith(
+                  'AI가 사진을 분석중입니다',
+                  style: context.caption1Medium.copyWith(
                     color: Colors.white,
                   ),
                   textAlign: TextAlign.center,
