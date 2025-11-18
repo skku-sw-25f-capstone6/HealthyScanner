@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:webview_flutter/webview_flutter.dart';
@@ -16,6 +17,7 @@ class KakaoLoginWebView extends StatefulWidget {
 class _KakaoLoginWebViewState extends State<KakaoLoginWebView> {
   late final WebViewController controller;
   final auth = Get.find<AuthController>();
+  bool _hideContent = false;
 
   @override
   void initState() {
@@ -29,32 +31,50 @@ class _KakaoLoginWebViewState extends State<KakaoLoginWebView> {
             final url = request.url;
             debugPrint("🌐 Navigation request: $url");
 
-            if (url.startsWith("healthy://callback")) {
-              final uri = Uri.parse(url);
-
-              final jwt = uri.queryParameters["jwt"];
-              final userId = uri.queryParameters["userId"];
-
-              debugPrint("🎉 Custom callback URL detected!");
-              debugPrint("JWT: $jwt");
-              debugPrint("USER ID: $userId");
-
-              if (jwt != null && userId != null) {
-                auth.onLoginCompleted(jwt, userId);
-              }
-
-              Get.back();
-              return NavigationDecision.prevent;
+            if (url.contains('/auth/kakao/callback')) {
+              setState(() {
+                _hideContent = true;
+              });
             }
 
             return NavigationDecision.navigate;
           },
-          onPageFinished: (url) {
+          onPageFinished: (url) async {
             debugPrint("🔎 WebView loaded: $url");
+
+            if (url.contains('/auth/kakao/callback')) {
+              await _handleCallbackPage();
+            }
           },
         ),
       )
       ..loadRequest(Uri.parse(widget.loginUrl));
+  }
+
+  Future<void> _handleCallbackPage() async {
+    try {
+      final result = await controller
+          .runJavaScriptReturningResult('document.body.innerText');
+
+      final bodyText = result is String ? result : result.toString();
+      debugPrint("📄 Callback body: $bodyText");
+
+      final data = jsonDecode(bodyText) as Map<String, dynamic>;
+      final jwt = data['jwt'] as String?;
+      final userId = (data['user_id'] ?? data['userId'])?.toString();
+
+      debugPrint("🎉 Parsed JWT: $jwt");
+      debugPrint("👤 Parsed USER ID: $userId");
+
+      if (jwt != null && userId != null) {
+        await auth.onLoginCompleted(jwt, userId);
+      } else {
+        auth.onLoginFailed();
+      }
+    } catch (e, st) {
+      debugPrint("❌ Failed to parse callback JSON: $e\n$st");
+      auth.onLoginFailed();
+    }
   }
 
   @override
@@ -80,7 +100,15 @@ class _KakaoLoginWebViewState extends State<KakaoLoginWebView> {
           ),
         ),
       ),
-      body: WebViewWidget(controller: controller),
+      body: Stack(
+        children: [
+          WebViewWidget(controller: controller),
+          if (_hideContent)
+            Container(
+              color: Colors.white,
+            ),
+        ],
+      ),
     );
   }
 }
