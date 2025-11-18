@@ -6,7 +6,6 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 class AuthController extends GetxController {
   /// 플랫폼별 FastAPI 로컬 개발용 URL
-  /// TODO: 실제 서버 baseURL로 수정
   static String get BACKEND_LOGIN_URL => Platform.isAndroid
       ? "http://10.0.2.2:8000/auth/kakao/login?platform=android"
       : "http://localhost:8000/auth/kakao/login?platform=ios";
@@ -37,8 +36,6 @@ class AuthController extends GetxController {
   /// 1) 서버 로그인 URL을 바로 WebView로 오픈
   /// ----------------------------------------------------------
   Future<void> startKakaoLogin() async {
-    // 서버는 JSON이 아니라 즉시 카카오 login 페이지로 Redirect하므로
-    // 그대로 WebView에서 URL을 열면 된다.
     nav.goToKakaoWebView(BACKEND_LOGIN_URL);
   }
 
