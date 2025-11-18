@@ -5,8 +5,9 @@ import 'package:healthy_scanner/controller/navigation_controller.dart';
 
 class AuthController extends GetxController {
   /// 플랫폼별 FastAPI 로컬 개발용 URL
-  static const String BACKEND_LOGIN_URL =
-      "http://10.221.51.204:8000/auth/kakao/login";
+  static String get BACKEND_LOGIN_URL => Platform.isAndroid
+      ? "http://10.0.2.2:8000/auth/kakao/login?platform=android"
+      : "http://localhost:8000/auth/kakao/login?platform=ios";
 
   final nav = Get.find<NavigationController>();
 
