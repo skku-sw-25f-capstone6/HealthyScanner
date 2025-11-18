@@ -1,8 +1,9 @@
-import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 import 'package:healthy_scanner/controller/auth_controller.dart';
+import 'package:healthy_scanner/theme/app_colors.dart';
+import 'package:healthy_scanner/theme/theme_extensions.dart';
 
 class KakaoLoginWebView extends StatefulWidget {
   final String loginUrl;
@@ -24,35 +25,32 @@ class _KakaoLoginWebViewState extends State<KakaoLoginWebView> {
       ..setJavaScriptMode(JavaScriptMode.unrestricted)
       ..setNavigationDelegate(
         NavigationDelegate(
-          // ✔ URL 로딩 전에 가로채기
           onNavigationRequest: (NavigationRequest request) {
             final url = request.url;
-            print("🌐 Navigation request: $url");
+            debugPrint("🌐 Navigation request: $url");
 
-            // healthy://callback?jwt=...&userId=...
             if (url.startsWith("healthy://callback")) {
               final uri = Uri.parse(url);
 
               final jwt = uri.queryParameters["jwt"];
-              final userId = uri.queryParameters["userId"]; // ⬅ 수정됨!
+              final userId = uri.queryParameters["userId"];
 
-              print("🎉 Custom callback URL detected!");
-              print("JWT: $jwt");
-              print("USER ID: $userId");
+              debugPrint("🎉 Custom callback URL detected!");
+              debugPrint("JWT: $jwt");
+              debugPrint("USER ID: $userId");
 
               if (jwt != null && userId != null) {
                 auth.onLoginCompleted(jwt, userId);
               }
 
-              Get.back(); // WebView 닫기
-              return NavigationDecision.prevent; // WebView에서 URL을 열지 않게 막기
+              Get.back();
+              return NavigationDecision.prevent;
             }
 
             return NavigationDecision.navigate;
           },
-
           onPageFinished: (url) {
-            print("🔎 WebView loaded: $url");
+            debugPrint("🔎 WebView loaded: $url");
           },
         ),
       )
@@ -62,7 +60,26 @@ class _KakaoLoginWebViewState extends State<KakaoLoginWebView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text("카카오 로그인")),
+      appBar: AppBar(
+        backgroundColor: AppColors.mainRed,
+        centerTitle: true,
+        elevation: 0,
+        leading: IconButton(
+          onPressed: () => Navigator.of(context).maybePop(),
+          icon: Image.asset(
+            'assets/icons/ic_chevron_left.png',
+            width: 24,
+            height: 24,
+            color: AppColors.staticWhite,
+          ),
+        ),
+        title: Text(
+          "카카오 로그인",
+          style: context.bodyMedium.copyWith(
+            color: AppColors.staticWhite,
+          ),
+        ),
+      ),
       body: WebViewWidget(controller: controller),
     );
   }
