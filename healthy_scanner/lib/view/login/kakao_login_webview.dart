@@ -17,7 +17,6 @@ class KakaoLoginWebView extends StatefulWidget {
 class _KakaoLoginWebViewState extends State<KakaoLoginWebView> {
   late final WebViewController controller;
   final auth = Get.find<AuthController>();
-  bool _hideContent = false;
 
   @override
   void initState() {
@@ -30,13 +29,6 @@ class _KakaoLoginWebViewState extends State<KakaoLoginWebView> {
           onNavigationRequest: (NavigationRequest request) {
             final url = request.url;
             debugPrint("🌐 Navigation request: $url");
-
-            if (url.contains('/auth/kakao/callback')) {
-              setState(() {
-                _hideContent = true;
-              });
-            }
-
             return NavigationDecision.navigate;
           },
           onPageFinished: (url) async {
@@ -53,6 +45,7 @@ class _KakaoLoginWebViewState extends State<KakaoLoginWebView> {
 
   Future<void> _handleCallbackPage() async {
     try {
+      // TODO: 서버 응답에서 refresh token, 유저 정보 등 변경 발생 시 반영 필요
       final result = await controller
           .runJavaScriptReturningResult('document.body.innerText');
 
@@ -103,10 +96,6 @@ class _KakaoLoginWebViewState extends State<KakaoLoginWebView> {
       body: Stack(
         children: [
           WebViewWidget(controller: controller),
-          if (_hideContent)
-            Container(
-              color: Colors.white,
-            ),
         ],
       ),
     );
