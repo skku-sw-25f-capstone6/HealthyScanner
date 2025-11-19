@@ -5,7 +5,6 @@ import 'package:healthy_scanner/theme/app_colors.dart';
 import 'package:healthy_scanner/theme/theme_extensions.dart';
 import 'package:healthy_scanner/controller/auth_controller.dart';
 
-
 /// 로그인 메인 화면
 /// ------------------------------------------------------------
 /// 현재는 소셜 로그인 API(카카오, 네이버)가 아직 등록되지 않았기 때문에,
@@ -101,6 +100,8 @@ class LoginMainView extends StatelessWidget {
                     behavior: HitTestBehavior.opaque,
                     onTap: () {
                       // TODO: 문의 페이지 연결 (예: 이메일, 피드백 폼 등)
+                      // 임시 개발용: 로그인 없이 홈으로 연결
+                      nav.goToHome();
                     },
                     child: Padding(
                       padding: const EdgeInsets.all(6),
