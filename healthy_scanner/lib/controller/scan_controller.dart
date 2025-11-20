@@ -72,7 +72,7 @@ class ScanController extends GetxController {
 
       lastImagePath.value = file.path;
 
-      _nav.goToScanCheck(
+      _nav.goToScanCrop(
         imagePath: file.path,
         mode: mode.value,
       );
@@ -100,7 +100,7 @@ class ScanController extends GetxController {
       debugPrint('갤러리에서 선택한 이미지 경로: ${image.path}');
       lastImagePath.value = image.path;
 
-      _nav.goToScanCheck(
+      _nav.goToScanCrop(
         imagePath: image.path,
         mode: mode.value,
       );

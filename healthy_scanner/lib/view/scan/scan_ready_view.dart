@@ -10,6 +10,17 @@ import 'package:healthy_scanner/component/shutter_button.dart';
 class ScanReadyView extends StatelessWidget {
   const ScanReadyView({super.key});
 
+  String _guideText(ScanMode mode) {
+    switch (mode) {
+      case ScanMode.barcode:
+        return '식품 바코드를 프레임 안에 맞춰주세요';
+      case ScanMode.ingredient:
+        return '식품 성분표를 프레임 안에 맞춰주세요';
+      case ScanMode.image:
+        return '식품 이미지를 프레임 안에 맞춰주세요';
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final scan = Get.find<ScanController>();
@@ -43,9 +54,13 @@ class ScanReadyView extends StatelessWidget {
                 ),
               ),
               const Spacer(),
-              const Padding(
-                padding: EdgeInsets.symmetric(horizontal: 60),
-                child: GuidePill.red('식품 바코드를 프레임 안에 맞춰주세요'),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 60),
+                child: Obx(
+                  () => GuidePill.red(
+                    _guideText(scan.mode.value),
+                  ),
+                ),
               ),
               const SizedBox(height: 14),
               Padding(
@@ -99,16 +114,12 @@ class ScanReadyView extends StatelessWidget {
               return const _CameraPlaceholder();
             }
 
-            // camera 패키지는 previewSize를 가로 기준(landscape)으로 주기 때문에
-            // 세로(portrait) 기준의 비율로 바꿔줘야 함.
-            final cameraRatio = previewSize.height /
-                previewSize.width; // width / height (portrait)
+            final cameraRatio = previewSize.height / previewSize.width;
 
             final height = constraints.maxHeight;
             final width = height * cameraRatio;
 
             return FittedBox(
-              // ScanCheckView 의 Image.file(..., fit: BoxFit.cover) 와 동일한 방식
               fit: BoxFit.cover,
               child: SizedBox(
                 width: width,

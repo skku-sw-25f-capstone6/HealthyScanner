@@ -43,7 +43,7 @@ dependencies:
   app_links: ^3.4.0
   webview_flutter: ^4.7.0
   flutter_secure_storage: ^4.2.1
-
+  crop_your_image: ^2.0.0
 
 dev_dependencies:
   flutter_test:
