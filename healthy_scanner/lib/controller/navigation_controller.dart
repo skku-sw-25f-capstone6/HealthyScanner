@@ -69,6 +69,20 @@ class NavigationController extends SuperController {
     );
   }
 
+  /// ✅ 스캔 대기 → 사진 자르기
+  void goToScanCrop({
+    required String imagePath,
+    required ScanMode mode,
+  }) {
+    Get.toNamed(
+      AppRoutes.scanCrop,
+      arguments: {
+        'imagePath': imagePath,
+        'mode': mode,
+      },
+    );
+  }
+
   /// ✅ 스캔 실패 → 실패 페이지
   void goToScanFail() => Get.toNamed(AppRoutes.scanFail);
 
