@@ -51,5 +51,10 @@
     	<string>식품을 스캔하기 위해 카메라를 사용합니다.</string>
 		<key>NSPhotoLibraryUsageDescription</key>
 		<string>기기에 저장된 사진을 불러오기 위해 사용합니다.</string>
+		<key>NSAppTransportSecurity</key>
+		<dict>
+			<key>NSAllowsArbitraryLoads</key>
+			<true/>
+		</dict>
 	</dict>
 </plist>

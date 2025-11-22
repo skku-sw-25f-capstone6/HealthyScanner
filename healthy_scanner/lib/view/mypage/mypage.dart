@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:healthy_scanner/controller/auth_controller.dart';
 
 // TODO: 임시 비어있는 마이페이지
 class MyPageView extends StatelessWidget {
@@ -6,15 +8,17 @@ class MyPageView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final auth = Get.find<AuthController>();
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('마이페이지'),
         centerTitle: true,
       ),
-      body: const Center(
-        child: Text(
-          '마이페이지 화면입니다.',
-          style: TextStyle(fontSize: 18, color: Colors.black54),
+      body: Center(
+        child: ElevatedButton(
+          onPressed: () => auth.logout(),
+          child: const Text('로그아웃 (테스트용)'),
         ),
       ),
       backgroundColor: Colors.white,

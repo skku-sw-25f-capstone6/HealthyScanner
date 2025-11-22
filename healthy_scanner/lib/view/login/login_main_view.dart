@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:healthy_scanner/controller/navigation_controller.dart';
 import 'package:healthy_scanner/theme/app_colors.dart';
 import 'package:healthy_scanner/theme/theme_extensions.dart';
+import 'package:healthy_scanner/controller/auth_controller.dart';
 
 /// 로그인 메인 화면
 /// ------------------------------------------------------------
@@ -17,6 +18,9 @@ class LoginMainView extends StatelessWidget {
   Widget build(BuildContext context) {
     // NavigationController 인스턴스 가져오기
     final nav = Get.find<NavigationController>();
+
+    // AuthController 인스턴스 가져오기
+    final auth = Get.find<AuthController>();
 
     return Scaffold(
       backgroundColor: AppColors.mainRed,
@@ -62,8 +66,7 @@ class LoginMainView extends StatelessWidget {
                       height: 13,
                     ),
                     onPressed: () {
-                      // TODO: 카카오 로그인 API 연동 예정
-                      nav.goToHome(); // ✅ 임시로 홈으로 이동
+                      auth.startKakaoLogin();
                     },
                   ),
                   const SizedBox(height: 7),
@@ -97,6 +100,8 @@ class LoginMainView extends StatelessWidget {
                     behavior: HitTestBehavior.opaque,
                     onTap: () {
                       // TODO: 문의 페이지 연결 (예: 이메일, 피드백 폼 등)
+                      // 임시 개발용: 로그인 없이 홈으로 연결
+                      nav.goToHome();
                     },
                     child: Padding(
                       padding: const EdgeInsets.all(6),
