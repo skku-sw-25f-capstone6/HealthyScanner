@@ -157,7 +157,6 @@ class _ScanCropViewState extends State<ScanCropView> {
 
       final scanController = Get.find<ScanController>();
 
-      // 🔹 분석 + 네비게이션은 컨트롤러에 위임
       await scanController.handleCroppedImage(
         croppedImage,
         mode: _mode,
