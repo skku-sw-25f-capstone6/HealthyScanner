@@ -7,7 +7,7 @@ import 'package:healthy_scanner/component/round_icon_button.dart';
 import 'package:healthy_scanner/component/bottom_button.dart';
 import 'package:healthy_scanner/component/guide_pill.dart';
 import 'package:healthy_scanner/theme/app_colors.dart';
-import 'package:healthy_scanner/routes/app_routes.dart';
+import 'package:healthy_scanner/controller/scan_controller.dart';
 
 class ScanCropView extends StatefulWidget {
   const ScanCropView({super.key});
@@ -148,19 +148,19 @@ class _ScanCropViewState extends State<ScanCropView> {
     _cropController.crop();
   }
 
-  void _onCropped(CropResult result) {
+  void _onCropped(CropResult result) async {
     setState(() => _isCropping = false);
 
     if (result is CropSuccess) {
       final croppedImage = result.croppedImage;
       debugPrint('cropped image size: ${croppedImage.lengthInBytes} bytes');
 
-      Get.toNamed(
-        AppRoutes.scanWaiting,
-        arguments: {
-          'imageBytes': croppedImage,
-          'mode': _mode,
-        },
+      final scanController = Get.find<ScanController>();
+
+      // 🔹 분석 + 네비게이션은 컨트롤러에 위임
+      await scanController.handleCroppedImage(
+        croppedImage,
+        mode: _mode,
       );
     } else if (result is CropFailure) {
       debugPrint('이미지 크롭 실패: ${result.cause}');
