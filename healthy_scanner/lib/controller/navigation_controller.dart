@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'dart:typed_data';
 import '../routes/app_routes.dart';
 import '../component/scan_mode_button.dart';
 import 'package:healthy_scanner/view/login/kakao_login_webview.dart';
@@ -54,7 +55,22 @@ class NavigationController extends SuperController {
   void goToArchiveList() => Get.toNamed(AppRoutes.archiveList);
 
   /// ✅ 스캔 준비 → 대기 화면
-  void goToScanWaiting() => Get.toNamed(AppRoutes.scanWaiting);
+  void goToScanWaiting({
+    required Uint8List imageBytes,
+    required ScanMode mode,
+    String? barcode,
+    String? text,
+  }) {
+    Get.toNamed(
+      AppRoutes.scanWaiting,
+      arguments: {
+        'imageBytes': imageBytes,
+        'mode': mode,
+        'barcode': barcode,
+        'text': text,
+      },
+    );
+  }
 
   /// ✅ 스캔 대기 → 결과 확인
   void goToScanCheck({
@@ -69,6 +85,7 @@ class NavigationController extends SuperController {
       },
     );
   }
+
   void goToKakaoWebView(String loginUrl) {
     Get.to(() => KakaoLoginWebView(loginUrl: loginUrl));
   }
