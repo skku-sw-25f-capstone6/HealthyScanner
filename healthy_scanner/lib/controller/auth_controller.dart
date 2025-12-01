@@ -1,4 +1,3 @@
-import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
 import 'package:healthy_scanner/controller/navigation_controller.dart';
@@ -88,7 +87,7 @@ class AuthController extends GetxController {
   /// ----------------------------------------------------------
   void onLoginFailed() {
     debugPrint("❌ 카카오 로그인 실패");
-    nav.goToLoginFail();
+    // nav.goToLoginFail();
   }
 
   /// ----------------------------------------------------------

@@ -45,23 +45,44 @@ class _KakaoLoginWebViewState extends State<KakaoLoginWebView> {
 
   Future<void> _handleCallbackPage() async {
     try {
-      // TODO: 서버 응답에서 refresh token, 유저 정보 등 변경 발생 시 반영 필요
       final result = await controller
           .runJavaScriptReturningResult('document.body.innerText');
 
       final bodyText = result is String ? result : result.toString();
       debugPrint("📄 Callback body: $bodyText");
 
+      if (bodyText.trim().isEmpty) {
+        throw const FormatException("Empty response body");
+      }
+
       final data = jsonDecode(bodyText) as Map<String, dynamic>;
-      final jwt = data['jwt'] as String?;
-      final userId = (data['user_id'] ?? data['userId'])?.toString();
 
-      debugPrint("🎉 Parsed JWT: $jwt");
-      debugPrint("👤 Parsed USER ID: $userId");
+      final accessToken = data["access_token"] as String?;
+      final refreshToken = data["refresh_token"] as String?;
+      final tokenType = data["token_type"] as String?;
+      final expiresIn = (data["expires_in"] as num?)?.toInt();
+      final refreshExpiresIn = (data["refresh_expires_in"] as num?)?.toInt();
 
-      if (jwt != null && userId != null) {
-        await auth.onLoginCompleted(jwt, userId);
+      debugPrint("🎉 Parsed access_token: $accessToken");
+      debugPrint("🔁 Parsed refresh_token: $refreshToken");
+      debugPrint("🔤 Parsed token_type: $tokenType");
+      debugPrint("⏱ Parsed expires_in: $expiresIn");
+      debugPrint("⏱ Parsed refresh_expires_in: $refreshExpiresIn");
+
+      if (accessToken != null &&
+          refreshToken != null &&
+          tokenType != null &&
+          expiresIn != null &&
+          refreshExpiresIn != null) {
+        await auth.onKakaoLoginCompleted(
+          accessToken: accessToken,
+          refreshToken: refreshToken,
+          tokenType: tokenType,
+          expiresIn: expiresIn,
+          refreshExpiresIn: refreshExpiresIn,
+        );
       } else {
+        debugPrint("⚠️ Missing required fields in Kakao login response");
         auth.onLoginFailed();
       }
     } catch (e, st) {
