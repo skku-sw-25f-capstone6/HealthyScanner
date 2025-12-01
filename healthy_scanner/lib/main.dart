@@ -7,6 +7,7 @@ import 'controller/auth_controller.dart';
 
 
 void main() {
+  AppRoutes.validateRoutes();
   Get.put(NavigationController());
   Get.put(ScanController(), permanent: true);
   Get.put(AuthController());

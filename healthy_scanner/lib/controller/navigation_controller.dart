@@ -53,7 +53,38 @@ class NavigationController extends SuperController {
 
   /// ✅ 아카이브 캘린더 → 아카이브 리스트
   void goToArchiveList() => Get.toNamed(AppRoutes.archiveList);
+  // ============================================================
+  // 🧭 온보딩 상태 및 유효성
+  // ============================================================
+  final agreedPolicy = false.obs;
+  final agreedService = false.obs;
+  final selectedDiet = ''.obs;
+  final selectedDiseases = <String>[].obs;
+  final selectedAllergies = <String>[].obs;
 
+  bool get isAgreeValid => agreedPolicy.value && agreedService.value;
+  bool get isDietValid => selectedDiet.isNotEmpty;
+  bool get isDiseaseValid => selectedDiseases.isNotEmpty;
+  bool get isAllergyValid => selectedAllergies.isNotEmpty;
+
+  // ============================================================
+  // 🔹 온보딩 이동 함수
+  // ============================================================
+  void goToOnboardingAgree() => Get.offAllNamed(AppRoutes.onboardingAgree);
+  void goToOnboardingDiet() => Get.toNamed(AppRoutes.onboardingDiet);
+  void goToOnboardingDisease() => Get.toNamed(AppRoutes.onboardingDisease);
+  void goToOnboardingAllergy() => Get.toNamed(AppRoutes.onboardingAllergy);
+  void goToOnboardingComplete() => Get.toNamed(AppRoutes.onboardingComplete);
+
+  /// ✅ 온보딩 완료 후 홈 이동
+  void finishOnboarding() => Get.offAllNamed(AppRoutes.home);
+
+  /// ✅ 온보딩 중 뒤로가기
+  void backOnboardingStep() => Get.back();
+
+  // ============================================================
+  // 🔹 기존 공용 이동 함수 (기존 기능 유지)
+  // ============================================================
   /// ✅ 스캔 준비 → 대기 화면
   void goToScanWaiting({
     required Uint8List imageBytes,
@@ -112,6 +143,10 @@ class NavigationController extends SuperController {
 
   /// ✅ 홈 → 마이페이지
   void goToMyPage() => Get.toNamed(AppRoutes.myPage);
+  void goToMyPageDietEdit() => Get.toNamed(AppRoutes.myPageDietEdit);
+  void goToMyPageDiseaseEdit() => Get.toNamed(AppRoutes.myPageDiseaseEdit);
+  void goToMyPageAllergyEdit() => Get.toNamed(AppRoutes.myPageAllergyEdit);
+  void goToAnalysisResult() => Get.toNamed(AppRoutes.analysisResult);
 
   /// ✅ 뒤로가기
   void goBack() => Get.back();
@@ -125,4 +160,8 @@ class NavigationController extends SuperController {
     debugPrint('👋 로그아웃 완료');
     Get.offAllNamed(AppRoutes.loginMain);
   }
+}
+void goToAnalysisResult() {
+  print('🚀 goToAnalysisResult() 호출됨');
+  Get.toNamed(AppRoutes.analysisResult);
 }
