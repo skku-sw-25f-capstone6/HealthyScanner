@@ -161,7 +161,8 @@ class NavigationController extends SuperController {
     Get.offAllNamed(AppRoutes.loginMain);
   }
 }
+
 void goToAnalysisResult() {
-  print('🚀 goToAnalysisResult() 호출됨');
+  debugPrint('🚀 goToAnalysisResult() 호출됨');
   Get.toNamed(AppRoutes.analysisResult);
 }
