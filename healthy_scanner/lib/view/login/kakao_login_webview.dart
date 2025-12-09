@@ -33,7 +33,6 @@ class _KakaoLoginWebViewState extends State<KakaoLoginWebView> {
           },
           onPageFinished: (url) async {
             debugPrint("🔎 WebView loaded: $url");
-
             if (url.contains('/auth/kakao/callback')) {
               await _handleCallbackPage();
             }

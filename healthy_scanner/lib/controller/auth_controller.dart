@@ -2,12 +2,13 @@ import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
 import 'package:healthy_scanner/controller/navigation_controller.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:healthy_scanner/app_secure_storage.dart';
 
 class AuthController extends GetxController {
   static String backendLoginURL =
       "https://healthy-scanner.com/auth/kakao/login";
   final nav = Get.find<NavigationController>();
-  final storage = const FlutterSecureStorage();
+  final FlutterSecureStorage storage = appSecureStorage;
 
   final kakaoAccessToken = RxnString();
   final kakaoRefreshToken = RxnString();
@@ -94,13 +95,19 @@ class AuthController extends GetxController {
   /// 4) 로그아웃
   /// ----------------------------------------------------------
   Future<void> logout() async {
-    await storage.deleteAll();
+    await storage.delete(key: "kakao_access_token");
+    await storage.delete(key: "kakao_refresh_token");
+    await storage.delete(key: "kakao_token_type");
+    await storage.delete(key: "kakao_expires_in");
+    await storage.delete(key: "kakao_refresh_expires_in");
 
     kakaoAccessToken.value = null;
     kakaoRefreshToken.value = null;
     kakaoTokenType.value = null;
     kakaoExpiresIn.value = null;
     kakaoRefreshExpiresIn.value = null;
+
+    debugPrint("👋 로그아웃 완료");
 
     nav.goToLogin();
   }
