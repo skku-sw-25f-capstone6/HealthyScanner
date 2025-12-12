@@ -7,12 +7,14 @@ import 'controller/auth_controller.dart';
 import 'app_secure_storage.dart';
 
 void main() async {
-  AppRoutes.validateRoutes();
-  Get.put(NavigationController());
-  Get.put(ScanController(), permanent: true);
-  Get.put(AuthController());
   WidgetsFlutterBinding.ensureInitialized();
+  AppRoutes.validateRoutes();
   await migrateAndCleanupSecureStorage();
+
+  Get.put(NavigationController(), permanent: true);
+  Get.put(AuthController(), permanent: true);
+  Get.put(ScanController(), permanent: true);
+
   runApp(const MyApp());
 }
 
