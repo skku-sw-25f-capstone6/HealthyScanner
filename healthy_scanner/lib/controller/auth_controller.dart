@@ -1,20 +1,20 @@
-import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
 import 'package:healthy_scanner/controller/navigation_controller.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:healthy_scanner/app_secure_storage.dart';
 
 class AuthController extends GetxController {
-  /// 플랫폼별 FastAPI 로컬 개발용 URL
-  static String get BACKEND_LOGIN_URL => Platform.isAndroid
-      ? "http://10.0.2.2:8000/auth/kakao/login?platform=android"
-      : "http://localhost:8000/auth/kakao/login?platform=ios";
-
+  static String backendLoginURL =
+      "https://healthy-scanner.com/auth/kakao/login";
   final nav = Get.find<NavigationController>();
-  final storage = const FlutterSecureStorage();
+  final FlutterSecureStorage storage = appSecureStorage;
 
-  final jwt = RxnString();
-  final userId = RxnString();
+  final kakaoAccessToken = RxnString();
+  final kakaoRefreshToken = RxnString();
+  final kakaoTokenType = RxnString();
+  final kakaoExpiresIn = RxnInt();
+  final kakaoRefreshExpiresIn = RxnInt();
 
   @override
   void onInit() {
@@ -23,11 +23,23 @@ class AuthController extends GetxController {
   }
 
   Future<void> _loadStoredTokens() async {
-    jwt.value = await storage.read(key: "jwt");
-    userId.value = await storage.read(key: "userId");
+    kakaoAccessToken.value = await storage.read(key: "kakao_access_token");
+    kakaoRefreshToken.value = await storage.read(key: "kakao_refresh_token");
+    kakaoTokenType.value = await storage.read(key: "kakao_token_type");
 
-    if (jwt.value != null) {
-      debugPrint("🔐 Saved JWT found → Auto login");
+    final expiresInStr = await storage.read(key: "kakao_expires_in");
+    final refreshExpiresInStr =
+        await storage.read(key: "kakao_refresh_expires_in");
+
+    if (expiresInStr != null) {
+      kakaoExpiresIn.value = int.tryParse(expiresInStr);
+    }
+    if (refreshExpiresInStr != null) {
+      kakaoRefreshExpiresIn.value = int.tryParse(refreshExpiresInStr);
+    }
+
+    if (kakaoAccessToken.value != null) {
+      debugPrint("🔐 Saved Kakao access token found → Auto login");
       nav.goToHome();
     }
   }
@@ -36,21 +48,37 @@ class AuthController extends GetxController {
   /// 1) 서버 로그인 URL을 바로 WebView로 오픈
   /// ----------------------------------------------------------
   Future<void> startKakaoLogin() async {
-    nav.goToKakaoWebView(BACKEND_LOGIN_URL);
+    nav.goToKakaoWebView(backendLoginURL);
   }
 
   /// ----------------------------------------------------------
-  /// 2) WebView에서 JWT를 수신한 뒤 호출됨
+  /// 2) WebView에서 카카오 토큰 JSON을 수신한 뒤 호출됨
   /// ----------------------------------------------------------
-  Future<void> onLoginCompleted(String token, String uid) async {
-    debugPrint("🎉 JWT 수신 완료: $token");
-    debugPrint("👤 USER ID: $uid");
+  Future<void> onKakaoLoginCompleted({
+    required String accessToken,
+    required String refreshToken,
+    required String tokenType,
+    required int expiresIn,
+    required int refreshExpiresIn,
+  }) async {
+    debugPrint("🎉 Kakao access_token: $accessToken");
+    debugPrint("🔁 Kakao refresh_token: $refreshToken");
+    debugPrint("🔤 token_type: $tokenType");
+    debugPrint("⏱ expires_in: $expiresIn");
+    debugPrint("⏱ refresh_expires_in: $refreshExpiresIn");
 
-    jwt.value = token;
-    userId.value = uid;
+    kakaoAccessToken.value = accessToken;
+    kakaoRefreshToken.value = refreshToken;
+    kakaoTokenType.value = tokenType;
+    kakaoExpiresIn.value = expiresIn;
+    kakaoRefreshExpiresIn.value = refreshExpiresIn;
 
-    await storage.write(key: "jwt", value: token);
-    await storage.write(key: "userId", value: uid);
+    await storage.write(key: "kakao_access_token", value: accessToken);
+    await storage.write(key: "kakao_refresh_token", value: refreshToken);
+    await storage.write(key: "kakao_token_type", value: tokenType);
+    await storage.write(key: "kakao_expires_in", value: expiresIn.toString());
+    await storage.write(
+        key: "kakao_refresh_expires_in", value: refreshExpiresIn.toString());
 
     nav.goToHome();
   }
@@ -60,16 +88,26 @@ class AuthController extends GetxController {
   /// ----------------------------------------------------------
   void onLoginFailed() {
     debugPrint("❌ 카카오 로그인 실패");
-    nav.goToLoginFail();
+    // nav.goToLoginFail();
   }
 
   /// ----------------------------------------------------------
   /// 4) 로그아웃
   /// ----------------------------------------------------------
   Future<void> logout() async {
-    await storage.deleteAll();
-    jwt.value = null;
-    userId.value = null;
+    await storage.delete(key: "kakao_access_token");
+    await storage.delete(key: "kakao_refresh_token");
+    await storage.delete(key: "kakao_token_type");
+    await storage.delete(key: "kakao_expires_in");
+    await storage.delete(key: "kakao_refresh_expires_in");
+
+    kakaoAccessToken.value = null;
+    kakaoRefreshToken.value = null;
+    kakaoTokenType.value = null;
+    kakaoExpiresIn.value = null;
+    kakaoRefreshExpiresIn.value = null;
+
+    debugPrint("👋 로그아웃 완료");
 
     nav.goToLogin();
   }

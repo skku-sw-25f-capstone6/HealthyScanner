@@ -70,7 +70,7 @@ class _MyPageDietEditViewState extends State<MyPageDietEditView> {
                         borderRadius: BorderRadius.circular(8),
                       ),
                       child: DropdownButtonFormField<String>(
-                        value: selectedDiet,
+                        initialValue: selectedDiet,
                         icon: const Icon(
                           Icons.keyboard_arrow_down,
                           color: AppColors.charcoleGray,

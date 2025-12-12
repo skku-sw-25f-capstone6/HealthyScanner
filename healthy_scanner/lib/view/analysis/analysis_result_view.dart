@@ -124,7 +124,7 @@ class _AnalysisResultViewState extends State<AnalysisResultView> {
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.03),
+            color: Colors.black.withValues(alpha: 0.03),
             blurRadius: 6,
             offset: const Offset(0, 2),
           ),
@@ -148,9 +148,8 @@ class _AnalysisResultViewState extends State<AnalysisResultView> {
                     padding:
                         const EdgeInsets.symmetric(horizontal: 18, vertical: 8),
                     decoration: BoxDecoration(
-                      color: isSelected
-                          ? AppColors.mainRed
-                          : AppColors.softGray,
+                      color:
+                          isSelected ? AppColors.mainRed : AppColors.softGray,
                       borderRadius: BorderRadius.circular(20),
                     ),
                     child: Text(
@@ -191,15 +190,13 @@ class _AnalysisResultViewState extends State<AnalysisResultView> {
         bgColor = AppColors.mainRed;
         iconColor = Colors.white;
         icon = Icons.sentiment_very_dissatisfied_rounded;
-        message =
-            '땅콩 알레르기와 심혈관 질환이 있는 분께는 비추천드립니다.\n안전한 대체 간식을 선택하시길 권장드립니다.';
+        message = '땅콩 알레르기와 심혈관 질환이 있는 분께는 비추천드립니다.\n안전한 대체 간식을 선택하시길 권장드립니다.';
         break;
       case FoodRecommendation.caution:
         bgColor = AppColors.kakaoYellow;
         iconColor = AppColors.staticBlack;
         icon = Icons.sentiment_neutral_rounded;
-        message =
-            '당류가 다소 높지만, 적정량 섭취 시 괜찮은 간식입니다.\n섭취량에 주의하세요.';
+        message = '당류가 다소 높지만, 적정량 섭취 시 괜찮은 간식입니다.\n섭취량에 주의하세요.';
         break;
       case FoodRecommendation.good:
         bgColor = AppColors.mainGreen;
@@ -247,7 +244,7 @@ class _AnalysisResultViewState extends State<AnalysisResultView> {
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.03),
+            color: Colors.black.withValues(alpha: 0.03),
             blurRadius: 6,
             offset: const Offset(0, 2),
           ),
@@ -257,10 +254,10 @@ class _AnalysisResultViewState extends State<AnalysisResultView> {
         children: [
           _buildRiskRow('유제품 허용 채식', TrafficLightState.yellow,
               icon: Icons.eco_outlined),
-          Divider(color: AppColors.softGray, thickness: 1, height: 20),
+          const Divider(color: AppColors.softGray, thickness: 1, height: 20),
           _buildRiskRow('심장질환', TrafficLightState.red,
               icon: Icons.medical_services_outlined),
-          Divider(color: AppColors.softGray, thickness: 1, height: 20),
+          const Divider(color: AppColors.softGray, thickness: 1, height: 20),
           _buildRiskRow('땅콩 / 견과류 알레르기', TrafficLightState.yellow,
               icon: Icons.sentiment_dissatisfied_outlined),
         ],
@@ -291,9 +288,24 @@ class _AnalysisResultViewState extends State<AnalysisResultView> {
   // ============================================================
   Widget _buildNutritionFacts() {
     final nutrients = [
-      Nutrient(name: '탄수화물', value: 27, unit: 'g', daily: 324, baseColor: AppColors.staticBlack),
-      Nutrient(name: '단백질', value: 15, unit: 'g', daily: 55, baseColor: AppColors.staticBlack),
-      Nutrient(name: '나트륨', value: 105, unit: 'mg', daily: 2000, baseColor: AppColors.staticBlack),
+      Nutrient(
+          name: '탄수화물',
+          value: 27,
+          unit: 'g',
+          daily: 324,
+          baseColor: AppColors.staticBlack),
+      Nutrient(
+          name: '단백질',
+          value: 15,
+          unit: 'g',
+          daily: 55,
+          baseColor: AppColors.staticBlack),
+      Nutrient(
+          name: '나트륨',
+          value: 105,
+          unit: 'mg',
+          daily: 2000,
+          baseColor: AppColors.staticBlack),
       Nutrient(name: '당류', value: 15, unit: 'g', daily: 50),
       Nutrient(name: '지방', value: 9, unit: 'g', daily: 54),
       Nutrient(name: '트랜스지방', value: 0, unit: 'g', daily: 2),
@@ -316,7 +328,6 @@ class _AnalysisResultViewState extends State<AnalysisResultView> {
           ],
         ),
         const SizedBox(height: 10),
-
         Container(
           width: double.infinity,
           padding: const EdgeInsets.fromLTRB(16, 16, 16, 10),
@@ -325,7 +336,7 @@ class _AnalysisResultViewState extends State<AnalysisResultView> {
             borderRadius: BorderRadius.circular(12),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withOpacity(0.03),
+                color: Colors.black.withValues(alpha: 0.03),
                 blurRadius: 6,
                 offset: const Offset(0, 2),
               ),
@@ -334,7 +345,8 @@ class _AnalysisResultViewState extends State<AnalysisResultView> {
           child: Column(
             children: List.generate(nutrients.length, (i) {
               final n = nutrients[i];
-              final percent = (n.value / n.daily * 100).clamp(0, 100).toDouble();
+              final percent =
+                  (n.value / n.daily * 100).clamp(0, 100).toDouble();
               final isOver = percent > 20;
               final barColor = (n.baseColor != null)
                   ? n.baseColor!
@@ -386,8 +398,7 @@ class _AnalysisResultViewState extends State<AnalysisResultView> {
                               alignment: Alignment.centerLeft,
                               child: FractionallySizedBox(
                                 alignment: Alignment.centerLeft,
-                                widthFactor:
-                                    (percent / 100).clamp(0.0, 1.0),
+                                widthFactor: (percent / 100).clamp(0.0, 1.0),
                                 child: Container(
                                   height: 8,
                                   decoration: BoxDecoration(
@@ -408,12 +419,10 @@ class _AnalysisResultViewState extends State<AnalysisResultView> {
                     ],
                   ),
                   if (i != nutrients.length - 1)
-                    Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 12),
+                    const Padding(
+                      padding: EdgeInsets.symmetric(vertical: 12),
                       child: Divider(
-                          color: AppColors.softGray,
-                          thickness: 1,
-                          height: 1),
+                          color: AppColors.softGray, thickness: 1, height: 1),
                     ),
                 ],
               );

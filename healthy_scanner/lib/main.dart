@@ -4,13 +4,15 @@ import 'routes/app_routes.dart';
 import 'controller/navigation_controller.dart';
 import 'controller/scan_controller.dart';
 import 'controller/auth_controller.dart';
+import 'app_secure_storage.dart';
 
-
-void main() {
+void main() async {
   AppRoutes.validateRoutes();
   Get.put(NavigationController());
   Get.put(ScanController(), permanent: true);
   Get.put(AuthController());
+  WidgetsFlutterBinding.ensureInitialized();
+  await migrateAndCleanupSecureStorage();
   runApp(const MyApp());
 }
 

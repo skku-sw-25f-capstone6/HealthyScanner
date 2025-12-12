@@ -45,8 +45,7 @@ class _OnboardingDietViewState extends State<OnboardingDietView> {
                     height: 16,
                     margin: const EdgeInsets.symmetric(horizontal: 7),
                     decoration: BoxDecoration(
-                      color:
-                          isActive ? AppColors.mainRed : AppColors.softGray,
+                      color: isActive ? AppColors.mainRed : AppColors.softGray,
                       shape: BoxShape.circle,
                     ),
                   );
@@ -89,7 +88,7 @@ class _OnboardingDietViewState extends State<OnboardingDietView> {
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: DropdownButtonFormField<String>(
-                    value: selectedDiet,
+                    initialValue: selectedDiet,
                     icon: const Icon(
                       Icons.keyboard_arrow_down,
                       color: AppColors.charcoleGray,

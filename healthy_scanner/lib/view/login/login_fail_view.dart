@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:healthy_scanner/controller/navigation_controller.dart';
 import 'package:healthy_scanner/theme/app_colors.dart';
 import 'package:healthy_scanner/theme/theme_extensions.dart';
 import 'package:healthy_scanner/component/bottom_button.dart';
@@ -53,7 +55,8 @@ class LoginFailView extends StatelessWidget {
         child: BottomButton(
           text: '다시 로그인하기',
           onPressed: () {
-            // TODO: 다시 로그인하기 액션
+            final nav = Get.find<NavigationController>();
+            nav.goToLogin();
           },
         ),
       ),

@@ -39,10 +39,6 @@ class _ArchiveCalendarViewState extends State<ArchiveCalendarView> {
           child: Column(
             children: [
               const SizedBox(height: 13),
-              Text(
-                '스캔 기록',
-                style: context.bodyMedium,
-              ),
               _MonthHeader(
                 month: _currentMonth,
                 onPrev: () {
@@ -151,7 +147,7 @@ class _ArchiveCalendarViewState extends State<ArchiveCalendarView> {
                   );
                 },
               ),
-              const SizedBox(height: 240),
+              const SizedBox(height: 200),
             ],
           ),
         ),
