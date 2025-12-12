@@ -102,6 +102,35 @@ class ScanApi {
     return _parseScanAnalyzeResponse(res);
   }
 
+  Future<ScanAnalyzeResponse> analyzeImageOnly({
+    required String jwt,
+    required Uint8List imageBytes,
+  }) async {
+    final requestId = _uuid.v4();
+
+    final formData = FormData.fromMap({
+      'image': MultipartFile.fromBytes(
+        imageBytes,
+        filename: 'scan.jpg',
+        contentType: DioMediaType.parse('image/jpeg'),
+      ),
+    });
+
+    final res = await _dio.post(
+      '/v1/scan-history/image',
+      data: formData,
+      options: Options(
+        headers: {
+          'Authorization': 'Bearer $jwt',
+          'Accept': 'application/json',
+          'X-Request-ID': requestId,
+        },
+      ),
+    );
+
+    return _parseScanAnalyzeResponse(res);
+  }
+
   ScanAnalyzeResponse _parseScanAnalyzeResponse(Response res) {
     if (res.statusCode != 200 && res.statusCode != 201) {
       throw DioException(

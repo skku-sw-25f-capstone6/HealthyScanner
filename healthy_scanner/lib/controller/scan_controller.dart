@@ -235,25 +235,33 @@ class ScanController extends GetxController {
 
       late final ScanAnalyzeResponse result;
 
-      if (mode == ScanMode.barcode) {
-        // ✅ 바코드 API
-        result = await _scanApi.analyzeBarcodeImage(
-          jwt: jwt,
-          imageBytes: imageBytes,
-          barcode: barcode,
-        );
-      } else {
-        // ✅ 성분표 API
-        final label = (nutritionLabel ?? '').trim();
-        if (label.isEmpty) {
-          throw Exception('nutrition_label is empty');
-        }
+      switch (mode) {
+        case ScanMode.barcode:
+          result = await _scanApi.analyzeBarcodeImage(
+            jwt: jwt,
+            imageBytes: imageBytes,
+            barcode: barcode,
+          );
+          break;
 
-        result = await _scanApi.analyzeNutritionLabel(
-          jwt: jwt,
-          imageBytes: imageBytes,
-          nutritionLabel: label,
-        );
+        case ScanMode.ingredient:
+          final label = (nutritionLabel ?? '').trim();
+          if (label.isEmpty) {
+            throw Exception('nutrition_label is empty');
+          }
+          result = await _scanApi.analyzeNutritionLabel(
+            jwt: jwt,
+            imageBytes: imageBytes,
+            nutritionLabel: label,
+          );
+          break;
+
+        case ScanMode.image:
+          result = await _scanApi.analyzeImageOnly(
+            jwt: jwt,
+            imageBytes: imageBytes,
+          );
+          break;
       }
 
       _nav.goToAnalysisResult(scanId: result.scanId);
