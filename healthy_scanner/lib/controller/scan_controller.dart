@@ -223,7 +223,9 @@ class ScanController extends GetxController {
   /// 🔸 결과 분석
   Future<void> requestAnalyzeToServer({
     required Uint8List imageBytes,
+    required ScanMode mode,
     String? barcode,
+    String? nutritionLabel,
   }) async {
     try {
       final jwt = _auth.accessToken.value;
@@ -231,17 +233,33 @@ class ScanController extends GetxController {
         throw Exception('JWT is missing');
       }
 
-      final result = await _scanApi.analyze(
-        jwt: jwt,
-        imageBytes: imageBytes,
-        barcode: barcode,
-      );
+      late final ScanAnalyzeResponse result;
+
+      if (mode == ScanMode.barcode) {
+        // ✅ 바코드 API
+        result = await _scanApi.analyzeBarcodeImage(
+          jwt: jwt,
+          imageBytes: imageBytes,
+          barcode: barcode,
+        );
+      } else {
+        // ✅ 성분표 API
+        final label = (nutritionLabel ?? '').trim();
+        if (label.isEmpty) {
+          throw Exception('nutrition_label is empty');
+        }
+
+        result = await _scanApi.analyzeNutritionLabel(
+          jwt: jwt,
+          imageBytes: imageBytes,
+          nutritionLabel: label,
+        );
+      }
 
       _nav.goToAnalysisResult(scanId: result.scanId);
     } catch (e, s) {
       debugPrint('❌ [API] analyze failed: $e');
       debugPrint('❌ [API] stack: $s');
-
       _nav.goToScanFail();
     }
   }

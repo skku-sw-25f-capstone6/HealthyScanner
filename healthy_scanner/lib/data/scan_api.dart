@@ -39,7 +39,7 @@ class ScanApi {
               receiveTimeout: const Duration(seconds: 30),
             ));
 
-  Future<ScanAnalyzeResponse> analyze({
+  Future<ScanAnalyzeResponse> analyzeBarcodeImage({
     required String jwt,
     required Uint8List imageBytes,
     String? barcode,
@@ -68,6 +68,41 @@ class ScanApi {
       ),
     );
 
+    return _parseScanAnalyzeResponse(res);
+  }
+
+  Future<ScanAnalyzeResponse> analyzeNutritionLabel({
+    required String jwt,
+    required Uint8List imageBytes,
+    required String nutritionLabel,
+  }) async {
+    final requestId = _uuid.v4();
+
+    final formData = FormData.fromMap({
+      'nutrition_label': nutritionLabel,
+      'image': MultipartFile.fromBytes(
+        imageBytes,
+        filename: 'scan.jpg',
+        contentType: DioMediaType.parse('image/jpeg'),
+      ),
+    });
+
+    final res = await _dio.post(
+      '/v1/scan-history/nutrition_label',
+      data: formData,
+      options: Options(
+        headers: {
+          'Authorization': 'Bearer $jwt',
+          'Accept': 'application/json',
+          'X-Request-ID': requestId,
+        },
+      ),
+    );
+
+    return _parseScanAnalyzeResponse(res);
+  }
+
+  ScanAnalyzeResponse _parseScanAnalyzeResponse(Response res) {
     if (res.statusCode != 200 && res.statusCode != 201) {
       throw DioException(
         requestOptions: res.requestOptions,

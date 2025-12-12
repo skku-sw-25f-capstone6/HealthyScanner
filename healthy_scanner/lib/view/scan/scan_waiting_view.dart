@@ -1,4 +1,3 @@
-import 'dart:typed_data';
 import 'package:get/get.dart';
 import 'package:flutter/material.dart';
 import 'package:healthy_scanner/theme/app_colors.dart';
@@ -22,19 +21,13 @@ class ScanWaitingView extends GetView<ScanWaitingController> {
         children: [
           Positioned.fill(
             child: Container(
-              color: Colors.black,
-              child: imageBytes != null
-                  ? Center(
-                      child: Image.memory(
-                        imageBytes,
-                        fit: BoxFit.contain,
-                      ),
-                    )
-                  : Image.asset(
-                      'assets/images/sample_eggs.png',
-                      fit: BoxFit.contain,
-                    ),
-            ),
+                color: Colors.black,
+                child: Center(
+                  child: Image.memory(
+                    imageBytes,
+                    fit: BoxFit.contain,
+                  ),
+                )),
           ),
 
           Positioned.fill(
