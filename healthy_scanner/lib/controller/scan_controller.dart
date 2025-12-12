@@ -4,12 +4,17 @@ import 'package:image_picker/image_picker.dart';
 import 'package:get/get.dart';
 import 'package:healthy_scanner/component/scan_mode_button.dart';
 import 'package:healthy_scanner/controller/navigation_controller.dart';
+import 'package:healthy_scanner/controller/auth_controller.dart';
 import 'dart:io';
 import 'package:path_provider/path_provider.dart';
 import 'package:google_mlkit_barcode_scanning/google_mlkit_barcode_scanning.dart';
 import 'package:google_mlkit_text_recognition/google_mlkit_text_recognition.dart';
+import 'package:healthy_scanner/data/scan_api.dart';
 
 class ScanController extends GetxController {
+  final AuthController _auth = Get.find<AuthController>();
+  late final ScanApi _scanApi = ScanApi(baseUrl: 'https://healthy-scanner.com');
+
   final NavigationController _nav = Get.find<NavigationController>();
 
   final Rx<ScanMode> mode = ScanMode.ingredient.obs;
@@ -212,6 +217,32 @@ class ScanController extends GetxController {
     } finally {
       await textRecognizer.close();
       // await tempFile.delete();
+    }
+  }
+
+  /// 🔸 결과 분석
+  Future<void> requestAnalyzeToServer({
+    required Uint8List imageBytes,
+    String? barcode,
+  }) async {
+    try {
+      final jwt = _auth.accessToken.value;
+      if (jwt == null || jwt.isEmpty) {
+        throw Exception('JWT is missing');
+      }
+
+      final result = await _scanApi.analyze(
+        jwt: jwt,
+        imageBytes: imageBytes,
+        barcode: barcode,
+      );
+
+      _nav.goToAnalysisResult(scanId: result.scanId);
+    } catch (e, s) {
+      debugPrint('❌ [API] analyze failed: $e');
+      debugPrint('❌ [API] stack: $s');
+
+      _nav.goToScanFail();
     }
   }
 }

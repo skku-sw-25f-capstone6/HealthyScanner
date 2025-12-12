@@ -1,6 +1,7 @@
 // import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 // import '../controller/navigation_controller.dart';
+import '../controller/scan_waiting_controller.dart';
 
 // [view import]
 import '../view/splash/splash_view.dart';
@@ -83,6 +84,13 @@ class AppRoutes {
     //GetPage(name: onboarding, page: () => const OnboardingView()),
 
     GetPage(name: analysisResult, page: () => const AnalysisResultView()),
+    GetPage(
+      name: '/scan-waiting',
+      page: () => const ScanWaitingView(),
+      binding: BindingsBuilder(() {
+        Get.put(ScanWaitingController());
+      }),
+    ),
 
     // ✅ 온보딩 단계
     GetPage(name: onboardingAgree, page: () => const OnboardingAgreeView()),

@@ -136,7 +136,7 @@ class NavigationController extends SuperController {
   }
 
   /// ✅ 스캔 실패 → 실패 페이지
-  void goToScanFail() => Get.toNamed(AppRoutes.scanFail);
+  void goToScanFail() => Get.offNamed(AppRoutes.scanFail);
 
   /// ✅ 홈(로그인 등)으로 돌아가기
   void backToHome() => Get.offAllNamed(AppRoutes.loginMain);
@@ -146,13 +146,14 @@ class NavigationController extends SuperController {
   void goToMyPageDietEdit() => Get.toNamed(AppRoutes.myPageDietEdit);
   void goToMyPageDiseaseEdit() => Get.toNamed(AppRoutes.myPageDiseaseEdit);
   void goToMyPageAllergyEdit() => Get.toNamed(AppRoutes.myPageAllergyEdit);
-  void goToAnalysisResult() => Get.toNamed(AppRoutes.analysisResult);
 
   /// ✅ 뒤로가기
   void goBack() => Get.back();
   //void goToOnboarding() => Get.offAllNamed(AppRoutes.onboarding);
+
   void goToHome() => Get.offAllNamed(AppRoutes.home);
   void goToScanReady() => Get.toNamed(AppRoutes.scanReady);
+  void replaceToScanReady() => Get.offNamed(AppRoutes.scanReady);
 
   /// ✅ 로그아웃 (데이터 초기화 + 메인 이동)
   void logout() {
@@ -160,9 +161,11 @@ class NavigationController extends SuperController {
     debugPrint('👋 로그아웃 완료');
     Get.offAllNamed(AppRoutes.loginMain);
   }
-}
 
-void goToAnalysisResult() {
-  debugPrint('🚀 goToAnalysisResult() 호출됨');
-  Get.toNamed(AppRoutes.analysisResult);
+  void goToAnalysisResult({required String scanId}) {
+    Get.toNamed(
+      AppRoutes.analysisResult,
+      arguments: {'scanId': scanId},
+    );
+  }
 }

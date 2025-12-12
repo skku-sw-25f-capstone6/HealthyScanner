@@ -3,8 +3,9 @@ import 'package:get/get.dart';
 import 'package:flutter/material.dart';
 import 'package:healthy_scanner/theme/app_colors.dart';
 import 'package:healthy_scanner/theme/theme_extensions.dart';
+import 'package:healthy_scanner/controller/scan_waiting_controller.dart';
 
-class ScanWaitingView extends StatelessWidget {
+class ScanWaitingView extends GetView<ScanWaitingController> {
   const ScanWaitingView({
     super.key,
     this.onClose,
@@ -14,8 +15,7 @@ class ScanWaitingView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final args = Get.arguments as Map<String, dynamic>?;
-    final Uint8List? imageBytes = args?['imageBytes'] as Uint8List?;
+    final imageBytes = controller.imageBytes;
 
     return Scaffold(
       body: Stack(
@@ -66,7 +66,6 @@ class ScanWaitingView extends StatelessWidget {
                 Transform.scale(
                   scale: 2,
                   child: Image.asset(
-                    // TODO: gif 화질 개선 시 Lottie 등 활용
                     'assets/images/loading.gif',
                   ),
                 ),

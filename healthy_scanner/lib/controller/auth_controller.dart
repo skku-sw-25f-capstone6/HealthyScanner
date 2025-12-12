@@ -10,11 +10,11 @@ class AuthController extends GetxController {
   final nav = Get.find<NavigationController>();
   final FlutterSecureStorage storage = appSecureStorage;
 
-  final kakaoAccessToken = RxnString();
-  final kakaoRefreshToken = RxnString();
-  final kakaoTokenType = RxnString();
-  final kakaoExpiresIn = RxnInt();
-  final kakaoRefreshExpiresIn = RxnInt();
+  final accessToken = RxnString();
+  final refreshToken = RxnString();
+  final tokenType = RxnString();
+  final expiresIn = RxnInt();
+  final refreshExpiresIn = RxnInt();
 
   @override
   void onInit() {
@@ -23,22 +23,22 @@ class AuthController extends GetxController {
   }
 
   Future<void> _loadStoredTokens() async {
-    kakaoAccessToken.value = await storage.read(key: "kakao_access_token");
-    kakaoRefreshToken.value = await storage.read(key: "kakao_refresh_token");
-    kakaoTokenType.value = await storage.read(key: "kakao_token_type");
+    accessToken.value = await storage.read(key: "kakao_access_token");
+    refreshToken.value = await storage.read(key: "kakao_refresh_token");
+    tokenType.value = await storage.read(key: "kakao_token_type");
 
     final expiresInStr = await storage.read(key: "kakao_expires_in");
     final refreshExpiresInStr =
         await storage.read(key: "kakao_refresh_expires_in");
 
     if (expiresInStr != null) {
-      kakaoExpiresIn.value = int.tryParse(expiresInStr);
+      expiresIn.value = int.tryParse(expiresInStr);
     }
     if (refreshExpiresInStr != null) {
-      kakaoRefreshExpiresIn.value = int.tryParse(refreshExpiresInStr);
+      refreshExpiresIn.value = int.tryParse(refreshExpiresInStr);
     }
 
-    if (kakaoAccessToken.value != null) {
+    if (accessToken.value != null) {
       debugPrint("🔐 Saved Kakao access token found → Auto login");
       nav.goToHome();
     }
@@ -67,11 +67,11 @@ class AuthController extends GetxController {
     debugPrint("⏱ expires_in: $expiresIn");
     debugPrint("⏱ refresh_expires_in: $refreshExpiresIn");
 
-    kakaoAccessToken.value = accessToken;
-    kakaoRefreshToken.value = refreshToken;
-    kakaoTokenType.value = tokenType;
-    kakaoExpiresIn.value = expiresIn;
-    kakaoRefreshExpiresIn.value = refreshExpiresIn;
+    this.accessToken.value = accessToken;
+    this.refreshToken.value = refreshToken;
+    this.tokenType.value = tokenType;
+    this.expiresIn.value = expiresIn;
+    this.refreshExpiresIn.value = refreshExpiresIn;
 
     await storage.write(key: "kakao_access_token", value: accessToken);
     await storage.write(key: "kakao_refresh_token", value: refreshToken);
@@ -101,11 +101,11 @@ class AuthController extends GetxController {
     await storage.delete(key: "kakao_expires_in");
     await storage.delete(key: "kakao_refresh_expires_in");
 
-    kakaoAccessToken.value = null;
-    kakaoRefreshToken.value = null;
-    kakaoTokenType.value = null;
-    kakaoExpiresIn.value = null;
-    kakaoRefreshExpiresIn.value = null;
+    accessToken.value = null;
+    refreshToken.value = null;
+    tokenType.value = null;
+    expiresIn.value = null;
+    refreshExpiresIn.value = null;
 
     debugPrint("👋 로그아웃 완료");
 

@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:healthy_scanner/theme/app_colors.dart';
 import 'package:healthy_scanner/theme/theme_extensions.dart';
 import 'package:healthy_scanner/component/bottom_button.dart';
+import 'package:healthy_scanner/controller/navigation_controller.dart';
 
 class ScanFailView extends StatelessWidget {
   const ScanFailView({
@@ -13,6 +15,8 @@ class ScanFailView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final nav = Get.find<NavigationController>();
+
     return Scaffold(
       backgroundColor: Colors.white,
       body: SafeArea(
@@ -54,7 +58,7 @@ class ScanFailView extends StatelessWidget {
         child: BottomButton(
           text: '다시 시도하기',
           onPressed: () {
-            // TODO: ScanReadyView로 이동
+            nav.replaceToScanReady();
           },
         ),
       ),
