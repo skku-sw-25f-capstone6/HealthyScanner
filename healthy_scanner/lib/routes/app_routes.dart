@@ -8,7 +8,6 @@ import '../view/archive/archive_calendar.dart';
 import '../view/archive/archive_list.dart';
 import '../view/login/login_main_view.dart';
 import '../view/login/login_fail_view.dart';
-import '../view/scan/scan_check_view.dart';
 import '../view/scan/scan_crop_view.dart';
 import '../view/scan/scan_fail_view.dart';
 import '../view/scan/scan_ready_view.dart';
@@ -72,7 +71,6 @@ class AppRoutes {
     GetPage(name: loginFail, page: () => const LoginFailView()),
     GetPage(name: archiveCalendar, page: () => const ArchiveCalendarView()),
     GetPage(name: archiveList, page: () => const ArchiveListView()),
-    GetPage(name: scanCheck, page: () => const ScanCheckView()),
     GetPage(name: scanCrop, page: () => const ScanCropView()),
     GetPage(name: scanFail, page: () => const ScanFailView()),
     GetPage(
@@ -84,16 +82,15 @@ class AppRoutes {
     GetPage(name: home, page: () => const MainShellView()),
     //GetPage(name: onboarding, page: () => const OnboardingView()),
 
-  
     GetPage(name: analysisResult, page: () => const AnalysisResultView()),
-
 
     // ✅ 온보딩 단계
     GetPage(name: onboardingAgree, page: () => const OnboardingAgreeView()),
     GetPage(name: onboardingDiet, page: () => const OnboardingDietView()),
     GetPage(name: onboardingDisease, page: () => const OnboardingDiseaseView()),
     GetPage(name: onboardingAllergy, page: () => const OnboardingAllergyView()),
-    GetPage(name: onboardingComplete, page: () => const OnboardingCompleteView()),
+    GetPage(
+        name: onboardingComplete, page: () => const OnboardingCompleteView()),
 
     // ✅ 마이페이지 편집 화면
     GetPage(name: myPage, page: () => const MyPageView()),
