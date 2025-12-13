@@ -4,18 +4,23 @@ import 'package:healthy_scanner/theme/app_colors.dart';
 import 'package:healthy_scanner/theme/theme_extensions.dart';
 import 'package:healthy_scanner/component/bottom_button.dart';
 import 'package:healthy_scanner/controller/navigation_controller.dart';
+import 'package:healthy_scanner/controller/auth_controller.dart';
+import 'package:healthy_scanner/data/scan_fail_payload.dart';
+import 'package:healthy_scanner/component/scan_mode_button.dart';
 
 class ScanFailView extends StatelessWidget {
-  const ScanFailView({
-    super.key,
-    this.onRetry,
-  });
+  const ScanFailView({super.key, this.onRetry});
 
   final VoidCallback? onRetry;
 
   @override
   Widget build(BuildContext context) {
     final nav = Get.find<NavigationController>();
+    final auth = Get.find<AuthController>();
+
+    final payload = ScanFailPayload.fromArgs(
+      Get.arguments as Map<String, dynamic>?,
+    );
 
     return Scaffold(
       backgroundColor: Colors.white,
@@ -30,9 +35,8 @@ class ScanFailView extends StatelessWidget {
                 height: 128,
               ),
               const SizedBox(height: 17),
-              // TODO: 발생한 에러에 따라 분기 처리
               Text(
-                '오류가 발생했어요',
+                payload.title,
                 textAlign: TextAlign.center,
                 style: context.body2Bold.copyWith(
                   color: AppColors.staticBlack,
@@ -40,7 +44,7 @@ class ScanFailView extends StatelessWidget {
               ),
               const SizedBox(height: 5),
               Text(
-                '사진을 다시 촬영해 주세요',
+                payload.message,
                 textAlign: TextAlign.center,
                 style: context.caption1Medium.copyWith(
                   color: AppColors.staticBlack,
@@ -51,13 +55,21 @@ class ScanFailView extends StatelessWidget {
           ),
         ),
       ),
-
-      // 하단 버튼
       bottomNavigationBar: SafeArea(
         minimum: const EdgeInsets.fromLTRB(15, 0, 15, 10),
         child: BottomButton(
-          text: '다시 시도하기',
-          onPressed: () {
+          text: payload.forceLogout ? '다시 로그인하기' : '다시 시도하기',
+          onPressed: () async {
+            if (payload.forceLogout) {
+              await Get.find<AuthController>().logout();
+              return;
+            }
+
+            if (payload.suggestIngredientMode) {
+              nav.replaceToScanReady(initialMode: ScanMode.ingredient);
+              return;
+            }
+
             nav.replaceToScanReady();
           },
         ),

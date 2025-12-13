@@ -4,6 +4,8 @@ import 'dart:typed_data';
 import '../routes/app_routes.dart';
 import '../component/scan_mode_button.dart';
 import 'package:healthy_scanner/view/login/kakao_login_webview.dart';
+import 'package:healthy_scanner/data/scan_fail_payload.dart';
+import 'package:healthy_scanner/controller/scan_controller.dart';
 
 /// 📍 모든 페이지 전환을 중앙에서 관리하는 컨트롤러
 class NavigationController extends SuperController {
@@ -136,7 +138,10 @@ class NavigationController extends SuperController {
   }
 
   /// ✅ 스캔 실패 → 실패 페이지
-  void goToScanFail() => Get.offNamed(AppRoutes.scanFail);
+  void goToScanFail(ScanFailPayload payload) => Get.offNamed(
+        AppRoutes.scanFail,
+        arguments: payload.toArgs(),
+      );
 
   /// ✅ 홈(로그인 등)으로 돌아가기
   void backToHome() => Get.offAllNamed(AppRoutes.loginMain);
@@ -153,7 +158,12 @@ class NavigationController extends SuperController {
 
   void goToHome() => Get.offAllNamed(AppRoutes.home);
   void goToScanReady() => Get.toNamed(AppRoutes.scanReady);
-  void replaceToScanReady() => Get.offNamed(AppRoutes.scanReady);
+  void replaceToScanReady({ScanMode? initialMode}) {
+    if (initialMode != null) {
+      Get.find<ScanController>().changeMode(initialMode);
+    }
+    Get.offAllNamed(AppRoutes.scanReady);
+  }
 
   void goToAnalysisResult({required String scanId}) {
     Get.toNamed(
