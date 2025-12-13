@@ -1,6 +1,6 @@
-import 'dart:typed_data';
 import 'package:dio/dio.dart';
 import 'package:uuid/uuid.dart';
+import 'package:flutter/foundation.dart';
 
 class ScanAnalyzeResponse {
   final String scanId;
@@ -35,8 +35,9 @@ class ScanApi {
   }) : _dio = dio ??
             Dio(BaseOptions(
               baseUrl: baseUrl,
-              connectTimeout: const Duration(seconds: 15),
-              receiveTimeout: const Duration(seconds: 30),
+              connectTimeout: const Duration(seconds: 30),
+              receiveTimeout: const Duration(seconds: 120),
+              sendTimeout: const Duration(seconds: 60),
             ));
 
   Future<ScanAnalyzeResponse> analyzeBarcodeImage({
@@ -56,19 +57,27 @@ class ScanApi {
       ),
     });
 
-    final res = await _dio.post(
-      '/v1/scan-history/barcode_image',
-      data: formData,
-      options: Options(
-        headers: {
-          'Authorization': 'Bearer $jwt',
-          'Accept': 'application/json',
-          'X-Request-ID': requestId,
-        },
-      ),
-    );
+    try {
+      final res = await _dio.post(
+        '/v1/scan-history/barcode_image',
+        data: formData,
+        options: Options(
+          headers: {
+            'Authorization': 'Bearer $jwt',
+            'Accept': 'application/json',
+            'X-Request-ID': requestId,
+          },
+        ),
+      );
 
-    return _parseScanAnalyzeResponse(res);
+      return _parseScanAnalyzeResponse(res);
+    } on DioException catch (e) {
+      debugPrint('❌ [Barcode API]');
+      debugPrint('status: ${e.response?.statusCode}');
+      debugPrint('data: ${e.response?.data}');
+      debugPrint('headers: ${e.response?.headers}');
+      rethrow;
+    }
   }
 
   Future<ScanAnalyzeResponse> analyzeNutritionLabel({
@@ -87,19 +96,27 @@ class ScanApi {
       ),
     });
 
-    final res = await _dio.post(
-      '/v1/scan-history/nutrition_label',
-      data: formData,
-      options: Options(
-        headers: {
-          'Authorization': 'Bearer $jwt',
-          'Accept': 'application/json',
-          'X-Request-ID': requestId,
-        },
-      ),
-    );
+    try {
+      final res = await _dio.post(
+        '/v1/scan-history/nutrition_label',
+        data: formData,
+        options: Options(
+          headers: {
+            'Authorization': 'Bearer $jwt',
+            'Accept': 'application/json',
+            'X-Request-ID': requestId,
+          },
+        ),
+      );
 
-    return _parseScanAnalyzeResponse(res);
+      return _parseScanAnalyzeResponse(res);
+    } on DioException catch (e) {
+      debugPrint('❌ [NutritionLabel API]');
+      debugPrint('status: ${e.response?.statusCode}');
+      debugPrint('data: ${e.response?.data}');
+      debugPrint('headers: ${e.response?.headers}');
+      rethrow;
+    }
   }
 
   Future<ScanAnalyzeResponse> analyzeImageOnly({
@@ -116,19 +133,27 @@ class ScanApi {
       ),
     });
 
-    final res = await _dio.post(
-      '/v1/scan-history/image',
-      data: formData,
-      options: Options(
-        headers: {
-          'Authorization': 'Bearer $jwt',
-          'Accept': 'application/json',
-          'X-Request-ID': requestId,
-        },
-      ),
-    );
+    try {
+      final res = await _dio.post(
+        '/v1/scan-history/image',
+        data: formData,
+        options: Options(
+          headers: {
+            'Authorization': 'Bearer $jwt',
+            'Accept': 'application/json',
+            'X-Request-ID': requestId,
+          },
+        ),
+      );
 
-    return _parseScanAnalyzeResponse(res);
+      return _parseScanAnalyzeResponse(res);
+    } on DioException catch (e) {
+      debugPrint('❌ [ImageOnly API]');
+      debugPrint('status: ${e.response?.statusCode}');
+      debugPrint('data: ${e.response?.data}');
+      debugPrint('headers: ${e.response?.headers}');
+      rethrow;
+    }
   }
 
   ScanAnalyzeResponse _parseScanAnalyzeResponse(Response res) {

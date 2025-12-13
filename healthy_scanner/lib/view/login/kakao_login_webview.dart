@@ -56,6 +56,7 @@ class _KakaoLoginWebViewState extends State<KakaoLoginWebView> {
 
       final data = jsonDecode(bodyText) as Map<String, dynamic>;
 
+      final jwt = data["jwt"] as String?;
       final accessToken = data["access_token"] as String?;
       final refreshToken = data["refresh_token"] as String?;
       final tokenType = data["token_type"] as String?;
@@ -68,12 +69,14 @@ class _KakaoLoginWebViewState extends State<KakaoLoginWebView> {
       debugPrint("⏱ Parsed expires_in: $expiresIn");
       debugPrint("⏱ Parsed refresh_expires_in: $refreshExpiresIn");
 
-      if (accessToken != null &&
+      if (jwt != null &&
+          accessToken != null &&
           refreshToken != null &&
           tokenType != null &&
           expiresIn != null &&
           refreshExpiresIn != null) {
         await auth.onKakaoLoginCompleted(
+          jwt: jwt,
           accessToken: accessToken,
           refreshToken: refreshToken,
           tokenType: tokenType,

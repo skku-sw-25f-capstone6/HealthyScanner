@@ -79,7 +79,13 @@ class AppRoutes {
         page: () => const ScanReadyView(),
         transition: Transition.noTransition,
         transitionDuration: Duration.zero),
-    GetPage(name: scanWaiting, page: () => const ScanWaitingView()),
+    GetPage(
+      name: AppRoutes.scanWaiting,
+      page: () => const ScanWaitingView(),
+      binding: BindingsBuilder(() {
+        Get.lazyPut<ScanWaitingController>(() => ScanWaitingController());
+      }),
+    ),
     GetPage(name: home, page: () => const MainShellView()),
     //GetPage(name: onboarding, page: () => const OnboardingView()),
 

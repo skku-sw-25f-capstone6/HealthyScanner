@@ -228,10 +228,14 @@ class ScanController extends GetxController {
     String? nutritionLabel,
   }) async {
     try {
-      final jwt = _auth.accessToken.value;
-      if (jwt == null || jwt.isEmpty) {
-        throw Exception('JWT is missing');
-      }
+      final jwt = _auth.jwt.value;
+      if (jwt == null || jwt.isEmpty) throw Exception('JWT is missing');
+
+      // TODO: 디버깅 로그 삭제
+      debugPrint(
+        'JWT prefix: ${jwt.substring(0, jwt.length > 20 ? 20 : jwt.length)}',
+      );
+      debugPrint('JWT hasDot: ${jwt.contains('.')}');
 
       late final ScanAnalyzeResponse result;
 

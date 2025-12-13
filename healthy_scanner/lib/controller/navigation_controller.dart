@@ -155,13 +155,6 @@ class NavigationController extends SuperController {
   void goToScanReady() => Get.toNamed(AppRoutes.scanReady);
   void replaceToScanReady() => Get.offNamed(AppRoutes.scanReady);
 
-  /// ✅ 로그아웃 (데이터 초기화 + 메인 이동)
-  void logout() {
-    // TODO: 여기에 SharedPref, Token 제거 등의 로직 추가 가능
-    debugPrint('👋 로그아웃 완료');
-    Get.offAllNamed(AppRoutes.loginMain);
-  }
-
   void goToAnalysisResult({required String scanId}) {
     Get.toNamed(
       AppRoutes.analysisResult,
