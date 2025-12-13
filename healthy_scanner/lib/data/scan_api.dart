@@ -73,9 +73,9 @@ class ScanApi {
       return _parseScanAnalyzeResponse(res);
     } on DioException catch (e) {
       debugPrint('❌ [Barcode API]');
-      debugPrint('status: ${e.response?.statusCode}');
-      debugPrint('data: ${e.response?.data}');
-      debugPrint('headers: ${e.response?.headers}');
+      debugPrint('🔍 status: ${e.response?.statusCode}');
+      debugPrint('🔍 data: ${e.response?.data}');
+      debugPrint('🔍 headers: ${e.response?.headers}');
       rethrow;
     }
   }
@@ -112,9 +112,9 @@ class ScanApi {
       return _parseScanAnalyzeResponse(res);
     } on DioException catch (e) {
       debugPrint('❌ [NutritionLabel API]');
-      debugPrint('status: ${e.response?.statusCode}');
-      debugPrint('data: ${e.response?.data}');
-      debugPrint('headers: ${e.response?.headers}');
+      debugPrint('📝 status: ${e.response?.statusCode}');
+      debugPrint('📝 data: ${e.response?.data}');
+      debugPrint('📝 headers: ${e.response?.headers}');
       rethrow;
     }
   }
@@ -149,9 +149,9 @@ class ScanApi {
       return _parseScanAnalyzeResponse(res);
     } on DioException catch (e) {
       debugPrint('❌ [ImageOnly API]');
-      debugPrint('status: ${e.response?.statusCode}');
-      debugPrint('data: ${e.response?.data}');
-      debugPrint('headers: ${e.response?.headers}');
+      debugPrint('🖼️ status: ${e.response?.statusCode}');
+      debugPrint('🖼️ data: ${e.response?.data}');
+      debugPrint('🖼️ headers: ${e.response?.headers}');
       rethrow;
     }
   }

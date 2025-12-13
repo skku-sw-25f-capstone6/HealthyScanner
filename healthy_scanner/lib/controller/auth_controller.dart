@@ -93,7 +93,7 @@ class AuthController extends GetxController {
   /// 3) 로그인 실패 처리
   /// ----------------------------------------------------------
   void onLoginFailed() {
-    debugPrint("❌ 카카오 로그인 실패");
+    debugPrint("❌ Kakao Login Failed");
     // nav.goToLoginFail();
   }
 
@@ -118,7 +118,7 @@ class AuthController extends GetxController {
     expiresIn.value = null;
     refreshExpiresIn.value = null;
 
-    debugPrint("👋 로그아웃 완료");
+    debugPrint("👋 Logout successed");
 
     nav.goToLogin();
   }

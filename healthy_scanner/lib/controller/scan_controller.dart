@@ -54,9 +54,9 @@ class ScanController extends GetxController {
 
       cameraController = controller;
       initializeControllerFuture = controller.initialize();
-      update(); // GetBuilder용
+      update();
     } catch (e) {
-      debugPrint('카메라 초기화 실패: $e');
+      debugPrint('❌ [Camera] Failed to Initialize: $e');
     }
   }
 
@@ -77,7 +77,7 @@ class ScanController extends GetxController {
     isTakingPicture.value = true;
     try {
       final XFile file = await controller.takePicture();
-      debugPrint('사진 저장 경로: ${file.path}');
+      debugPrint('📷 [Camera] Saved Image Path: ${file.path}');
 
       lastImagePath.value = file.path;
 
@@ -86,7 +86,7 @@ class ScanController extends GetxController {
         mode: mode.value,
       );
     } catch (e) {
-      debugPrint('사진 촬영 실패: $e');
+      debugPrint('❌ [Camera] Failed to Take a Picture: $e');
     } finally {
       isTakingPicture.value = false;
     }
@@ -102,11 +102,11 @@ class ScanController extends GetxController {
       );
 
       if (image == null) {
-        debugPrint('갤러리 선택 취소됨');
+        debugPrint('🖼️ [Gallery] Cancel to Open Gallery');
         return;
       }
 
-      debugPrint('갤러리에서 선택한 이미지 경로: ${image.path}');
+      debugPrint('🖼️ [Gallery] Selected Image Path: ${image.path}');
       lastImagePath.value = image.path;
 
       _nav.goToScanCrop(
@@ -114,7 +114,7 @@ class ScanController extends GetxController {
         mode: mode.value,
       );
     } catch (e) {
-      debugPrint('갤러리 열기 실패: $e');
+      debugPrint('❌ [Gallery] Failed to Open Gallery: $e');
     }
   }
 
