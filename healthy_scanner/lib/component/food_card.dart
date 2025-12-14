@@ -50,12 +50,7 @@ class FoodCard extends StatelessWidget {
               // 왼쪽 식품 이미지
               ClipRRect(
                 borderRadius: BorderRadius.circular(8),
-                child: Image.asset(
-                  imageAsset,
-                  width: 110,
-                  height: 110,
-                  fit: BoxFit.cover,
-                ),
+                child: _buildFoodImage(),
               ),
               const SizedBox(width: 12),
 
@@ -84,15 +79,16 @@ class FoodCard extends StatelessWidget {
                         const SizedBox(width: 8),
 
                         // 경고 아이콘
-                        SizedBox(
-                          width: 25,
-                          height: 23,
-                          child: Image.asset(
-                            'assets/icons/ic_warning.png',
+                        if (warningAsset != null)
+                          SizedBox(
                             width: 25,
                             height: 23,
+                            child: Image.asset(
+                              warningAsset!,
+                              width: 25,
+                              height: 23,
+                            ),
                           ),
-                        ),
                       ],
                     ),
 
@@ -140,6 +136,46 @@ class FoodCard extends StatelessWidget {
           ),
         ),
       ),
+    );
+  }
+
+  Widget _buildFoodImage() {
+    final path = imageAsset.trim();
+
+    if (path.isEmpty) {
+      // ✅ 서버가 url을 못 줬거나 빈 값이면 placeholder
+      return Container(
+        width: 110,
+        height: 110,
+        color: AppColors.stoneGray.withValues(alpha: 0.2),
+        alignment: Alignment.center,
+        child: const Icon(Icons.image_not_supported),
+      );
+    }
+
+    final isNetwork = path.startsWith('http://') || path.startsWith('https://');
+
+    if (isNetwork) {
+      return Image.network(
+        path,
+        width: 110,
+        height: 110,
+        fit: BoxFit.cover,
+        errorBuilder: (_, __, ___) => Container(
+          width: 110,
+          height: 110,
+          color: AppColors.stoneGray.withValues(alpha: 0.2),
+          alignment: Alignment.center,
+          child: const Icon(Icons.broken_image),
+        ),
+      );
+    }
+
+    return Image.asset(
+      path,
+      width: 110,
+      height: 110,
+      fit: BoxFit.cover,
     );
   }
 }
