@@ -71,7 +71,14 @@ class AppRoutes {
         transitionDuration: Duration.zero),
     GetPage(name: loginFail, page: () => const LoginFailView()),
     GetPage(name: archiveCalendar, page: () => const ArchiveCalendarView()),
-    GetPage(name: archiveList, page: () => const ArchiveListView()),
+    GetPage(
+      name: archiveList,
+      page: () {
+        final DateTime selectedDate =
+            (Get.arguments as DateTime?) ?? DateTime.now();
+        return ArchiveListView(selectedDate: selectedDate);
+      },
+    ),
     GetPage(name: scanCrop, page: () => const ScanCropView()),
     GetPage(name: scanFail, page: () => const ScanFailView()),
     GetPage(
