@@ -166,7 +166,7 @@ class NavigationController extends SuperController {
   }
 
   void goToAnalysisResult({required String scanId}) {
-    Get.toNamed(
+    Get.offNamed(
       AppRoutes.analysisResult,
       arguments: {'scanId': scanId},
     );
