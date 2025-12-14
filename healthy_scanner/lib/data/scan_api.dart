@@ -4,23 +4,28 @@ import 'package:flutter/foundation.dart';
 
 class ScanAnalyzeResponse {
   final String scanId;
-  final String productId;
-  final String nutritionId;
-  final String ingredientId;
+  final String? productId;
+  final String? nutritionId;
+  final String? ingredientId;
 
   ScanAnalyzeResponse({
     required this.scanId,
-    required this.productId,
-    required this.nutritionId,
-    required this.ingredientId,
+    this.productId,
+    this.nutritionId,
+    this.ingredientId,
   });
 
   factory ScanAnalyzeResponse.fromJson(Map<String, dynamic> json) {
+    final scanId = json['scan_id']?.toString();
+    if (scanId == null || scanId.isEmpty) {
+      throw Exception('Missing scan_id in response: $json');
+    }
+
     return ScanAnalyzeResponse(
-      scanId: json['scan_id'] as String,
-      productId: json['product_id'] as String,
-      nutritionId: json['nutrition_id'] as String,
-      ingredientId: json['ingredient_id'] as String,
+      scanId: scanId,
+      productId: json['product_id']?.toString(),
+      nutritionId: json['nutrition_id']?.toString(),
+      ingredientId: json['ingredient_id']?.toString(),
     );
   }
 }
@@ -59,7 +64,7 @@ class ScanApi {
 
     try {
       final res = await _dio.post(
-        '/v1/scan-history/barcode_image',
+        '/v1/scan/barcode_image',
         data: formData,
         options: Options(
           headers: {
@@ -98,7 +103,7 @@ class ScanApi {
 
     try {
       final res = await _dio.post(
-        '/v1/scan-history/nutrition_label',
+        '/v1/scan/nutrition_label',
         data: formData,
         options: Options(
           headers: {
@@ -135,7 +140,7 @@ class ScanApi {
 
     try {
       final res = await _dio.post(
-        '/v1/scan-history/image',
+        '/v1/scan/image',
         data: formData,
         options: Options(
           headers: {
@@ -167,6 +172,7 @@ class ScanApi {
     }
 
     final data = res.data;
+    debugPrint('✅ [API] analyze success raw body: $data');
     if (data is! Map<String, dynamic>) {
       throw Exception('Unexpected response body: $data');
     }
