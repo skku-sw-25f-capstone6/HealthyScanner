@@ -120,36 +120,78 @@ class HomeView extends StatelessWidget {
                         const SizedBox(height: 20),
                         const Center(child: CircularProgressIndicator()),
                       ] else if (home.errorMessage.value != null) ...[
-                        Text(home.errorMessage.value!,
-                            style: context.bodyMedium),
+                        Text(
+                          "정보를 불러올 수 없어요",
+                          style: context.bodyMedium,
+                        ),
                         const SizedBox(height: 12),
                         ElevatedButton(
                           onPressed: home.fetchHome,
-                          child: const Text('다시 시도'),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: AppColors.peachRed,
+                            foregroundColor: AppColors.mainRed,
+                            textStyle: context.bodyBold,
+                          ),
+                          child: const Text('다시 시도하기'),
                         ),
                       ] else ...[
-                        if (items.isNotEmpty)
+                        if (items.isEmpty)
+                          Padding(
+                            padding: const EdgeInsets.only(top: 60),
+                            child: Column(
+                              children: [
+                                Text(
+                                  '최근 찍먹 기록이 없네요.',
+                                  style: context.bodyMedium.copyWith(
+                                    color: AppColors.stoneGray,
+                                  ),
+                                  textAlign: TextAlign.center,
+                                ),
+                                const SizedBox(height: 6),
+                                Text(
+                                  '식품을 스캔해 볼까요?',
+                                  style: context.body2Bold.copyWith(
+                                    color: AppColors.stoneGray,
+                                  ),
+                                  textAlign: TextAlign.center,
+                                ),
+                                const SizedBox(height: 50),
+                                ElevatedButton(
+                                  onPressed: () =>
+                                      Get.find<NavigationController>()
+                                          .goToScanReady(),
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: AppColors.peachRed,
+                                    foregroundColor: AppColors.mainRed,
+                                    textStyle: context.bodyBold,
+                                  ),
+                                  child: const Text('스캔 시작하기'),
+                                ),
+                              ],
+                            ),
+                          )
+                        else ...[
                           FoodCard(
                             title: items[0].name,
                             category: items[0].category,
                             message: items[0].summary,
-                            imageAsset: items[0].url, // ✅ url을 넘김
-                            warningAsset:
-                                'assets/icons/ic_warning.png', // 필요 시 조건 처리
+                            imageAsset: items[0].url,
+                            warningAsset: 'assets/icons/ic_warning.png',
                             lightState: items[0].riskLevel,
                             onTap: () {},
                           ),
-                        const SizedBox(height: 15),
-                        if (items.length > 1)
-                          FoodCard(
-                            title: items[1].name,
-                            category: items[1].category,
-                            message: items[1].summary,
-                            imageAsset: items[1].url,
-                            warningAsset: 'assets/icons/ic_warning.png',
-                            lightState: items[1].riskLevel,
-                            onTap: () {},
-                          ),
+                          const SizedBox(height: 15),
+                          if (items.length > 1)
+                            FoodCard(
+                              title: items[1].name,
+                              category: items[1].category,
+                              message: items[1].summary,
+                              imageAsset: items[1].url,
+                              warningAsset: 'assets/icons/ic_warning.png',
+                              lightState: items[1].riskLevel,
+                              onTap: () {},
+                            ),
+                        ],
                       ],
                     ],
                   ),
