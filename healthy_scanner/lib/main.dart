@@ -7,11 +7,14 @@ import 'controller/auth_controller.dart';
 import 'controller/home_controller.dart';
 import 'data/home_api.dart';
 import 'core/app_secure_storage.dart';
+import 'core/api_client.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   AppRoutes.validateRoutes();
   await migrateAndCleanupSecureStorage();
+
+  ApiClient.setupInterceptors();
 
   Get.put(NavigationController(), permanent: true);
   Get.put(AuthController(), permanent: true);

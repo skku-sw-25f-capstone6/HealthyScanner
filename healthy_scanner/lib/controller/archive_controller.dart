@@ -16,7 +16,7 @@ class ArchiveListController extends GetxController {
 
     try {
       final auth = Get.find<AuthController>();
-      final String jwt = auth.jwt.value ?? '';
+      final String jwt = auth.appAccess.value ?? '';
       if (jwt.isEmpty) throw Exception('JWT is missing');
 
       final result = await fetchScanHistory(

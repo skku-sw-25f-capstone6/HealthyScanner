@@ -234,7 +234,7 @@ class ScanController extends GetxController {
     String? nutritionLabel,
   }) async {
     try {
-      final jwt = _auth.jwt.value;
+      final jwt = _auth.appAccess.value;
       if (jwt == null || jwt.isEmpty) throw Exception('JWT is missing');
 
       late final ScanAnalyzeResponse result;

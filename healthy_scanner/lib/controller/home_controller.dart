@@ -23,13 +23,13 @@ class HomeController extends GetxController {
   void onInit() {
     super.onInit();
 
-    _jwtWorker = ever<String?>(_auth.jwt, (jwt) {
+    _jwtWorker = ever<String?>(_auth.appAccess, (jwt) {
       if (jwt != null && jwt.isNotEmpty) {
         fetchHome();
       }
     });
 
-    final jwt = _auth.jwt.value;
+    final jwt = _auth.appAccess.value;
     if (jwt != null && jwt.isNotEmpty) {
       fetchHome();
     }
@@ -47,7 +47,7 @@ class HomeController extends GetxController {
 
     try {
       final auth = Get.find<AuthController>();
-      final jwt = auth.jwt.value;
+      final jwt = auth.appAccess.value;
       if (jwt == null || jwt.isEmpty) throw Exception('JWT is missing');
 
       final reqId = const Uuid().v4();
