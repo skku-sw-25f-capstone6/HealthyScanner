@@ -134,7 +134,29 @@ class MyPageView extends StatelessWidget {
                       _divider(),
                       _buildSettingItem(
                         label: '로그아웃',
-                        onTap: () => Get.find<AuthController>().logout(),
+                        // onTap: () => Get.find<AuthController>().logout(),
+
+                        // TODO: 디버깅 코드 삭제하고 위 코드 주석 해제
+                        onTap: () async {
+                          final auth = Get.find<AuthController>();
+
+                          // 🔴 1. 로그아웃 전 JWT 백업
+                          final oldJwt = auth.jwt.value;
+                          if (oldJwt == null) {
+                            debugPrint("⚠️ No JWT to test");
+                            await auth.logout();
+                            return;
+                          }
+
+                          debugPrint(
+                              "🧪 oldJwt prefix = ${oldJwt.substring(0, 15)}");
+
+                          // 🔴 2. 로그아웃 실행
+                          await auth.logout();
+
+                          // 🔴 3. 로그아웃 후 서버에서 차단됐는지 확인
+                          await auth.debugVerifyOldJwtRejected(oldJwt);
+                        },
                       ),
                       _divider(),
                       _buildSettingItem(
@@ -153,9 +175,10 @@ class MyPageView extends StatelessWidget {
                                   child: const Text('취소'),
                                 ),
                                 TextButton(
-                                  onPressed: () {
+                                  onPressed: () async {
                                     Get.back();
-                                    Get.find<AuthController>().logout();
+                                    // await Get.find<AuthController>()
+                                    //     .withdrawAccount();
                                   },
                                   child: const Text('탈퇴'),
                                 ),

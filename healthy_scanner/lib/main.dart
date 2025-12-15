@@ -6,7 +6,7 @@ import 'controller/scan_controller.dart';
 import 'controller/auth_controller.dart';
 import 'controller/home_controller.dart';
 import 'data/home_api.dart';
-import 'app_secure_storage.dart';
+import 'core/app_secure_storage.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
