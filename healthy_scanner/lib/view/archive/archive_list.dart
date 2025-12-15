@@ -83,7 +83,8 @@ class ArchiveListView extends StatelessWidget {
                 }
 
                 if (c.errorMessage.value.isNotEmpty) {
-                  debugPrint("❌ Failed to make list: $c.errorMessage.value");
+                  debugPrint("❌ Failed to make list");
+                  debugPrint(c.errorMessage.string);
 
                   return const SliverToBoxAdapter(
                     child: Padding(

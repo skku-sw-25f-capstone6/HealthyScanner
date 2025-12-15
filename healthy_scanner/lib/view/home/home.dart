@@ -120,7 +120,7 @@ class HomeView extends StatelessWidget {
                         const SizedBox(height: 20),
                         const Center(
                             child: CircularProgressIndicator(
-                          color: AppColors.mainRed,
+                          color: AppColors.brownGray,
                         )),
                       ] else if (home.errorMessage.value != null) ...[
                         Text(
