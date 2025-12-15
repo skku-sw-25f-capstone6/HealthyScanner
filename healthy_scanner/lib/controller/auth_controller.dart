@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
+import 'package:dio/dio.dart' as dio;
 import 'package:healthy_scanner/controller/navigation_controller.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:healthy_scanner/core/app_secure_storage.dart';
@@ -133,7 +134,11 @@ class AuthController extends GetxController {
 
   Future<void> _callLogoutApi() async {
     try {
-      final res = await ApiClient.dioClient.post("/auth/logout");
+      final res = await ApiClient.dioClient.post(
+        "/auth/logout",
+        options: dio.Options(extra: {"skipRefresh": true}),
+      );
+
       debugPrint("🚪 Logout API ok: ${res.statusCode}");
     } catch (e) {
       debugPrint("⚠️ Logout API failed but continue: $e");
@@ -167,7 +172,7 @@ class AuthController extends GetxController {
 
     try {
       final res = await ApiClient.dioClient.post(
-        "/v1/auth/refresh",
+        "/auth/refresh",
         data: {"app_refresh_token": refresh},
       );
 

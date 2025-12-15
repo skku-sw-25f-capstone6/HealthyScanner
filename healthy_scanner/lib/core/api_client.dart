@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:flutter/foundation.dart';
 import 'package:dio/dio.dart' as dio;
 import 'package:get/get.dart';
 import 'package:healthy_scanner/core/app_secure_storage.dart';
@@ -8,7 +9,7 @@ class ApiClient {
   ApiClient._();
 
   static const String baseUrl = "https://healthy-scanner.com";
-  static const String refreshPath = "/v1/auth/refresh";
+  static const String refreshPath = "/auth/refresh";
 
   static final dio.Dio dioClient = dio.Dio(
     dio.BaseOptions(
@@ -28,17 +29,34 @@ class ApiClient {
     dioClient.interceptors.add(
       dio.InterceptorsWrapper(
         onRequest: (options, handler) async {
+          if (options.path == refreshPath) return handler.next(options);
+
           final token = await appSecureStorage.read(key: "jwt");
           if (token != null && token.isNotEmpty) {
             options.headers["Authorization"] = "Bearer $token";
           }
+
+          debugPrint(
+              "➡️ ${options.method} ${options.path} auth=${options.headers["Authorization"]}");
+
           return handler.next(options);
         },
         onError: (e, handler) async {
+          if (e.requestOptions.extra["skipRefresh"] == true) {
+            return handler.next(e);
+          }
+
           final status = e.response?.statusCode;
           final path = e.requestOptions.path;
 
           if (path == refreshPath) {
+            return handler.next(e);
+          }
+
+          final alreadyRetried = e.requestOptions.extra["__retried"] == true;
+          if (status == 401 && alreadyRetried) {
+            final auth = Get.find<AuthController>();
+            await auth.logout();
             return handler.next(e);
           }
 
@@ -116,14 +134,11 @@ class ApiClient {
     final options = dio.Options(
       method: requestOptions.method,
       headers: headers,
-      responseType: requestOptions.responseType,
-      contentType: requestOptions.contentType,
-      validateStatus: requestOptions.validateStatus,
-      receiveTimeout: requestOptions.receiveTimeout,
-      sendTimeout: requestOptions.sendTimeout,
+      extra: Map<String, dynamic>.from(requestOptions.extra)
+        ..["__retried"] = true,
     );
 
-    return dioClient.request<dynamic>(
+    return dioClient.request(
       requestOptions.path,
       data: requestOptions.data,
       queryParameters: requestOptions.queryParameters,
