@@ -177,8 +177,8 @@ class MyPageView extends StatelessWidget {
                                 TextButton(
                                   onPressed: () async {
                                     Get.back();
-                                    // await Get.find<AuthController>()
-                                    //     .withdrawAccount();
+                                    await Get.find<AuthController>()
+                                        .withdrawAccount();
                                   },
                                   child: const Text('탈퇴'),
                                 ),

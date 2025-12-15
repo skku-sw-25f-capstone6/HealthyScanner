@@ -162,4 +162,36 @@ class AuthController extends GetxController {
       );
     }
   }
+
+  /// ----------------------------------------------------------
+  /// 5) 계정 탈퇴(연동 해제)
+  /// ----------------------------------------------------------
+  Future<void> withdrawAccount() async {
+    try {
+      final res = await ApiClient.dio.delete("/auth/unlink");
+
+      debugPrint("🗑️ Withdraw API ok: ${res.statusCode}, body=${res.data}");
+
+      await logout();
+    } on DioException catch (e) {
+      debugPrint(
+        "❌ Withdraw API failed: ${e.response?.statusCode} ${e.response?.data}",
+      );
+
+      // 사용자에게 알림(원하면 문구 수정)
+      Get.snackbar(
+        "계정 탈퇴 실패",
+        "잠시 후 다시 시도해주세요.",
+        snackPosition: SnackPosition.BOTTOM,
+      );
+    } catch (e) {
+      debugPrint("❌ Withdraw API unknown error: $e");
+
+      Get.snackbar(
+        "계정 탈퇴 실패",
+        "알 수 없는 오류가 발생했어요.",
+        snackPosition: SnackPosition.BOTTOM,
+      );
+    }
+  }
 }

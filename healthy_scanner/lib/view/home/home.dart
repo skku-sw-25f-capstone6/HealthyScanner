@@ -118,7 +118,10 @@ class HomeView extends StatelessWidget {
                     children: [
                       if (home.isLoading.value) ...[
                         const SizedBox(height: 20),
-                        const Center(child: CircularProgressIndicator()),
+                        const Center(
+                            child: CircularProgressIndicator(
+                          color: AppColors.mainRed,
+                        )),
                       ] else if (home.errorMessage.value != null) ...[
                         Text(
                           "정보를 불러올 수 없어요",
