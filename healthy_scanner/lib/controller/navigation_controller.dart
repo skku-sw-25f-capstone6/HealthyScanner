@@ -6,6 +6,7 @@ import '../component/scan_mode_button.dart';
 import 'package:healthy_scanner/view/login/kakao_login_webview.dart';
 import 'package:healthy_scanner/data/scan_fail_payload.dart';
 import 'package:healthy_scanner/controller/scan_controller.dart';
+import 'package:healthy_scanner/controller/home_controller.dart';
 
 /// 📍 모든 페이지 전환을 중앙에서 관리하는 컨트롤러
 class NavigationController extends SuperController {
@@ -156,7 +157,16 @@ class NavigationController extends SuperController {
   void goBack() => Get.back();
   //void goToOnboarding() => Get.offAllNamed(AppRoutes.onboarding);
 
-  void goToHome() => Get.offAllNamed(AppRoutes.home);
+  void goToHome() {
+    Get.offAllNamed(AppRoutes.home);
+
+    Future.microtask(() {
+      if (Get.isRegistered<HomeController>()) {
+        Get.find<HomeController>().fetchHome();
+      }
+    });
+  }
+
   void goToScanReady() => Get.toNamed(AppRoutes.scanReady);
   void replaceToScanReady({ScanMode? initialMode}) {
     if (initialMode != null) {

@@ -143,7 +143,6 @@ class FoodCard extends StatelessWidget {
     final path = imageAsset.trim();
 
     if (path.isEmpty) {
-      // ✅ 서버가 url을 못 줬거나 빈 값이면 placeholder
       return Container(
         width: 110,
         height: 110,
@@ -153,11 +152,19 @@ class FoodCard extends StatelessWidget {
       );
     }
 
-    final isNetwork = path.startsWith('http://') || path.startsWith('https://');
+    final isNetwork = path.startsWith('http://') ||
+        path.startsWith('https://') ||
+        path.startsWith('/static/') ||
+        path.startsWith('static/');
 
     if (isNetwork) {
+      final normalizedPath = path.startsWith('static/') ? '/$path' : path;
+      final url = normalizedPath.startsWith('/static/')
+          ? 'https://healthy-scanner.com$normalizedPath'
+          : normalizedPath;
+
       return Image.network(
-        path,
+        url,
         width: 110,
         height: 110,
         fit: BoxFit.cover,

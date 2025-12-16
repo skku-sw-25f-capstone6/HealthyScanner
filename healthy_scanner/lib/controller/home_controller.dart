@@ -50,17 +50,43 @@ class HomeController extends GetxController {
       final jwt = auth.appAccess.value;
       if (jwt == null || jwt.isEmpty) throw Exception('JWT is missing');
 
+      debugPrint('🏠 [HOME] calling API...');
+
       final reqId = const Uuid().v4();
       final res = await _api.fetchHome(jwt: jwt, requestId: reqId);
+
       debugPrint(
           'home res score=${res.todayScore}, firstName=${res.scan.firstOrNull?.name}, firstUrl=${res.scan.firstOrNull?.url}');
 
+      final normalized = res.scan.take(2).map((it) {
+        return ScanItem(
+          name: it.name,
+          category: it.category,
+          riskLevel: it.riskLevel,
+          summary: it.summary,
+          url: _resolveUrl('healthy-scanner.com', it.url),
+        );
+      }).toList();
+
       todayScore.value = res.todayScore;
-      scanItems.assignAll(res.scan.take(2).toList());
+      scanItems.assignAll(normalized);
     } catch (e) {
+      debugPrint('❌ [HOME] fetchHome failed');
+      debugPrint('❌ [HOME] error=$e');
       errorMessage.value = e.toString();
     } finally {
       isLoading.value = false;
     }
+  }
+
+  String _resolveUrl(String baseHost, String raw) {
+    final p = raw.trim();
+    if (p.isEmpty) return p;
+
+    if (p.startsWith('http://') || p.startsWith('https://')) return p;
+
+    final normalizedPath = p.startsWith('static/') ? '/$p' : p;
+
+    return Uri.https(baseHost, normalizedPath).toString();
   }
 }

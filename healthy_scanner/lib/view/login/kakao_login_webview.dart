@@ -33,7 +33,15 @@ class _KakaoLoginWebViewState extends State<KakaoLoginWebView> {
           },
           onPageFinished: (url) async {
             debugPrint("🔎 WebView loaded: $url");
-            if (url.contains('/auth/kakao/callback')) {
+
+            final uri = Uri.tryParse(url);
+            if (uri == null) return;
+
+            final isRealCallback = uri.scheme == 'https' &&
+                uri.host == 'healthy-scanner.com' &&
+                uri.path == '/auth/kakao/callback';
+
+            if (isRealCallback) {
               await _handleCallbackPage();
             }
           },
