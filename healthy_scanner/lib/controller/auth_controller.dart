@@ -134,10 +134,16 @@ class AuthController extends GetxController {
 
   Future<void> _callLogoutApi() async {
     try {
+      final token = await storage.read(key: "jwt");
       final res = await ApiClient.dioClient.post(
         "/auth/logout",
-        options: dio.Options(extra: {"skipRefresh": true}),
+        options: dio.Options(
+          headers: {"Authorization": "Bearer $token"},
+          extra: {"skipRefresh": true},
+        ),
       );
+
+      debugPrint("🚪 Logout API status=${res.statusCode} body=${res.data}");
 
       debugPrint("🚪 Logout API ok: ${res.statusCode}");
     } catch (e) {
@@ -172,7 +178,7 @@ class AuthController extends GetxController {
 
     try {
       final res = await ApiClient.dioClient.post(
-        "/auth/refresh",
+        "/v1/auth/refresh",
         data: {"app_refresh_token": refresh},
       );
 

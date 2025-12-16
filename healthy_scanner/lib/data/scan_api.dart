@@ -1,6 +1,8 @@
-import 'package:dio/dio.dart';
-import 'package:uuid/uuid.dart';
 import 'package:flutter/foundation.dart';
+import 'package:uuid/uuid.dart';
+import 'package:dio/dio.dart' as dio;
+import 'package:get/get.dart' hide Response, FormData;
+import 'package:healthy_scanner/controller/auth_controller.dart';
 
 class ScanAnalyzeResponse {
   final String scanId;
@@ -31,19 +33,72 @@ class ScanAnalyzeResponse {
 }
 
 class ScanApi {
-  final Dio _dio;
+  final dio.Dio _dio;
   final Uuid _uuid = const Uuid();
 
   ScanApi({
-    required String baseUrl,
-    Dio? dio,
-  }) : _dio = dio ??
-            Dio(BaseOptions(
-              baseUrl: baseUrl,
-              connectTimeout: const Duration(seconds: 30),
-              receiveTimeout: const Duration(seconds: 120),
-              sendTimeout: const Duration(seconds: 60),
-            ));
+    required dio.Dio dioClient,
+  }) : _dio = dioClient;
+
+  Future<dio.Response<dynamic>> _postWithManualRefreshRetry({
+    required String path,
+    required String jwt,
+    required String requestId,
+    required dio.FormData Function() buildFormData,
+    required String logTag,
+  }) async {
+    Future<dio.Response<dynamic>> call(String token, {required bool retried}) {
+      return _dio.post(
+        path,
+        data: buildFormData(),
+        options: dio.Options(
+          headers: {
+            'Authorization': 'Bearer $token',
+            'Accept': 'application/json',
+            'X-Request-ID': requestId,
+          },
+          extra: {
+            'skipRefresh': true,
+            '__scanApiRetried': retried,
+          },
+        ),
+      );
+    }
+
+    try {
+      return await call(jwt, retried: false);
+    } on dio.DioException catch (e) {
+      debugPrint('❌ [$logTag]');
+      debugPrint('🔍 status: ${e.response?.statusCode}');
+      debugPrint('🔍 data: ${e.response?.data}');
+      debugPrint('🔍 headers: ${e.response?.headers}');
+      debugPrint('🔍 type: ${e.type}');
+
+      final status = e.response?.statusCode;
+      final alreadyRetried =
+          (e.requestOptions.extra['__scanApiRetried'] == true);
+
+      if (status == 401 && !alreadyRetried) {
+        final auth = Get.find<AuthController>();
+        final newToken = await auth.refreshAppToken();
+
+        if (newToken == null || newToken.isEmpty) {
+          rethrow;
+        }
+
+        try {
+          return await call(newToken, retried: true);
+        } on dio.DioException catch (e2) {
+          debugPrint('❌ [$logTag] retry failed');
+          debugPrint('🔁 status: ${e2.response?.statusCode}');
+          debugPrint('🔁 data: ${e2.response?.data}');
+          rethrow;
+        }
+      }
+
+      rethrow;
+    }
+  }
 
   Future<ScanAnalyzeResponse> analyzeBarcodeImage({
     required String jwt,
@@ -52,37 +107,27 @@ class ScanApi {
   }) async {
     final requestId = _uuid.v4();
 
-    final formData = FormData.fromMap({
-      if (barcode != null && barcode.trim().isNotEmpty)
-        'barcode': barcode.trim(),
-      'image': MultipartFile.fromBytes(
-        imageBytes,
-        filename: 'scan.jpg',
-        contentType: DioMediaType.parse('image/jpeg'),
-      ),
-    });
-
-    try {
-      final res = await _dio.post(
-        '/v1/scan/barcode_image',
-        data: formData,
-        options: Options(
-          headers: {
-            'Authorization': 'Bearer $jwt',
-            'Accept': 'application/json',
-            'X-Request-ID': requestId,
-          },
+    dio.FormData build() {
+      return dio.FormData.fromMap({
+        if (barcode != null && barcode.trim().isNotEmpty)
+          'barcode': barcode.trim(),
+        'image': dio.MultipartFile.fromBytes(
+          imageBytes,
+          filename: 'scan.jpg',
+          contentType: dio.DioMediaType.parse('image/jpeg'),
         ),
-      );
-
-      return _parseScanAnalyzeResponse(res);
-    } on DioException catch (e) {
-      debugPrint('❌ [Barcode API]');
-      debugPrint('🔍 status: ${e.response?.statusCode}');
-      debugPrint('🔍 data: ${e.response?.data}');
-      debugPrint('🔍 headers: ${e.response?.headers}');
-      rethrow;
+      });
     }
+
+    final res = await _postWithManualRefreshRetry(
+      path: '/v1/scan/barcode_image',
+      jwt: jwt,
+      requestId: requestId,
+      buildFormData: build,
+      logTag: 'Barcode API',
+    );
+
+    return _parseScanAnalyzeResponse(res);
   }
 
   Future<ScanAnalyzeResponse> analyzeNutritionLabel({
@@ -92,36 +137,26 @@ class ScanApi {
   }) async {
     final requestId = _uuid.v4();
 
-    final formData = FormData.fromMap({
-      'nutrition_label': nutritionLabel,
-      'image': MultipartFile.fromBytes(
-        imageBytes,
-        filename: 'scan.jpg',
-        contentType: DioMediaType.parse('image/jpeg'),
-      ),
-    });
-
-    try {
-      final res = await _dio.post(
-        '/v1/scan/nutrition_label',
-        data: formData,
-        options: Options(
-          headers: {
-            'Authorization': 'Bearer $jwt',
-            'Accept': 'application/json',
-            'X-Request-ID': requestId,
-          },
+    dio.FormData build() {
+      return dio.FormData.fromMap({
+        'nutrition_label': nutritionLabel,
+        'image': dio.MultipartFile.fromBytes(
+          imageBytes,
+          filename: 'scan.jpg',
+          contentType: dio.DioMediaType.parse('image/jpeg'),
         ),
-      );
-
-      return _parseScanAnalyzeResponse(res);
-    } on DioException catch (e) {
-      debugPrint('❌ [NutritionLabel API]');
-      debugPrint('📝 status: ${e.response?.statusCode}');
-      debugPrint('📝 data: ${e.response?.data}');
-      debugPrint('📝 headers: ${e.response?.headers}');
-      rethrow;
+      });
     }
+
+    final res = await _postWithManualRefreshRetry(
+      path: '/v1/scan/nutrition_label',
+      jwt: jwt,
+      requestId: requestId,
+      buildFormData: build,
+      logTag: 'NutritionLabel API',
+    );
+
+    return _parseScanAnalyzeResponse(res);
   }
 
   Future<ScanAnalyzeResponse> analyzeImageOnly({
@@ -130,53 +165,44 @@ class ScanApi {
   }) async {
     final requestId = _uuid.v4();
 
-    final formData = FormData.fromMap({
-      'image': MultipartFile.fromBytes(
-        imageBytes,
-        filename: 'scan.jpg',
-        contentType: DioMediaType.parse('image/jpeg'),
-      ),
-    });
-
-    try {
-      final res = await _dio.post(
-        '/v1/scan/image',
-        data: formData,
-        options: Options(
-          headers: {
-            'Authorization': 'Bearer $jwt',
-            'Accept': 'application/json',
-            'X-Request-ID': requestId,
-          },
+    dio.FormData build() {
+      return dio.FormData.fromMap({
+        'image': dio.MultipartFile.fromBytes(
+          imageBytes,
+          filename: 'scan.jpg',
+          contentType: dio.DioMediaType.parse('image/jpeg'),
         ),
-      );
-
-      return _parseScanAnalyzeResponse(res);
-    } on DioException catch (e) {
-      debugPrint('❌ [ImageOnly API]');
-      debugPrint('🖼️ status: ${e.response?.statusCode}');
-      debugPrint('🖼️ data: ${e.response?.data}');
-      debugPrint('🖼️ headers: ${e.response?.headers}');
-      rethrow;
+      });
     }
+
+    final res = await _postWithManualRefreshRetry(
+      path: '/v1/scan/image',
+      jwt: jwt,
+      requestId: requestId,
+      buildFormData: build,
+      logTag: 'ImageOnly API',
+    );
+
+    return _parseScanAnalyzeResponse(res);
   }
 
-  ScanAnalyzeResponse _parseScanAnalyzeResponse(Response res) {
+  ScanAnalyzeResponse _parseScanAnalyzeResponse(dio.Response res) {
     if (res.statusCode != 200 && res.statusCode != 201) {
-      throw DioException(
+      throw dio.DioException(
         requestOptions: res.requestOptions,
         response: res,
-        type: DioExceptionType.badResponse,
+        type: dio.DioExceptionType.badResponse,
         message: 'Analyze failed: ${res.statusCode}',
       );
     }
 
     final data = res.data;
     debugPrint('✅ [API] analyze success raw body: $data');
-    if (data is! Map<String, dynamic>) {
+
+    if (data is! Map) {
       throw Exception('Unexpected response body: $data');
     }
 
-    return ScanAnalyzeResponse.fromJson(data);
+    return ScanAnalyzeResponse.fromJson((data).cast<String, dynamic>());
   }
 }

@@ -16,7 +16,6 @@ class ScanFailView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final nav = Get.find<NavigationController>();
-    final auth = Get.find<AuthController>();
 
     final payload = ScanFailPayload.fromArgs(
       Get.arguments as Map<String, dynamic>?,

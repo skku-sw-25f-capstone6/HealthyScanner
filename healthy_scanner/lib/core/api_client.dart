@@ -9,7 +9,7 @@ class ApiClient {
   ApiClient._();
 
   static const String baseUrl = "https://healthy-scanner.com";
-  static const String refreshPath = "/auth/refresh";
+  static const String refreshPath = "/v1/auth/refresh";
 
   static final dio.Dio dioClient = dio.Dio(
     dio.BaseOptions(

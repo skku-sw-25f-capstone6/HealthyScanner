@@ -12,10 +12,14 @@ import 'package:google_mlkit_text_recognition/google_mlkit_text_recognition.dart
 import 'package:healthy_scanner/data/scan_api.dart';
 import 'package:dio/dio.dart';
 import 'package:healthy_scanner/data/scan_fail_payload.dart';
+import 'package:healthy_scanner/core/api_client.dart';
 
 class ScanController extends GetxController {
   final AuthController _auth = Get.find<AuthController>();
-  late final ScanApi _scanApi = ScanApi(baseUrl: 'https://healthy-scanner.com');
+
+  late final ScanApi _scanApi = ScanApi(
+    dioClient: ApiClient.dioClient,
+  );
 
   final NavigationController _nav = Get.find<NavigationController>();
 
