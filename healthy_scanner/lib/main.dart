@@ -4,15 +4,23 @@ import 'routes/app_routes.dart';
 import 'controller/navigation_controller.dart';
 import 'controller/scan_controller.dart';
 import 'controller/auth_controller.dart';
-import 'app_secure_storage.dart';
+import 'controller/home_controller.dart';
+import 'data/home_api.dart';
+import 'core/app_secure_storage.dart';
+import 'core/api_client.dart';
 
 void main() async {
-  AppRoutes.validateRoutes();
-  Get.put(NavigationController());
-  Get.put(ScanController(), permanent: true);
-  Get.put(AuthController());
   WidgetsFlutterBinding.ensureInitialized();
+  AppRoutes.validateRoutes();
   await migrateAndCleanupSecureStorage();
+
+  ApiClient.setupInterceptors();
+
+  Get.put(NavigationController(), permanent: true);
+  Get.put(AuthController(), permanent: true);
+  Get.put(ScanController(), permanent: true);
+  Get.put(HomeController(HomeApi(baseUrl: 'https://healthy-scanner.com')));
+
   runApp(const MyApp());
 }
 

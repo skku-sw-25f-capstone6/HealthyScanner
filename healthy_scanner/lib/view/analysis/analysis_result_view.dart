@@ -90,6 +90,9 @@ class _AnalysisResultViewState extends State<AnalysisResultView> {
               top: 12,
               left: 12,
               child: GestureDetector(
+                // TODO: 뒤로가기 로직 세분화
+                // i) 촬영 이후 첫 분석 시 - 메인 화면 (현재는 ScanCropView로 이동함)
+                // ii) 리포트>날짜 선택 후 재열람 - 캘린더
                 onTap: controller.goBack,
                 child: const Icon(
                   Icons.arrow_back_ios_new,

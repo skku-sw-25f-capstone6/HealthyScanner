@@ -1,26 +1,20 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:healthy_scanner/theme/theme_extensions.dart';
 import 'package:healthy_scanner/theme/app_colors.dart';
-import 'package:healthy_scanner/component/traffic_light.dart';
 import 'package:healthy_scanner/component/food_card.dart';
+import 'package:healthy_scanner/controller/archive_controller.dart';
+import 'package:healthy_scanner/component/traffic_light.dart';
 
 class ArchiveListView extends StatelessWidget {
-  const ArchiveListView({super.key});
+  final DateTime selectedDate;
+  const ArchiveListView({super.key, required this.selectedDate});
+
+  String _prettyKoreanDate(DateTime d) => '${d.year}년 ${d.month}월 ${d.day}일';
 
   @override
   Widget build(BuildContext context) {
-    // TODO: 임시 리스트 (API 연결 필요)
-    final items = List<_FoodItem>.generate(
-      5,
-      (i) => _FoodItem(
-        title: '칸쵸',
-        category: '과자/초콜릿가공품',
-        message: '포화지방과 당류가 다소 높고,\n땅콩이 포함되어 있어요.',
-        imageAsset: 'assets/images/cancho.png',
-        lightState: TrafficLightState.red,
-        warningAsset: 'assets/icons/ic_warning.png',
-      ),
-    );
+    final c = Get.put(ArchiveListController())..load(selectedDate);
 
     return Scaffold(
       backgroundColor: AppColors.backgroundGray,
@@ -35,11 +29,13 @@ class ArchiveListView extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
                     const SizedBox(height: 13),
-                    // 뒤로가기 + 제목
                     Row(
                       children: [
                         GestureDetector(
-                          onTap: () => Navigator.of(context).maybePop(),
+                          onTap: () {
+                            Get.delete<ArchiveListController>();
+                            Navigator.of(context).maybePop();
+                          },
                           child: Image.asset(
                             'assets/icons/ic_chevron_left.png',
                             width: 29,
@@ -60,36 +56,75 @@ class ArchiveListView extends StatelessWidget {
                       ],
                     ),
                     const SizedBox(height: 19),
-                    Text('2025년 10월 6일',
-                        style: context.footnote2Medium
-                            .copyWith(color: AppColors.staticBlack)),
+                    Obx(() => Text(
+                          _prettyKoreanDate(c.selectedDate.value),
+                          style: context.footnote2Medium.copyWith(
+                            color: AppColors.staticBlack,
+                          ),
+                        )),
                     const SizedBox(height: 18),
                   ],
                 ),
               ),
             ),
-
-            // 카드 리스트
             SliverPadding(
               padding: const EdgeInsets.symmetric(horizontal: 12),
-              sliver: SliverList.separated(
-                itemCount: items.length,
-                separatorBuilder: (_, __) => const SizedBox(height: 15),
-                itemBuilder: (context, index) {
-                  final it = items[index];
-                  return FoodCard(
-                    title: it.title,
-                    category: it.category,
-                    message: it.message,
-                    imageAsset: it.imageAsset,
-                    warningAsset: it.warningAsset,
-                    lightState: it.lightState,
-                    onTap: () {
-                      // TODO: 상세 페이지로 이동
-                    },
+              sliver: Obx(() {
+                if (c.isLoading.value) {
+                  return const SliverToBoxAdapter(
+                    child: Padding(
+                      padding: EdgeInsets.only(top: 40),
+                      child: Center(
+                          child: CircularProgressIndicator(
+                        color: AppColors.brownGray,
+                      )),
+                    ),
                   );
-                },
-              ),
+                }
+
+                if (c.errorMessage.value.isNotEmpty) {
+                  debugPrint("❌ Failed to make list");
+                  debugPrint(c.errorMessage.string);
+
+                  return const SliverToBoxAdapter(
+                    child: Padding(
+                      padding: EdgeInsets.only(top: 40),
+                      child: Center(
+                        child: Text(
+                          '기록을 불러오지 못했어요.',
+                          textAlign: TextAlign.center,
+                        ),
+                      ),
+                    ),
+                  );
+                }
+
+                if (c.items.isEmpty) {
+                  return const SliverToBoxAdapter(
+                    child: Padding(
+                      padding: EdgeInsets.only(top: 40),
+                      child: Center(child: Text('해당 날짜의 스캔 기록이 없어요.')),
+                    ),
+                  );
+                }
+
+                return SliverList.separated(
+                  itemCount: c.items.length,
+                  separatorBuilder: (_, __) => const SizedBox(height: 15),
+                  itemBuilder: (context, index) {
+                    final it = c.items[index];
+                    return FoodCard(
+                      title: it.name,
+                      category: it.category,
+                      message: it.summary,
+                      imageAsset: it.url,
+                      warningAsset: 'assets/icons/ic_warning.png',
+                      lightState: riskToState(it.riskLevel),
+                      onTap: () {},
+                    );
+                  },
+                );
+              }),
             ),
           ],
         ),
@@ -98,21 +133,14 @@ class ArchiveListView extends StatelessWidget {
   }
 }
 
-// TODO: 임시 아이템 모델 (API 연결 시 제거)
-class _FoodItem {
-  final String title;
-  final String category;
-  final String message;
-  final String imageAsset;
-  final String? warningAsset;
-  final TrafficLightState lightState;
-
-  _FoodItem({
-    required this.title,
-    required this.category,
-    required this.message,
-    required this.imageAsset,
-    this.warningAsset,
-    this.lightState = TrafficLightState.green,
-  });
+TrafficLightState riskToState(String riskLevel) {
+  switch (riskLevel.toLowerCase()) {
+    case 'red':
+      return TrafficLightState.red;
+    case 'yellow':
+      return TrafficLightState.yellow;
+    case 'green':
+    default:
+      return TrafficLightState.green;
+  }
 }

@@ -153,7 +153,7 @@ class _ScanCropViewState extends State<ScanCropView> {
 
     if (result is CropSuccess) {
       final croppedImage = result.croppedImage;
-      debugPrint('cropped image size: ${croppedImage.lengthInBytes} bytes');
+      debugPrint('✂️ Cropped image size: ${croppedImage.lengthInBytes} bytes');
 
       final scanController = Get.find<ScanController>();
 
@@ -162,7 +162,7 @@ class _ScanCropViewState extends State<ScanCropView> {
         mode: _mode,
       );
     } else if (result is CropFailure) {
-      debugPrint('이미지 크롭 실패: ${result.cause}');
+      debugPrint('❌ Image crop Failed: ${result.cause}');
     }
   }
 }

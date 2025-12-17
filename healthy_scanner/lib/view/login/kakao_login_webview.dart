@@ -33,7 +33,15 @@ class _KakaoLoginWebViewState extends State<KakaoLoginWebView> {
           },
           onPageFinished: (url) async {
             debugPrint("🔎 WebView loaded: $url");
-            if (url.contains('/auth/kakao/callback')) {
+
+            final uri = Uri.tryParse(url);
+            if (uri == null) return;
+
+            final isRealCallback = uri.scheme == 'https' &&
+                uri.host == 'healthy-scanner.com' &&
+                uri.path == '/auth/kakao/callback';
+
+            if (isRealCallback) {
               await _handleCallbackPage();
             }
           },
@@ -56,32 +64,30 @@ class _KakaoLoginWebViewState extends State<KakaoLoginWebView> {
 
       final data = jsonDecode(bodyText) as Map<String, dynamic>;
 
-      final accessToken = data["access_token"] as String?;
-      final refreshToken = data["refresh_token"] as String?;
+      final appAccessToken = data["app_access_token"] as String?;
+      final appRefreshToken = data["app_refresh_token"] as String?;
+
+      final kakaoAccessToken = data["kakao_access_token"] as String?;
+      final kakaoRefreshToken = data["kakao_refresh_token"] as String?;
       final tokenType = data["token_type"] as String?;
       final expiresIn = (data["expires_in"] as num?)?.toInt();
       final refreshExpiresIn = (data["refresh_expires_in"] as num?)?.toInt();
 
-      debugPrint("🎉 Parsed access_token: $accessToken");
-      debugPrint("🔁 Parsed refresh_token: $refreshToken");
-      debugPrint("🔤 Parsed token_type: $tokenType");
-      debugPrint("⏱ Parsed expires_in: $expiresIn");
-      debugPrint("⏱ Parsed refresh_expires_in: $refreshExpiresIn");
-
-      if (accessToken != null &&
-          refreshToken != null &&
-          tokenType != null &&
-          expiresIn != null &&
-          refreshExpiresIn != null) {
+      if (appAccessToken != null &&
+          appRefreshToken != null &&
+          kakaoAccessToken != null &&
+          kakaoRefreshToken != null) {
         await auth.onKakaoLoginCompleted(
-          accessToken: accessToken,
-          refreshToken: refreshToken,
+          appAccessToken: appAccessToken,
+          appRefreshToken: appRefreshToken,
+          kakaoAccessToken: kakaoAccessToken,
+          kakaoRefreshToken: kakaoRefreshToken,
           tokenType: tokenType,
           expiresIn: expiresIn,
           refreshExpiresIn: refreshExpiresIn,
         );
       } else {
-        debugPrint("⚠️ Missing required fields in Kakao login response");
+        debugPrint("⚠️ Missing required fields in login response: $data");
         auth.onLoginFailed();
       }
     } catch (e, st) {

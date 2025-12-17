@@ -4,6 +4,9 @@ import 'dart:typed_data';
 import '../routes/app_routes.dart';
 import '../component/scan_mode_button.dart';
 import 'package:healthy_scanner/view/login/kakao_login_webview.dart';
+import 'package:healthy_scanner/data/scan_fail_payload.dart';
+import 'package:healthy_scanner/controller/scan_controller.dart';
+import 'package:healthy_scanner/controller/home_controller.dart';
 
 /// 📍 모든 페이지 전환을 중앙에서 관리하는 컨트롤러
 class NavigationController extends SuperController {
@@ -136,7 +139,10 @@ class NavigationController extends SuperController {
   }
 
   /// ✅ 스캔 실패 → 실패 페이지
-  void goToScanFail() => Get.toNamed(AppRoutes.scanFail);
+  void goToScanFail(ScanFailPayload payload) => Get.offNamed(
+        AppRoutes.scanFail,
+        arguments: payload.toArgs(),
+      );
 
   /// ✅ 홈(로그인 등)으로 돌아가기
   void backToHome() => Get.offAllNamed(AppRoutes.loginMain);
@@ -146,23 +152,33 @@ class NavigationController extends SuperController {
   void goToMyPageDietEdit() => Get.toNamed(AppRoutes.myPageDietEdit);
   void goToMyPageDiseaseEdit() => Get.toNamed(AppRoutes.myPageDiseaseEdit);
   void goToMyPageAllergyEdit() => Get.toNamed(AppRoutes.myPageAllergyEdit);
-  void goToAnalysisResult() => Get.toNamed(AppRoutes.analysisResult);
 
   /// ✅ 뒤로가기
   void goBack() => Get.back();
   //void goToOnboarding() => Get.offAllNamed(AppRoutes.onboarding);
-  void goToHome() => Get.offAllNamed(AppRoutes.home);
-  void goToScanReady() => Get.toNamed(AppRoutes.scanReady);
 
-  /// ✅ 로그아웃 (데이터 초기화 + 메인 이동)
-  void logout() {
-    // TODO: 여기에 SharedPref, Token 제거 등의 로직 추가 가능
-    debugPrint('👋 로그아웃 완료');
-    Get.offAllNamed(AppRoutes.loginMain);
+  void goToHome() {
+    Get.offAllNamed(AppRoutes.home);
+
+    Future.microtask(() {
+      if (Get.isRegistered<HomeController>()) {
+        Get.find<HomeController>().fetchHome();
+      }
+    });
   }
-}
 
-void goToAnalysisResult() {
-  debugPrint('🚀 goToAnalysisResult() 호출됨');
-  Get.toNamed(AppRoutes.analysisResult);
+  void goToScanReady() => Get.toNamed(AppRoutes.scanReady);
+  void replaceToScanReady({ScanMode? initialMode}) {
+    if (initialMode != null) {
+      Get.find<ScanController>().changeMode(initialMode);
+    }
+    Get.offAllNamed(AppRoutes.scanReady);
+  }
+
+  void goToAnalysisResult({required String scanId}) {
+    Get.offNamed(
+      AppRoutes.analysisResult,
+      arguments: {'scanId': scanId},
+    );
+  }
 }

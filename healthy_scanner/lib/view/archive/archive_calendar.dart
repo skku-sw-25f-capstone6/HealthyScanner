@@ -142,8 +142,12 @@ class _ArchiveCalendarViewState extends State<ArchiveCalendarView> {
                 text: '기록 확인하기',
                 isEnabled: !isFutureSelected,
                 onPressed: () {
+                  final selected = _selected ?? _today;
+
                   Navigator.of(context).push(
-                    MaterialPageRoute(builder: (_) => const ArchiveListView()),
+                    MaterialPageRoute(
+                      builder: (_) => ArchiveListView(selectedDate: selected),
+                    ),
                   );
                 },
               ),

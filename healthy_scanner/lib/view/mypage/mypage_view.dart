@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../../controller/navigation_controller.dart';
+import '../../controller/auth_controller.dart';
 import '../../theme/app_colors.dart';
 import '../../theme/app_typography.dart';
 
@@ -133,7 +134,7 @@ class MyPageView extends StatelessWidget {
                       _divider(),
                       _buildSettingItem(
                         label: '로그아웃',
-                        onTap: controller.logout,
+                        onTap: () => Get.find<AuthController>().logout(),
                       ),
                       _divider(),
                       _buildSettingItem(
@@ -152,9 +153,10 @@ class MyPageView extends StatelessWidget {
                                   child: const Text('취소'),
                                 ),
                                 TextButton(
-                                  onPressed: () {
+                                  onPressed: () async {
                                     Get.back();
-                                    controller.logout(); // 임시로 로그아웃 처리
+                                    await Get.find<AuthController>()
+                                        .withdrawAccount();
                                   },
                                   child: const Text('탈퇴'),
                                 ),

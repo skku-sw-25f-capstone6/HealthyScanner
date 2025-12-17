@@ -1,6 +1,7 @@
 // import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 // import '../controller/navigation_controller.dart';
+import '../controller/scan_waiting_controller.dart';
 
 // [view import]
 import '../view/splash/splash_view.dart';
@@ -8,7 +9,6 @@ import '../view/archive/archive_calendar.dart';
 import '../view/archive/archive_list.dart';
 import '../view/login/login_main_view.dart';
 import '../view/login/login_fail_view.dart';
-import '../view/scan/scan_check_view.dart';
 import '../view/scan/scan_crop_view.dart';
 import '../view/scan/scan_fail_view.dart';
 import '../view/scan/scan_ready_view.dart';
@@ -71,8 +71,14 @@ class AppRoutes {
         transitionDuration: Duration.zero),
     GetPage(name: loginFail, page: () => const LoginFailView()),
     GetPage(name: archiveCalendar, page: () => const ArchiveCalendarView()),
-    GetPage(name: archiveList, page: () => const ArchiveListView()),
-    GetPage(name: scanCheck, page: () => const ScanCheckView()),
+    GetPage(
+      name: archiveList,
+      page: () {
+        final DateTime selectedDate =
+            (Get.arguments as DateTime?) ?? DateTime.now();
+        return ArchiveListView(selectedDate: selectedDate);
+      },
+    ),
     GetPage(name: scanCrop, page: () => const ScanCropView()),
     GetPage(name: scanFail, page: () => const ScanFailView()),
     GetPage(
@@ -80,20 +86,32 @@ class AppRoutes {
         page: () => const ScanReadyView(),
         transition: Transition.noTransition,
         transitionDuration: Duration.zero),
-    GetPage(name: scanWaiting, page: () => const ScanWaitingView()),
+    GetPage(
+      name: AppRoutes.scanWaiting,
+      page: () => const ScanWaitingView(),
+      binding: BindingsBuilder(() {
+        Get.lazyPut<ScanWaitingController>(() => ScanWaitingController());
+      }),
+    ),
     GetPage(name: home, page: () => const MainShellView()),
     //GetPage(name: onboarding, page: () => const OnboardingView()),
 
-  
     GetPage(name: analysisResult, page: () => const AnalysisResultView()),
-
+    GetPage(
+      name: '/scan-waiting',
+      page: () => const ScanWaitingView(),
+      binding: BindingsBuilder(() {
+        Get.put(ScanWaitingController());
+      }),
+    ),
 
     // ✅ 온보딩 단계
     GetPage(name: onboardingAgree, page: () => const OnboardingAgreeView()),
     GetPage(name: onboardingDiet, page: () => const OnboardingDietView()),
     GetPage(name: onboardingDisease, page: () => const OnboardingDiseaseView()),
     GetPage(name: onboardingAllergy, page: () => const OnboardingAllergyView()),
-    GetPage(name: onboardingComplete, page: () => const OnboardingCompleteView()),
+    GetPage(
+        name: onboardingComplete, page: () => const OnboardingCompleteView()),
 
     // ✅ 마이페이지 편집 화면
     GetPage(name: myPage, page: () => const MyPageView()),

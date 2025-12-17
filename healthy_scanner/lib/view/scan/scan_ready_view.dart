@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:camera/camera.dart';
 import 'package:get/get.dart';
 import 'package:healthy_scanner/controller/scan_controller.dart';
+import 'package:healthy_scanner/controller/navigation_controller.dart';
 import 'package:healthy_scanner/component/scan_mode_button.dart';
 import 'package:healthy_scanner/component/round_icon_button.dart';
 import 'package:healthy_scanner/component/guide_pill.dart';
@@ -24,6 +25,7 @@ class ScanReadyView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final scan = Get.find<ScanController>();
+    final nav = Get.find<NavigationController>();
 
     return Scaffold(
       backgroundColor: Colors.black,
@@ -44,7 +46,7 @@ class ScanReadyView extends StatelessWidget {
                   children: [
                     RoundIconButton(
                       assetPath: 'assets/icons/ic_x.png',
-                      onTap: () => Get.back(),
+                      onTap: () => nav.goToHome(),
                     ),
                     RoundIconButton(
                       assetPath: 'assets/icons/ic_image.png',
