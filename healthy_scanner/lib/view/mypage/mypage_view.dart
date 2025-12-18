@@ -82,7 +82,6 @@ class MyPageView extends GetView<MyPageController> {
                       ),
                     ),
                     const SizedBox(height: 8),
-
                     Container(
                       width: double.infinity,
                       padding: const EdgeInsets.all(20),
@@ -129,7 +128,6 @@ class MyPageView extends GetView<MyPageController> {
                       ),
                     ),
                     const SizedBox(height: 24),
-
                     Container(
                       padding: const EdgeInsets.symmetric(vertical: 16),
                       decoration: BoxDecoration(
@@ -158,7 +156,6 @@ class MyPageView extends GetView<MyPageController> {
                       ),
                     ),
                     const SizedBox(height: 24),
-
                     Container(
                       width: double.infinity,
                       decoration: BoxDecoration(
@@ -193,22 +190,45 @@ class MyPageView extends GetView<MyPageController> {
                               Get.dialog(
                                 AlertDialog(
                                   shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(12),
+                                    borderRadius: BorderRadius.circular(20),
                                   ),
-                                  title: const Text('계정을 정말 탈퇴하시겠어요?'),
-                                  content:
-                                      const Text('탈퇴 후 데이터는 복구되지 않습니다.'),
+                                  backgroundColor: AppColors.backgroundGray,
+                                  title: Text(
+                                    '정말 탈퇴하시겠어요?',
+                                    style: AppTextStyles.bodyBold.copyWith(
+                                      color: AppColors.staticBlack,
+                                    ),
+                                  ),
+                                  content: Text(
+                                    '탈퇴 후 데이터는 복구되지 않습니다.',
+                                    style:
+                                        AppTextStyles.caption1Medium.copyWith(
+                                      color: AppColors.staticBlack,
+                                    ),
+                                  ),
                                   actions: [
                                     TextButton(
                                       onPressed: () => Get.back(),
-                                      child: const Text('취소'),
+                                      child: Text(
+                                        '취소',
+                                        style: AppTextStyles.caption1Medium
+                                            .copyWith(
+                                          color: AppColors.charcoleGray,
+                                        ),
+                                      ),
                                     ),
                                     TextButton(
                                       onPressed: () async {
                                         Get.back();
                                         await auth.withdrawAccount();
                                       },
-                                      child: const Text('탈퇴'),
+                                      child: Text(
+                                        '탈퇴',
+                                        style: AppTextStyles.caption1Medium
+                                            .copyWith(
+                                          color: AppColors.mainRed,
+                                        ),
+                                      ),
                                     ),
                                   ],
                                 ),
