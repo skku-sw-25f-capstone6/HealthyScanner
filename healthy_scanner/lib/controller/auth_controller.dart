@@ -6,6 +6,7 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:healthy_scanner/core/app_secure_storage.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 import 'package:healthy_scanner/core/api_client.dart';
+import 'package:healthy_scanner/core/onboarding_store.dart';
 
 class AuthController extends GetxController {
   static String backendLoginURL =
@@ -159,9 +160,16 @@ class AuthController extends GetxController {
   /// 5) 계정 탈퇴(연동 해제)
   /// ----------------------------------------------------------
   Future<void> withdrawAccount() async {
+    final uid = userId.value;
+
     try {
       final res = await ApiClient.dioClient.delete("/auth/unlink");
       debugPrint("🗑️ Withdraw API ok: ${res.statusCode}, body=${res.data}");
+
+      if (uid != null && uid.isNotEmpty) {
+        await OnboardingStore.clear(userKey: uid);
+      }
+
       await logout();
     } catch (e) {
       debugPrint("❌ Withdraw API failed: $e");
