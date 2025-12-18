@@ -195,8 +195,8 @@ class NavigationController extends SuperController {
         arguments: payload.toArgs(),
       );
 
-  /// ✅ 홈(로그인 등)으로 돌아가기
-  void backToHome() => Get.offAllNamed(AppRoutes.loginMain);
+  /// ✅ 로그인 화면으로 돌아가기
+  void backToLoginMain() => Get.offAllNamed(AppRoutes.loginMain);
 
   /// ✅ 홈 → 마이페이지
   void goToMyPage() => Get.toNamed(AppRoutes.myPage);
@@ -227,9 +227,19 @@ class NavigationController extends SuperController {
   }
 
   void goToAnalysisResult({required String scanId}) {
-    Get.offNamed(
-      AppRoutes.analysisResult,
-      arguments: {'scanId': scanId},
-    );
+    Get.offAllNamed(AppRoutes.home);
+
+    Future.microtask(() {
+      Get.toNamed(
+        AppRoutes.analysisResult,
+        arguments: {'scanId': scanId},
+      );
+    });
+
+    Future.microtask(() {
+      if (Get.isRegistered<HomeController>()) {
+        Get.find<HomeController>().fetchHome();
+      }
+    });
   }
 }

@@ -3,6 +3,7 @@ import 'package:uuid/uuid.dart';
 import 'package:dio/dio.dart' as dio;
 import 'package:get/get.dart' hide Response, FormData;
 import 'package:healthy_scanner/controller/auth_controller.dart';
+import 'package:healthy_scanner/data/scan_history_detail_response.dart';
 
 class ScanAnalyzeResponse {
   final String scanId;
@@ -204,5 +205,67 @@ class ScanApi {
     }
 
     return ScanAnalyzeResponse.fromJson((data).cast<String, dynamic>());
+  }
+
+  Future<ScanHistoryDetailResponse> getScanHistoryDetails({
+    required String scanId,
+  }) async {
+    final requestId = _uuid.v4();
+
+    debugPrint(
+        '➡️ [ScanHistoryDetails API] GET /v1/scan-history/$scanId/details');
+    debugPrint('🧾 requestId: $requestId');
+
+    try {
+      final res = await _dio.get(
+        '/v1/scan-history/$scanId/details',
+        options: dio.Options(
+          headers: {
+            'Accept': 'application/json',
+            'X-Request-ID': requestId,
+          },
+        ),
+      );
+
+      debugPrint('✅ [ScanHistoryDetails API] success');
+      debugPrint('🔍 status: ${res.statusCode}');
+      debugPrint('🔍 headers: ${res.headers}');
+      debugPrint('🔍 data runtimeType: ${res.data.runtimeType}');
+      debugPrint('🔍 raw body: ${res.data}');
+
+      if (res.statusCode != 200) {
+        throw dio.DioException(
+          requestOptions: res.requestOptions,
+          response: res,
+          type: dio.DioExceptionType.badResponse,
+          message: 'GET details failed: ${res.statusCode}',
+        );
+      }
+
+      final data = res.data;
+
+      if (data is! Map) {
+        throw Exception('Unexpected response body: $data');
+      }
+
+      debugPrint('🧩 [ScanHistoryDetails API] keys: ${(data).keys.toList()}');
+
+      final parsed = ScanHistoryDetailResponse.fromJson(
+        (data).cast<String, dynamic>(),
+      );
+
+      debugPrint('✅ [ScanHistoryDetails API] parsed ok: $parsed');
+
+      return parsed;
+    } on dio.DioException catch (e) {
+      debugPrint('❌ [ScanHistoryDetails API] failed');
+      debugPrint('🧾 requestId: $requestId');
+      debugPrint('🔍 status: ${e.response?.statusCode}');
+      debugPrint('🔍 data runtimeType: ${e.response?.data.runtimeType}');
+      debugPrint('🔍 data: ${e.response?.data}');
+      debugPrint('🔍 headers: ${e.response?.headers}');
+      debugPrint('🔍 type: ${e.type}');
+      rethrow;
+    }
   }
 }

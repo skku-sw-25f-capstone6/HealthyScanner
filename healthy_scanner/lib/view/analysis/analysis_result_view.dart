@@ -5,6 +5,10 @@ import '../../component/traffic_light.dart';
 import '../../component/food_card.dart';
 import '../../theme/app_colors.dart';
 import '../../theme/app_typography.dart';
+import 'package:healthy_scanner/controller/analysis_result_controller.dart';
+import 'package:healthy_scanner/data/scan_history_detail_response.dart';
+import 'package:healthy_scanner/core/url_resolver.dart';
+import 'package:healthy_scanner/theme/theme_extensions.dart';
 
 class AnalysisResultView extends StatefulWidget {
   const AnalysisResultView({super.key});
@@ -14,10 +18,10 @@ class AnalysisResultView extends StatefulWidget {
 }
 
 class _AnalysisResultViewState extends State<AnalysisResultView> {
-  final controller = Get.find<NavigationController>();
+  final nav = Get.find<NavigationController>();
+  final result = Get.put(AnalysisResultController());
 
   int selectedTab = 0; // 0: 알레르기 / 1: 건강질환 / 2: 식습관 / 3: 대체 식품
-  FoodRecommendation currentState = FoodRecommendation.bad;
 
   @override
   Widget build(BuildContext context) {
@@ -26,74 +30,38 @@ class _AnalysisResultViewState extends State<AnalysisResultView> {
       body: SafeArea(
         child: Stack(
           children: [
-            SingleChildScrollView(
-              padding: const EdgeInsets.fromLTRB(20, 16, 20, 40),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  // ✅ 식품 카드
-                  Padding(
-                    padding: const EdgeInsets.only(top: 60, bottom: 16),
-                    child: SizedBox(
-                      width: MediaQuery.of(context).size.width,
-                      child: FoodCard(
-                        title: '칸쵸',
-                        category: '과자 / 초콜릿가공품',
-                        message: '포화지방과 당류가 다소 높고,\n땅콩이 포함되어 있어요.',
-                        imageAsset: 'assets/images/cancho.png',
-                        warningAsset: 'assets/icons/ic_warning.png',
-                        lightState: TrafficLightState.red,
-                        onTap: () {},
-                      ),
-                    ),
-                  ),
+            Obx(() {
+              // 로딩
+              if (result.isLoading.value) {
+                return const Center(
+                  child: CircularProgressIndicator(),
+                );
+              }
 
-                  // ✅ AI 리포트
-                  Text('AI 리포트',
-                      style: AppTextStyles.bodyBold
-                          .copyWith(color: AppColors.staticBlack)),
-                  const SizedBox(height: 10),
-                  _buildAIReport(),
+              // 에러
+              final err = result.error.value;
+              if (err != null) {
+                return _buildError(err);
+              }
 
-                  const SizedBox(height: 28),
+              // 데이터
+              final data = result.detail.value;
+              if (data == null) {
+                return _buildError('데이터가 비어있어요.');
+              }
 
-                  // ✅ 주의 요소
-                  Text('주의 요소',
-                      style: AppTextStyles.bodyBold
-                          .copyWith(color: AppColors.staticBlack)),
-                  const SizedBox(height: 10),
-                  _buildRiskFactors(),
+              final raw = data.product.imageUrl;
+              final imageUrl = UrlResolver.resolve('healthy-scanner.com', raw);
 
-                  const SizedBox(height: 28),
-
-                  // ✅ 세부 영양성분
-                  _buildNutritionFacts(),
-
-                  const SizedBox(height: 32),
-
-                  // ✅ 원재료명
-                  Text('원재료명',
-                      style: AppTextStyles.bodyBold
-                          .copyWith(color: AppColors.staticBlack)),
-                  const SizedBox(height: 8),
-                  Text(
-                    '밀가루(미국산), 설탕, 땅콩, 코코아버터, 탈지분유, 유청분말, 팜유, 정제소금 등',
-                    style: AppTextStyles.footnote1Regular
-                        .copyWith(color: AppColors.charcoleGray, height: 1.5),
-                  ),
-                ],
-              ),
-            ),
+              return _buildContent(context, data, imageUrl);
+            }),
 
             // ✅ 뒤로가기
             Positioned(
               top: 12,
               left: 12,
               child: GestureDetector(
-                // TODO: 뒤로가기 로직 세분화
-                // i) 촬영 이후 첫 분석 시 - 메인 화면 (현재는 ScanCropView로 이동함)
-                // ii) 리포트>날짜 선택 후 재열람 - 캘린더
-                onTap: controller.goBack,
+                onTap: nav.goBack,
                 child: const Icon(
                   Icons.arrow_back_ios_new,
                   color: AppColors.cloudGray,
@@ -107,18 +75,141 @@ class _AnalysisResultViewState extends State<AnalysisResultView> {
     );
   }
 
-  // ============================================================
-  // ✅ AI 리포트 (탭 포함)
-  // ============================================================
-  Widget _buildAIReport() {
+  Widget _buildError(String message) {
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 20),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(
+              "정보를 불러올 수 없어요",
+              style: context.bodyMedium,
+            ),
+            const SizedBox(height: 12),
+            ElevatedButton(
+              onPressed: result.fetch,
+              style: ElevatedButton.styleFrom(
+                backgroundColor: AppColors.peachRed,
+                foregroundColor: AppColors.mainRed,
+                textStyle: context.bodyBold,
+              ),
+              child: const Text('다시 시도하기'),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildContent(
+    BuildContext context,
+    ScanHistoryDetailResponse data,
+    String imageUrl,
+  ) {
+    final product = data.product;
+    final scan = data.scan;
+
+    final foodState = _scoreToFoodRecommendation(scan.score);
+    final lightState = _scoreToTrafficLight(scan.score);
+
+    // AI 리포트 탭 데이터 구성
     final labels = ['알레르기', '건강질환', '식습관 유형', '대체 식품'];
     final contents = [
-      '이 제품에는 땅콩, 유제품, 밀 성분이 포함되어 있습니다.\n소량의 혼입만으로도 알레르기 반응이 발생할 수 있습니다.',
-      '심혈관 질환이 있는 분은 포화지방 섭취를 줄이는 것이 좋습니다.\n대체로 낮은 지방 간식을 선택하세요.',
-      '유제품 허용 채식으로 분류됩니다.\n식습관에 맞는 제품인지 확인해보세요.',
-      '견과류나 초콜릿이 없는 대체 간식을 추천드립니다.\n예: 쌀과자, 과일칩, 요거트바 등',
+      _reportText(scan.reports.allergies),
+      _reportText(scan.reports.condition),
+      _reportText(scan.reports.vegan),
+      _alternativesText(scan.reports.alternatives),
     ];
 
+    // 주의 요소 (caution_factors)
+    final cautionList = scan.cautionFactors;
+
+    return SingleChildScrollView(
+      padding: const EdgeInsets.fromLTRB(20, 16, 20, 40),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // ✅ 식품 카드
+          Padding(
+            padding: const EdgeInsets.only(top: 60, bottom: 16),
+            child: SizedBox(
+              width: MediaQuery.of(context).size.width,
+              child: FoodCard(
+                title: product.name.isEmpty ? '식품' : product.name,
+                category: product.category.isEmpty ? '카테고리' : product.category,
+                message: scan.summary.isEmpty ? '분석 요약이 없어요.' : scan.summary,
+                imageAsset: imageUrl,
+                warningAsset: (lightState == TrafficLightState.red)
+                    ? 'assets/icons/ic_warning.png'
+                    : null,
+                lightState: lightState,
+                onTap: () {},
+              ),
+            ),
+          ),
+
+          // ✅ AI 리포트
+          Text(
+            'AI 리포트',
+            style:
+                AppTextStyles.bodyBold.copyWith(color: AppColors.staticBlack),
+          ),
+          const SizedBox(height: 10),
+          _buildAIReport(
+            labels: labels,
+            contents: contents,
+            foodState: foodState,
+            score: scan.score,
+          ),
+
+          const SizedBox(height: 28),
+
+          // ✅ 주의 요소 (API)
+          Text(
+            '주의 요소',
+            style:
+                AppTextStyles.bodyBold.copyWith(color: AppColors.staticBlack),
+          ),
+          const SizedBox(height: 10),
+          _buildRiskFactorsFromApi(cautionList),
+
+          const SizedBox(height: 28),
+
+          // ✅ 세부 영양성분 (API)
+          if (data.nutrition != null)
+            _buildNutritionFactsFromApi(data.nutrition!),
+
+          const SizedBox(height: 32),
+
+          // ✅ 원재료명 (API)
+          Text(
+            '원재료명',
+            style:
+                AppTextStyles.bodyBold.copyWith(color: AppColors.staticBlack),
+          ),
+          const SizedBox(height: 8),
+          Text(
+            (data.ingredient?.text.trim().isNotEmpty == true)
+                ? data.ingredient!.text
+                : '원재료 정보가 없어요.',
+            style: AppTextStyles.footnote1Regular
+                .copyWith(color: AppColors.charcoleGray, height: 1.5),
+          ),
+        ],
+      ),
+    );
+  }
+
+  // ============================================================
+  // ✅ AI 리포트 (탭 포함) - API 바인딩 버전
+  // ============================================================
+  Widget _buildAIReport({
+    required List<String> labels,
+    required List<String> contents,
+    required FoodRecommendation foodState,
+    required int score,
+  }) {
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(18),
@@ -136,8 +227,9 @@ class _AnalysisResultViewState extends State<AnalysisResultView> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          _buildSummaryBox(currentState),
+          _buildSummaryBox(foodState, score),
           const SizedBox(height: 20),
+
           // 🔹 탭 버튼
           SingleChildScrollView(
             scrollDirection: Axis.horizontal,
@@ -169,6 +261,7 @@ class _AnalysisResultViewState extends State<AnalysisResultView> {
             ),
           ),
           const SizedBox(height: 16),
+
           Text(
             contents[selectedTab],
             style: AppTextStyles.footnote1Regular
@@ -180,9 +273,9 @@ class _AnalysisResultViewState extends State<AnalysisResultView> {
   }
 
   // ============================================================
-  // ✅ 총평 박스
+  // ✅ 총평 박스 (점수 기반)
   // ============================================================
-  Widget _buildSummaryBox(FoodRecommendation state) {
+  Widget _buildSummaryBox(FoodRecommendation state, int score) {
     late Color bgColor;
     late Color iconColor;
     late IconData icon;
@@ -193,19 +286,19 @@ class _AnalysisResultViewState extends State<AnalysisResultView> {
         bgColor = AppColors.mainRed;
         iconColor = Colors.white;
         icon = Icons.sentiment_very_dissatisfied_rounded;
-        message = '땅콩 알레르기와 심혈관 질환이 있는 분께는 비추천드립니다.\n안전한 대체 간식을 선택하시길 권장드립니다.';
+        message = '점수 $score점\n섭취를 추천드리지 않아요.';
         break;
       case FoodRecommendation.caution:
         bgColor = AppColors.kakaoYellow;
         iconColor = AppColors.staticBlack;
         icon = Icons.sentiment_neutral_rounded;
-        message = '당류가 다소 높지만, 적정량 섭취 시 괜찮은 간식입니다.\n섭취량에 주의하세요.';
+        message = '점수 $score점\n섭취량을 조절하여 섭취하세요.';
         break;
       case FoodRecommendation.good:
         bgColor = AppColors.mainGreen;
         iconColor = Colors.white;
         icon = Icons.sentiment_satisfied_alt_rounded;
-        message = '영양 성분이 균형 잡혀 있어 추천드립니다!';
+        message = '점수 $score점\n추천드릴만한 좋은 식품이에요.';
         break;
     }
 
@@ -236,9 +329,32 @@ class _AnalysisResultViewState extends State<AnalysisResultView> {
   }
 
   // ============================================================
-  // ✅ 주의 요소
+  // ✅ 주의 요소 (API: caution_factors)
   // ============================================================
-  Widget _buildRiskFactors() {
+  Widget _buildRiskFactorsFromApi(List<CautionFactor> items) {
+    if (items.isEmpty) {
+      return Container(
+        width: double.infinity,
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+        decoration: BoxDecoration(
+          color: AppColors.staticWhite,
+          borderRadius: BorderRadius.circular(12),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.03),
+              blurRadius: 6,
+              offset: const Offset(0, 2),
+            ),
+          ],
+        ),
+        child: Text(
+          '주의 요소가 없어요.',
+          style: AppTextStyles.footnote1Regular
+              .copyWith(color: AppColors.charcoleGray),
+        ),
+      );
+    }
+
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
@@ -254,16 +370,19 @@ class _AnalysisResultViewState extends State<AnalysisResultView> {
         ],
       ),
       child: Column(
-        children: [
-          _buildRiskRow('유제품 허용 채식', TrafficLightState.yellow,
-              icon: Icons.eco_outlined),
-          const Divider(color: AppColors.softGray, thickness: 1, height: 20),
-          _buildRiskRow('심장질환', TrafficLightState.red,
-              icon: Icons.medical_services_outlined),
-          const Divider(color: AppColors.softGray, thickness: 1, height: 20),
-          _buildRiskRow('땅콩 / 견과류 알레르기', TrafficLightState.yellow,
-              icon: Icons.sentiment_dissatisfied_outlined),
-        ],
+        children: List.generate(items.length, (i) {
+          final it = items[i];
+          final state = _evaluationToTrafficLight(it.evaluation);
+
+          return Column(
+            children: [
+              _buildRiskRow(it.factor.isEmpty ? '주의 요소' : it.factor, state),
+              if (i != items.length - 1)
+                const Divider(
+                    color: AppColors.softGray, thickness: 1, height: 20),
+            ],
+          );
+        }),
       ),
     );
   }
@@ -287,34 +406,40 @@ class _AnalysisResultViewState extends State<AnalysisResultView> {
   }
 
   // ============================================================
-  // ✅ 세부 영양성분 (2줄 구조 + Divider + 정렬 개선)
+  // ✅ 세부 영양성분 (API nutrition)
   // ============================================================
-  Widget _buildNutritionFacts() {
+  Widget _buildNutritionFactsFromApi(NutritionPart nutrition) {
+    final perServing = nutrition.perServingGrams;
+    final calories = nutrition.calories;
+
     final nutrients = [
-      Nutrient(
-          name: '탄수화물',
-          value: 27,
-          unit: 'g',
-          daily: 324,
-          baseColor: AppColors.staticBlack),
-      Nutrient(
-          name: '단백질',
-          value: 15,
-          unit: 'g',
-          daily: 55,
-          baseColor: AppColors.staticBlack),
-      Nutrient(
-          name: '나트륨',
-          value: 105,
+      _NutrientVM(name: '탄수화물', value: nutrition.carbsG, unit: 'g', daily: 324),
+      _NutrientVM(name: '단백질', value: nutrition.proteinG, unit: 'g', daily: 55),
+      _NutrientVM(
+          name: '나트륨', value: nutrition.sodiumMg, unit: 'mg', daily: 2000),
+      _NutrientVM(name: '당류', value: nutrition.sugarG, unit: 'g', daily: 50),
+      _NutrientVM(name: '지방', value: nutrition.fatG, unit: 'g', daily: 54),
+      _NutrientVM(
+          name: '트랜스지방', value: nutrition.transFatG, unit: 'g', daily: 2),
+      _NutrientVM(name: '포화지방', value: nutrition.satFatG, unit: 'g', daily: 15),
+      _NutrientVM(
+          name: '콜레스테롤',
+          value: nutrition.cholesterolMg,
           unit: 'mg',
-          daily: 2000,
-          baseColor: AppColors.staticBlack),
-      Nutrient(name: '당류', value: 15, unit: 'g', daily: 50),
-      Nutrient(name: '지방', value: 9, unit: 'g', daily: 54),
-      Nutrient(name: '트랜스지방', value: 0, unit: 'g', daily: 2),
-      Nutrient(name: '포화지방', value: 5, unit: 'g', daily: 15),
-      Nutrient(name: '콜레스테롤', value: 2, unit: 'mg', daily: 300),
+          daily: 300),
     ];
+
+    String servingText;
+    if (perServing != null && calories != null) {
+      servingText =
+          '${perServing.toStringAsFixed(0)}g / ${calories.toStringAsFixed(0)}kcal';
+    } else if (perServing != null) {
+      servingText = '${perServing.toStringAsFixed(0)}g';
+    } else if (calories != null) {
+      servingText = '${calories.toStringAsFixed(0)}kcal';
+    } else {
+      servingText = '';
+    }
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -322,12 +447,17 @@ class _AnalysisResultViewState extends State<AnalysisResultView> {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Text('세부 영양성분',
-                style: AppTextStyles.bodyBold
-                    .copyWith(color: AppColors.staticBlack)),
-            Text('40g / 200kcal',
+            Text(
+              '세부 영양성분',
+              style:
+                  AppTextStyles.bodyBold.copyWith(color: AppColors.staticBlack),
+            ),
+            if (servingText.isNotEmpty)
+              Text(
+                servingText,
                 style: AppTextStyles.caption1Regular
-                    .copyWith(color: AppColors.brownGray)),
+                    .copyWith(color: AppColors.brownGray),
+              ),
           ],
         ),
         const SizedBox(height: 10),
@@ -348,29 +478,31 @@ class _AnalysisResultViewState extends State<AnalysisResultView> {
           child: Column(
             children: List.generate(nutrients.length, (i) {
               final n = nutrients[i];
-              final percent =
-                  (n.value / n.daily * 100).clamp(0, 100).toDouble();
+
+              final value = n.value ?? 0;
+              final percent = (n.daily <= 0)
+                  ? 0.0
+                  : ((value / n.daily) * 100).clamp(0, 100).toDouble();
+
               final isOver = percent > 20;
-              final barColor = (n.baseColor != null)
-                  ? n.baseColor!
-                  : isOver
-                      ? AppColors.mainRed
-                      : AppColors.mainGreen;
+              final barColor = isOver ? AppColors.mainRed : AppColors.mainGreen;
 
               return Column(
                 children: [
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      // 기준치 바
+                      // 기준치 바(회색) + %
                       Row(
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
                           SizedBox(
                             width: 70,
-                            child: Text(n.name,
-                                style: AppTextStyles.footnote1Medium
-                                    .copyWith(color: AppColors.staticBlack)),
+                            child: Text(
+                              n.name,
+                              style: AppTextStyles.footnote1Medium
+                                  .copyWith(color: AppColors.staticBlack),
+                            ),
                           ),
                           Expanded(
                             child: Container(
@@ -391,7 +523,7 @@ class _AnalysisResultViewState extends State<AnalysisResultView> {
                       ),
                       const SizedBox(height: 6),
 
-                      // 실제 함유량 바
+                      // 실제 함유량 바 + 값
                       Row(
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
@@ -413,10 +545,13 @@ class _AnalysisResultViewState extends State<AnalysisResultView> {
                             ),
                           ),
                           const SizedBox(width: 8),
-                          Text('${n.value}${n.unit}',
-                              style: AppTextStyles.footnote1Medium.copyWith(
-                                  color: barColor,
-                                  fontWeight: FontWeight.bold)),
+                          Text(
+                            n.value == null ? '-' : '${_fmt(n.value)}${n.unit}',
+                            style: AppTextStyles.footnote1Medium.copyWith(
+                              color: barColor,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
                         ],
                       ),
                     ],
@@ -425,7 +560,10 @@ class _AnalysisResultViewState extends State<AnalysisResultView> {
                     const Padding(
                       padding: EdgeInsets.symmetric(vertical: 12),
                       child: Divider(
-                          color: AppColors.softGray, thickness: 1, height: 1),
+                        color: AppColors.softGray,
+                        thickness: 1,
+                        height: 1,
+                      ),
                     ),
                 ],
               );
@@ -435,25 +573,79 @@ class _AnalysisResultViewState extends State<AnalysisResultView> {
       ],
     );
   }
+
+  // ============================================================
+  // helpers
+  // ============================================================
+  FoodRecommendation _scoreToFoodRecommendation(int score) {
+    if (score < 35) return FoodRecommendation.bad;
+    if (score < 70) return FoodRecommendation.caution;
+    return FoodRecommendation.good;
+  }
+
+  TrafficLightState _scoreToTrafficLight(int score) {
+    if (score < 35) return TrafficLightState.red;
+    if (score < 70) return TrafficLightState.yellow;
+    return TrafficLightState.green;
+  }
+
+  TrafficLightState _evaluationToTrafficLight(String evaluation) {
+    switch (evaluation) {
+      case 'NO':
+        return TrafficLightState.red;
+      case 'OK':
+        return TrafficLightState.green;
+      case 'CAUTION':
+      default:
+        return TrafficLightState.yellow;
+    }
+  }
+
+  String _reportText(ReportBlock? block) {
+    if (block == null) return '분석된 리포트가 없어요.';
+    final brief = block.briefReport.trim();
+    final report = block.report.trim();
+
+    if (brief.isEmpty && report.isEmpty) return '분석된 리포트가 없어요.';
+    if (brief.isEmpty) return report;
+    if (report.isEmpty) return brief;
+
+    // brief_report는 보여주지 않도록 삭제
+    return report;
+  }
+
+  String _alternativesText(List<AlternativeReport> list) {
+    if (list.isEmpty) return '추천드릴만한 대체 식품이 없어요.';
+
+    return list.map((e) {
+      final brief = e.briefReport.trim();
+      final report = e.report.trim();
+      if (brief.isEmpty) return report.isEmpty ? '-' : report;
+      if (report.isEmpty) return brief;
+      return '• $brief\n$report';
+    }).join('\n\n');
+  }
+
+  String _fmt(double? v) {
+    if (v == null) return '-';
+    final s = v.toString();
+    if (s.endsWith('.0')) return v.toStringAsFixed(0);
+    return v.toStringAsFixed(1);
+  }
 }
 
-// ============================================================
-// ENUM & MODEL
-// ============================================================
 enum FoodRecommendation { bad, caution, good }
 
-class Nutrient {
+class _NutrientVM {
   final String name;
-  final double value;
+  final double? value;
   final String unit;
   final double daily;
-  final Color? baseColor;
 
-  Nutrient({
+  _NutrientVM({
     required this.name,
     required this.value,
     required this.unit,
     required this.daily,
-    this.baseColor,
   });
 }

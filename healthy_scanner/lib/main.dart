@@ -5,7 +5,6 @@ import 'controller/navigation_controller.dart';
 import 'controller/scan_controller.dart';
 import 'controller/auth_controller.dart';
 import 'controller/home_controller.dart';
-import 'controller/mypage_controller.dart';
 import 'data/api_service.dart';
 import 'data/home_api.dart';
 import 'core/app_secure_storage.dart';
