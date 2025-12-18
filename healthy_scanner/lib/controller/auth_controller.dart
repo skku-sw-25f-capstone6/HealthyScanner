@@ -19,6 +19,7 @@ class AuthController extends GetxController {
   final tokenType = RxnString();
   final expiresIn = RxnInt();
   final refreshExpiresIn = RxnInt();
+  final userId = RxnString();
 
   @override
   void onInit() {
@@ -34,6 +35,7 @@ class AuthController extends GetxController {
     final expiresInStr = await storage.read(key: "kakao_expires_in");
     final refreshExpiresInStr =
         await storage.read(key: "kakao_refresh_expires_in");
+    userId.value = await storage.read(key: "user_id");
 
     if (expiresInStr != null) {
       expiresIn.value = int.tryParse(expiresInStr);
@@ -44,7 +46,7 @@ class AuthController extends GetxController {
 
     if (appAccess.value != null && appAccess.value!.isNotEmpty) {
       debugPrint("🔐 Saved AccessToken found → Auto login");
-      nav.goToOnboardingAgree();
+      nav.routeAfterLogin();
     }
   }
 
@@ -63,6 +65,7 @@ class AuthController extends GetxController {
     required String appRefreshToken,
     required String kakaoAccessToken,
     required String kakaoRefreshToken,
+    required String userId,
     String? tokenType,
     int? expiresIn,
     int? refreshExpiresIn,
@@ -73,6 +76,7 @@ class AuthController extends GetxController {
     appAccess.value = appAccessToken;
     await storage.write(key: "jwt", value: appAccessToken);
     await storage.write(key: "app_refresh_token", value: appRefreshToken);
+    await storage.write(key: "user_id", value: userId);
     kakaoAccess.value = kakaoAccessToken;
     kakaoRefresh.value = kakaoRefreshToken;
     this.tokenType.value = tokenType;
@@ -92,7 +96,7 @@ class AuthController extends GetxController {
           key: "kakao_refresh_expires_in", value: refreshExpiresIn.toString());
     }
 
-    nav.goToOnboardingAgree();
+    nav.routeAfterLogin();
   }
 
   /// ----------------------------------------------------------

@@ -49,7 +49,6 @@ class LoginMainView extends StatelessWidget {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   /// ✅ 카카오 로그인 버튼
-                  /// 현재는 로그인 성공 로직 없이 바로 홈으로 이동함.
                   SocialLoginButton(
                     label: '카카오로 로그인',
                     background: AppColors.kakaoYellow,
@@ -71,47 +70,25 @@ class LoginMainView extends StatelessWidget {
                   ),
                   const SizedBox(height: 7),
 
-                  /// ✅ 네이버 로그인 버튼
-                  /// 현재는 카카오 버튼과 동일하게 홈으로 이동만 수행.
-                  SocialLoginButton(
-                    label: '네이버로 로그인',
-                    background: AppColors.naverGreen,
-                    labelStyle: const TextStyle(
-                      fontFamily: 'NotoSansKR',
-                      fontWeight: FontWeight.w500,
-                      fontSize: 12,
-                      letterSpacing: 0,
-                      wordSpacing: 1.3,
-                    ),
-                    leading: const Image(
-                      image: AssetImage("assets/icons/ic_naver.png"),
-                      width: 29,
-                      height: 29,
-                    ),
-                    onPressed: () {
-                      // TODO: 네이버 로그인 API 연동 예정
-                      nav.goToOnboardingAgree(); // ✅ 임시로 온보딩으로 이동
-                    },
-                  ),
-                  const SizedBox(height: 20),
-
                   /// 문의 링크 텍스트
                   GestureDetector(
                     behavior: HitTestBehavior.opaque,
                     onTap: () {
                       // TODO: 문의 페이지 연결 (예: 이메일, 피드백 폼 등)
-                      // 임시 개발용: 로그인 없이 온보딩으로 연결
-                      nav.goToOnboardingAgree();
                     },
                     child: Padding(
-                      padding: const EdgeInsets.all(6),
+                      padding: const EdgeInsets.all(10),
                       child: Text(
                         '문제가 있나요?',
                         style: context.caption2Regular
                             .copyWith(color: Colors.white),
                       ),
                     ),
-                  )
+                  ),
+
+                  const SizedBox(
+                    height: 30,
+                  ),
                 ],
               ),
             ),
@@ -154,7 +131,7 @@ class SocialLoginButton extends StatelessWidget {
         borderRadius: BorderRadius.circular(7),
         onTap: onPressed,
         child: Container(
-          height: 35,
+          height: 40,
           decoration: BoxDecoration(
             color: background,
             borderRadius: BorderRadius.circular(7),
