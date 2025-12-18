@@ -25,10 +25,6 @@ void main() async {
     ApiService(baseUrl: ApiClient.baseUrl),
     permanent: true,
   );
-  Get.put(
-    MyPageController(Get.find<ApiService>()),
-    permanent: true,
-  );
   Get.put(HomeController(HomeApi(baseUrl: 'https://healthy-scanner.com')));
 
   runApp(const MyApp());
