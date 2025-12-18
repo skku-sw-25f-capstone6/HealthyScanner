@@ -9,6 +9,7 @@ import 'package:healthy_scanner/controller/analysis_result_controller.dart';
 import 'package:healthy_scanner/data/scan_history_detail_response.dart';
 import 'package:healthy_scanner/core/url_resolver.dart';
 import 'package:healthy_scanner/theme/theme_extensions.dart';
+import 'package:healthy_scanner/constants/onboarding_constants.dart';
 
 class AnalysisResultView extends StatefulWidget {
   const AnalysisResultView({super.key});
@@ -373,10 +374,11 @@ class _AnalysisResultViewState extends State<AnalysisResultView> {
         children: List.generate(items.length, (i) {
           final it = items[i];
           final state = _evaluationToTrafficLight(it.evaluation);
+          final label = _cautionFactorToKorean(it.factor);
 
           return Column(
             children: [
-              _buildRiskRow(it.factor.isEmpty ? '주의 요소' : it.factor, state),
+              _buildRiskRow(label, state),
               if (i != items.length - 1)
                 const Divider(
                     color: AppColors.softGray, thickness: 1, height: 20),
@@ -388,10 +390,10 @@ class _AnalysisResultViewState extends State<AnalysisResultView> {
   }
 
   Widget _buildRiskRow(String title, TrafficLightState state,
-      {IconData icon = Icons.info_outline}) {
+      {IconData icon = Icons.warning_rounded}) {
     return Row(
       children: [
-        Icon(icon, color: AppColors.charcoleGray, size: 22),
+        Icon(icon, color: AppColors.mainRed, size: 22),
         const SizedBox(width: 10),
         Expanded(
           child: Text(
@@ -631,6 +633,53 @@ class _AnalysisResultViewState extends State<AnalysisResultView> {
     final s = v.toString();
     if (s.endsWith('.0')) return v.toStringAsFixed(0);
     return v.toStringAsFixed(1);
+  }
+
+  String _cautionFactorToKorean(String raw) {
+    final s = raw.trim();
+    if (s.isEmpty) return '주의 요소';
+
+    // 서버가 peanut_allergy / wheat_allergy 같은 형태로 줄 때
+    if (s.endsWith('_allergy')) {
+      final code = s.replaceAll('_allergy', '');
+      final ko = OnboardingConstants.allergyCodeToLabel(code) ??
+          _fallbackAllergyKo(code);
+      return '$ko 알레르기';
+    }
+
+    // 1) 질환 코드 (hypertension 등)
+    final conditionKo = OnboardingConstants.conditionCodeToLabel(s);
+    if (conditionKo != null) return conditionKo;
+
+    // 2) 알레르기 코드 (wheat, soy 등)
+    final allergyKo = OnboardingConstants.allergyCodeToLabel(s);
+    if (allergyKo != null) return '$allergyKo 알레르기';
+
+    // 3) 영양/기타 주의 요소 (high_fat 등)
+    const otherMap = <String, String>{
+      'high_fat': '지방 함량이 높아요',
+      'high_sugar': '당류 함량이 높아요',
+      'high_sodium': '나트륨 함량이 높아요',
+      'high_calorie': '칼로리가 높아요',
+      'high_sat_fat': '포화지방 함량이 높아요',
+      'high_trans_fat': '트랜스지방 함량이 높아요',
+      'high_cholesterol': '콜레스테롤 함량이 높아요',
+    };
+    final other = otherMap[s];
+    if (other != null) return other;
+
+    return s.replaceAll('_', ' ');
+  }
+
+  String _fallbackAllergyKo(String code) {
+    switch (code) {
+      case 'peanut':
+        return '땅콩';
+      case 'nut':
+        return '견과류';
+      default:
+        return code; // 알 수 없으면 원문
+    }
   }
 }
 
