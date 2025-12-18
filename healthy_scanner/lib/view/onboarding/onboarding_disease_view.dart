@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:healthy_scanner/constants/onboarding_constants.dart';
 import '../../component/bottom_button.dart';
 import '../../component/tag_chip_toggle.dart';
 import '../../controller/navigation_controller.dart';
@@ -14,11 +15,12 @@ class OnboardingDiseaseView extends StatefulWidget {
 }
 
 class _OnboardingDiseaseViewState extends State<OnboardingDiseaseView> {
+  late final NavigationController controller;
   final RxSet<String> selectedDiseases = <String>{}.obs;
 
   // ✅ 질병 목록 (순서 및 누락 보완)
   final List<String> diseaseOptions = [
-    '건강 질환이 없어요',
+    OnboardingConstants.noDiseaseLabel,
     '고혈압',
     '간질환',
     '통풍',
@@ -29,9 +31,20 @@ class _OnboardingDiseaseViewState extends State<OnboardingDiseaseView> {
   ];
 
   @override
-  Widget build(BuildContext context) {
-    final controller = Get.find<NavigationController>();
+  void initState() {
+    super.initState();
+    controller = Get.find<NavigationController>();
+    if (controller.selectedDiseases.isNotEmpty) {
+      selectedDiseases.addAll(controller.selectedDiseases);
+    }
+  }
 
+  void _syncSelection() {
+    controller.selectedDiseases.assignAll(selectedDiseases.toList());
+  }
+
+  @override
+  Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xFFFAFAFA), // ✅ 배경색 적용
       body: SafeArea(
@@ -97,25 +110,28 @@ class _OnboardingDiseaseViewState extends State<OnboardingDiseaseView> {
                       children: diseaseOptions.map((disease) {
                         final isSelected = selectedDiseases.contains(disease);
                         return TagChipToggle(
+                          key: ValueKey(disease),
                           label: disease,
                           initialSelected: isSelected,
                           onChanged: (selected) {
                             if (selected) {
                               // ✅ ‘건강 질환이 없어요’ 선택 시 나머지 전부 해제 후 단독 선택
-                              if (disease == '건강 질환이 없어요') {
+                              if (disease == OnboardingConstants.noDiseaseLabel) {
                                 selectedDiseases
                                   ..clear()
-                                  ..add('건강 질환이 없어요');
+                                  ..add(OnboardingConstants.noDiseaseLabel);
                               }
                               // ✅ 다른 질환 선택 시 ‘건강 질환이 없어요’ 해제
                               else {
-                                selectedDiseases.remove('건강 질환이 없어요');
+                                selectedDiseases
+                                    .remove(OnboardingConstants.noDiseaseLabel);
                                 selectedDiseases.add(disease);
                               }
                             } else {
                               // ✅ 다시 클릭 시 해당 질환만 해제
                               selectedDiseases.remove(disease);
                             }
+                            _syncSelection();
                           },
                         );
                       }).toList(),

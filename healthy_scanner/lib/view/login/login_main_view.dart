@@ -90,7 +90,7 @@ class LoginMainView extends StatelessWidget {
                     ),
                     onPressed: () {
                       // TODO: 네이버 로그인 API 연동 예정
-                      nav.goToHome(); // ✅ 임시로 홈으로 이동
+                      nav.goToOnboardingAgree(); // ✅ 임시로 온보딩으로 이동
                     },
                   ),
                   const SizedBox(height: 20),
@@ -100,8 +100,8 @@ class LoginMainView extends StatelessWidget {
                     behavior: HitTestBehavior.opaque,
                     onTap: () {
                       // TODO: 문의 페이지 연결 (예: 이메일, 피드백 폼 등)
-                      // 임시 개발용: 로그인 없이 홈으로 연결
-                      nav.goToHome();
+                      // 임시 개발용: 로그인 없이 온보딩으로 연결
+                      nav.goToOnboardingAgree();
                     },
                     child: Padding(
                       padding: const EdgeInsets.all(6),

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:healthy_scanner/constants/onboarding_constants.dart';
 import '../../controller/navigation_controller.dart';
 import '../../component/tag_chip_toggle.dart';
 import '../../component/bottom_button.dart';
@@ -24,7 +25,7 @@ class OnboardingAllergyView extends GetView<NavigationController> {
       '대두(콩)',
       '유제품',
       '소고기',
-      '없어요',
+      OnboardingConstants.noAllergyLabel,
     ];
 
     return Scaffold(
@@ -95,17 +96,22 @@ class OnboardingAllergyView extends GetView<NavigationController> {
                             controller.selectedAllergies.contains(allergy);
 
                         return TagChipToggle(
+                          key: ValueKey(allergy),
                           label: allergy,
                           initialSelected: isSelected,
                           onChanged: (v) {
                             // ✅ '없어요' 선택 시 다른 알러지 해제
-                            if (allergy == '없어요' && v) {
+                            if (allergy ==
+                                    OnboardingConstants.noAllergyLabel &&
+                                v) {
                               controller.selectedAllergies.clear();
-                              controller.selectedAllergies.add('없어요');
+                              controller.selectedAllergies
+                                  .add(OnboardingConstants.noAllergyLabel);
                             } else {
                               if (controller.selectedAllergies
-                                  .contains('없어요')) {
-                                controller.selectedAllergies.remove('없어요');
+                                  .contains(OnboardingConstants.noAllergyLabel)) {
+                                controller.selectedAllergies
+                                    .remove(OnboardingConstants.noAllergyLabel);
                               }
                               if (v) {
                                 controller.selectedAllergies.add(allergy);

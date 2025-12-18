@@ -5,6 +5,8 @@ import 'controller/navigation_controller.dart';
 import 'controller/scan_controller.dart';
 import 'controller/auth_controller.dart';
 import 'controller/home_controller.dart';
+import 'controller/mypage_controller.dart';
+import 'data/api_service.dart';
 import 'data/home_api.dart';
 import 'core/app_secure_storage.dart';
 import 'core/api_client.dart';
@@ -19,6 +21,14 @@ void main() async {
   Get.put(NavigationController(), permanent: true);
   Get.put(AuthController(), permanent: true);
   Get.put(ScanController(), permanent: true);
+  Get.put(
+    ApiService(baseUrl: ApiClient.baseUrl),
+    permanent: true,
+  );
+  Get.put(
+    MyPageController(Get.find<ApiService>()),
+    permanent: true,
+  );
   Get.put(HomeController(HomeApi(baseUrl: 'https://healthy-scanner.com')));
 
   runApp(const MyApp());

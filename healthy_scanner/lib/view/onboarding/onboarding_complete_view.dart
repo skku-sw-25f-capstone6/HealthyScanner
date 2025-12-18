@@ -76,10 +76,14 @@ class OnboardingCompleteView extends GetView<NavigationController> {
                   // 🔹 시작 버튼
                   Padding(
                     padding: const EdgeInsets.only(bottom: 24),
-                    child: BottomButton(
-                      text: '시작하기',
-                      onPressed: controller.finishOnboarding,
-                    ),
+                    child: Obx(() {
+                      final isLoading = controller.isSubmittingProfile.value;
+                      return BottomButton(
+                        text: isLoading ? '전송 중...' : '시작하기',
+                        isEnabled: !isLoading,
+                        onPressed: () => controller.submitOnboardingProfile(),
+                      );
+                    }),
                   ),
                 ],
               ),
