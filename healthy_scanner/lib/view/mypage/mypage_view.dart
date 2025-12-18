@@ -209,6 +209,8 @@ class MyPageView extends GetView<MyPageController> {
                                   actions: [
                                     TextButton(
                                       onPressed: () => Get.back(),
+                                      style: TextButton.styleFrom(
+                                          overlayColor: AppColors.cloudGray),
                                       child: Text(
                                         '취소',
                                         style: AppTextStyles.caption1Medium
@@ -222,6 +224,8 @@ class MyPageView extends GetView<MyPageController> {
                                         Get.back();
                                         await auth.withdrawAccount();
                                       },
+                                      style: TextButton.styleFrom(
+                                          overlayColor: AppColors.cloudGray),
                                       child: Text(
                                         '탈퇴',
                                         style: AppTextStyles.caption1Medium
