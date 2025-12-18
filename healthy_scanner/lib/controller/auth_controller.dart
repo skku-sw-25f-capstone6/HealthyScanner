@@ -44,7 +44,7 @@ class AuthController extends GetxController {
 
     if (appAccess.value != null && appAccess.value!.isNotEmpty) {
       debugPrint("🔐 Saved AccessToken found → Auto login");
-      nav.goToHome();
+      nav.goToOnboardingAgree();
     }
   }
 
@@ -92,7 +92,7 @@ class AuthController extends GetxController {
           key: "kakao_refresh_expires_in", value: refreshExpiresIn.toString());
     }
 
-    nav.goToHome();
+    nav.goToOnboardingAgree();
   }
 
   /// ----------------------------------------------------------

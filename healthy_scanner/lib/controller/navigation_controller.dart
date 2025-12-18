@@ -3,10 +3,14 @@ import 'package:get/get.dart';
 import 'dart:typed_data';
 import '../routes/app_routes.dart';
 import '../component/scan_mode_button.dart';
-import 'package:healthy_scanner/view/login/kakao_login_webview.dart';
+import 'package:healthy_scanner/constants/onboarding_constants.dart';
+import 'package:healthy_scanner/controller/auth_controller.dart';
+import 'package:healthy_scanner/data/api_service.dart';
 import 'package:healthy_scanner/data/scan_fail_payload.dart';
 import 'package:healthy_scanner/controller/scan_controller.dart';
 import 'package:healthy_scanner/controller/home_controller.dart';
+import 'package:healthy_scanner/controller/mypage_controller.dart';
+import 'package:healthy_scanner/view/login/kakao_login_webview.dart';
 
 /// 📍 모든 페이지 전환을 중앙에서 관리하는 컨트롤러
 class NavigationController extends SuperController {
@@ -64,6 +68,7 @@ class NavigationController extends SuperController {
   final selectedDiet = ''.obs;
   final selectedDiseases = <String>[].obs;
   final selectedAllergies = <String>[].obs;
+  final isSubmittingProfile = false.obs;
 
   bool get isAgreeValid => agreedPolicy.value && agreedService.value;
   bool get isDietValid => selectedDiet.isNotEmpty;
@@ -81,6 +86,52 @@ class NavigationController extends SuperController {
 
   /// ✅ 온보딩 완료 후 홈 이동
   void finishOnboarding() => Get.offAllNamed(AppRoutes.home);
+
+  Future<void> submitOnboardingProfile() async {
+    if (isSubmittingProfile.value) return;
+
+    final auth = Get.find<AuthController>();
+    final token = auth.appAccess.value;
+    if (token == null || token.isEmpty) {
+      Get.snackbar(
+        '로그인이 필요합니다',
+        '다시 로그인해 주세요.',
+        snackPosition: SnackPosition.BOTTOM,
+      );
+      return;
+    }
+
+    final habitPayload = OnboardingConstants.mapHabit(selectedDiet.value);
+    final conditionPayload =
+        OnboardingConstants.mapConditions(selectedDiseases.toList());
+    final allergyPayload =
+        OnboardingConstants.mapAllergies(selectedAllergies.toList());
+
+    isSubmittingProfile.value = true;
+    try {
+      await Get.find<ApiService>().postOnboardingProfile(
+        jwt: token,
+        habits: habitPayload,
+        conditions: conditionPayload,
+        allergies: allergyPayload,
+      );
+      if (Get.isRegistered<MyPageController>()) {
+        final myPage = Get.find<MyPageController>();
+        myPage.currentHabitKorean.value = selectedDiet.value;
+        myPage.fetchMyPageInfo();
+      }
+      finishOnboarding();
+    } catch (e) {
+      debugPrint('❌ [ONBOARDING] submit failed: $e');
+      Get.snackbar(
+        '저장에 실패했어요',
+        '네트워크 상태를 확인한 뒤 다시 시도해 주세요.',
+        snackPosition: SnackPosition.BOTTOM,
+      );
+    } finally {
+      isSubmittingProfile.value = false;
+    }
+  }
 
   /// ✅ 온보딩 중 뒤로가기
   void backOnboardingStep() => Get.back();

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:healthy_scanner/controller/mypage_controller.dart';
 import '../../controller/navigation_controller.dart';
 import '../../component/bottom_button.dart';
 import '../../theme/app_colors.dart';
@@ -13,7 +14,10 @@ class MyPageDietEditView extends StatefulWidget {
 }
 
 class _MyPageDietEditViewState extends State<MyPageDietEditView> {
-  String selectedDiet = '일반식';
+  late final MyPageController myPageController;
+  late String selectedDiet;
+  Worker? _habitWorker;
+  bool _userChanged = false;
 
   final List<String> dietOptions = [
     '일반식',
@@ -22,6 +26,28 @@ class _MyPageDietEditViewState extends State<MyPageDietEditView> {
     '달걀 허용 채식',
     '채식',
   ];
+
+  @override
+  void initState() {
+    super.initState();
+    myPageController = Get.find<MyPageController>();
+    selectedDiet = myPageController.currentHabitKorean.value;
+    _habitWorker = ever<String>(
+      myPageController.currentHabitKorean,
+      (habit) {
+        if (!mounted || _userChanged) return;
+        setState(() {
+          selectedDiet = habit;
+        });
+      },
+    );
+  }
+
+  @override
+  void dispose() {
+    _habitWorker?.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -70,6 +96,7 @@ class _MyPageDietEditViewState extends State<MyPageDietEditView> {
                         borderRadius: BorderRadius.circular(8),
                       ),
                       child: DropdownButtonFormField<String>(
+                        key: ValueKey(selectedDiet),
                         initialValue: selectedDiet,
                         icon: const Icon(
                           Icons.keyboard_arrow_down,
@@ -94,8 +121,10 @@ class _MyPageDietEditViewState extends State<MyPageDietEditView> {
                           );
                         }).toList(),
                         onChanged: (value) {
+                          if (value == null) return;
                           setState(() {
-                            selectedDiet = value!;
+                            _userChanged = true;
+                            selectedDiet = value;
                           });
                         },
                       ),
@@ -107,11 +136,20 @@ class _MyPageDietEditViewState extends State<MyPageDietEditView> {
                   // 🔹 저장 버튼
                   Padding(
                     padding: const EdgeInsets.only(bottom: 24),
-                    child: BottomButton(
-                      text: '저장하기',
-                      isEnabled: true,
-                      onPressed: controller.goBack,
-                    ),
+                    child: Obx(() {
+                      final isSaving = myPageController.isUpdatingHabit.value;
+                      return BottomButton(
+                        text: isSaving ? '저장 중...' : '저장하기',
+                        isEnabled: !isSaving,
+                        onPressed: () async {
+                          final success = await myPageController
+                              .updateHabit(selectedDiet);
+                          if (success && mounted) {
+                            controller.goBack();
+                          }
+                        },
+                      );
+                    }),
                   ),
                 ],
               ),

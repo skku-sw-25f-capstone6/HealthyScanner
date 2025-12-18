@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:healthy_scanner/constants/onboarding_constants.dart';
 import '../../component/bottom_button.dart';
 import '../../controller/navigation_controller.dart';
 import '../../theme/app_colors.dart';
@@ -13,8 +14,6 @@ class OnboardingDietView extends StatefulWidget {
 }
 
 class _OnboardingDietViewState extends State<OnboardingDietView> {
-  String selectedDiet = '일반식'; // ✅ 기본 선택값
-
   final List<String> dietOptions = [
     '일반식',
     '생선 채식',
@@ -22,6 +21,15 @@ class _OnboardingDietViewState extends State<OnboardingDietView> {
     '달걀 허용 채식',
     '채식',
   ];
+
+  @override
+  void initState() {
+    super.initState();
+    final controller = Get.find<NavigationController>();
+    if (controller.selectedDiet.isEmpty) {
+      controller.selectedDiet.value = OnboardingConstants.defaultDietLabel;
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -87,36 +95,41 @@ class _OnboardingDietViewState extends State<OnboardingDietView> {
                     border: Border.all(color: AppColors.softGray),
                     borderRadius: BorderRadius.circular(8),
                   ),
-                  child: DropdownButtonFormField<String>(
-                    initialValue: selectedDiet,
-                    icon: const Icon(
-                      Icons.keyboard_arrow_down,
-                      color: AppColors.charcoleGray,
-                    ),
-                    decoration: const InputDecoration(
-                      border: InputBorder.none,
-                    ),
-                    dropdownColor: AppColors.staticWhite,
-                    style: AppTextStyles.footnote1Medium.copyWith(
-                      color: AppColors.stoneGray,
-                    ),
-                    items: dietOptions.map((option) {
-                      return DropdownMenuItem<String>(
-                        value: option,
-                        child: Text(
-                          option,
-                          style: AppTextStyles.footnote1Medium.copyWith(
-                            color: AppColors.charcoleGray,
+                  child: Obx(() {
+                    final selectedValue = controller.selectedDiet.value.isEmpty
+                        ? OnboardingConstants.defaultDietLabel
+                        : controller.selectedDiet.value;
+                    return DropdownButtonFormField<String>(
+                      key: ValueKey(selectedValue),
+                      initialValue: selectedValue,
+                      icon: const Icon(
+                        Icons.keyboard_arrow_down,
+                        color: AppColors.charcoleGray,
+                      ),
+                      decoration: const InputDecoration(
+                        border: InputBorder.none,
+                      ),
+                      dropdownColor: AppColors.staticWhite,
+                      style: AppTextStyles.footnote1Medium.copyWith(
+                        color: AppColors.stoneGray,
+                      ),
+                      items: dietOptions.map((option) {
+                        return DropdownMenuItem<String>(
+                          value: option,
+                          child: Text(
+                            option,
+                            style: AppTextStyles.footnote1Medium.copyWith(
+                              color: AppColors.charcoleGray,
+                            ),
                           ),
-                        ),
-                      );
-                    }).toList(),
-                    onChanged: (value) {
-                      setState(() {
-                        selectedDiet = value!;
-                      });
-                    },
-                  ),
+                        );
+                      }).toList(),
+                      onChanged: (value) {
+                        if (value == null) return;
+                        controller.selectedDiet.value = value;
+                      },
+                    );
+                  }),
                 ),
               ),
 
@@ -125,10 +138,12 @@ class _OnboardingDietViewState extends State<OnboardingDietView> {
               // 🔹 다음 버튼
               Padding(
                 padding: const EdgeInsets.only(bottom: 24),
-                child: BottomButton(
-                  text: '다음',
-                  isEnabled: true,
-                  onPressed: controller.goToOnboardingDisease,
+                child: Obx(
+                  () => BottomButton(
+                    text: '다음',
+                    isEnabled: controller.isDietValid,
+                    onPressed: controller.goToOnboardingDisease,
+                  ),
                 ),
               ),
             ],

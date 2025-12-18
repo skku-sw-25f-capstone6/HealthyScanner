@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:healthy_scanner/controller/mypage_controller.dart';
 import '../../controller/navigation_controller.dart';
 import '../../component/tag_chip_toggle.dart';
 import '../../component/bottom_button.dart';
@@ -14,7 +15,9 @@ class MyPageAllergyEditView extends StatefulWidget {
 }
 
 class _MyPageAllergyEditViewState extends State<MyPageAllergyEditView> {
-  final NavigationController controller = Get.find<NavigationController>();
+  late final NavigationController nav;
+  late final MyPageController myPageController;
+  late Set<String> selectedAllergies;
 
   final List<String> allergies = [
     '조개류',
@@ -32,7 +35,15 @@ class _MyPageAllergyEditViewState extends State<MyPageAllergyEditView> {
     '없어요',
   ];
 
-  final RxList<String> selectedAllergies = <String>[].obs;
+  @override
+  void initState() {
+    super.initState();
+    nav = Get.find<NavigationController>();
+    myPageController = Get.find<MyPageController>();
+    selectedAllergies = {
+      ...myPageController.currentAllergiesKorean,
+    };
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -71,23 +82,22 @@ class _MyPageAllergyEditViewState extends State<MyPageAllergyEditView> {
                   const SizedBox(height: 50),
 
                   // 🔹 알레르기 선택 영역
-                  Obx(
-                    () => Wrap(
-                      spacing: 10,
-                      runSpacing: 10,
-                      alignment: WrapAlignment.center,
-                      children: allergies.map((allergy) {
-                        final bool isSelected =
-                            selectedAllergies.contains(allergy);
+                  Wrap(
+                    spacing: 10,
+                    runSpacing: 10,
+                    alignment: WrapAlignment.center,
+                    children: allergies.map((allergy) {
+                      final bool isSelected =
+                          selectedAllergies.contains(allergy);
 
-                        return TagChipToggle(
-                          label: allergy,
-                          initialSelected: isSelected,
-                          onChanged: (v) {
-                            // ‘없어요’ 선택 시 나머지 해제
+                      return TagChipToggle(
+                        key: ValueKey('$allergy-$isSelected'),
+                        label: allergy,
+                        initialSelected: isSelected,
+                        onChanged: (v) {
+                          setState(() {
                             if (allergy == '없어요' && v) {
-                              selectedAllergies.clear();
-                              selectedAllergies.add(allergy);
+                              selectedAllergies = {'없어요'};
                             } else {
                               if (selectedAllergies.contains('없어요')) {
                                 selectedAllergies.remove('없어요');
@@ -98,10 +108,10 @@ class _MyPageAllergyEditViewState extends State<MyPageAllergyEditView> {
                                 selectedAllergies.remove(allergy);
                               }
                             }
-                          },
-                        );
-                      }).toList(),
-                    ),
+                          });
+                        },
+                      );
+                    }).toList(),
                   ),
 
                   const Spacer(),
@@ -120,11 +130,30 @@ class _MyPageAllergyEditViewState extends State<MyPageAllergyEditView> {
                   // 🔹 저장 버튼
                   Padding(
                     padding: const EdgeInsets.only(bottom: 24),
-                    child: BottomButton(
-                      text: '저장하기',
-                      isEnabled: true,
-                      onPressed: controller.goBack,
-                    ),
+                    child: Obx(() {
+                      final isSaving =
+                          myPageController.isUpdatingAllergies.value;
+                      return BottomButton(
+                        text: isSaving ? '저장 중...' : '저장하기',
+                        isEnabled: !isSaving,
+                        onPressed: () async {
+                          final selection =
+                              selectedAllergies.toList(growable: false);
+                          final success = await myPageController
+                              .updateAllergies(selection);
+                          if (!context.mounted) return;
+                          if (!success) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                content: Text('저장에 실패했어요. 다시 시도해 주세요.'),
+                              ),
+                            );
+                            return;
+                          }
+                          nav.goBack();
+                        },
+                      );
+                    }),
                   ),
                 ],
               ),
@@ -135,7 +164,7 @@ class _MyPageAllergyEditViewState extends State<MyPageAllergyEditView> {
               top: 20,
               left: 16,
               child: GestureDetector(
-                onTap: controller.goBack,
+                onTap: nav.goBack,
                 child: const Icon(
                   Icons.arrow_back_ios_new,
                   color: AppColors.cloudGray,

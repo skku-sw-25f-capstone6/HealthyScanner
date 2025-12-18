@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:healthy_scanner/controller/mypage_controller.dart';
 import '../../controller/navigation_controller.dart';
 import '../../component/tag_chip_toggle.dart';
 import '../../component/bottom_button.dart';
@@ -14,21 +15,30 @@ class MyPageDiseaseEditView extends StatefulWidget {
 }
 
 class _MyPageDiseaseEditViewState extends State<MyPageDiseaseEditView> {
-  final NavigationController controller = Get.find<NavigationController>();
+  late final NavigationController nav;
+  late final MyPageController myPageController;
+  late Set<String> selectedDiseases;
 
   final List<String> diseases = [
+    '건강 질환이 없어요',
     '고혈압',
+    '간질환',
+    '통풍',
     '당뇨병',
     '고지혈증',
-    '비만',
-    '심혈관질환',
     '신장질환',
-    '간질환',
-    '위염/소화질환',
-    '없어요',
+    '갑상선질환',
   ];
 
-  final RxList<String> selectedDiseases = <String>[].obs;
+  @override
+  void initState() {
+    super.initState();
+    nav = Get.find<NavigationController>();
+    myPageController = Get.find<MyPageController>();
+    selectedDiseases = {
+      ...myPageController.currentConditionsKorean,
+    };
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -67,26 +77,27 @@ class _MyPageDiseaseEditViewState extends State<MyPageDiseaseEditView> {
                   const SizedBox(height: 50),
 
                   // 🔹 질환 선택 칩
-                  Obx(
-                    () => Wrap(
-                      spacing: 10,
-                      runSpacing: 10,
-                      alignment: WrapAlignment.center,
-                      children: diseases.map((disease) {
-                        final bool isSelected =
-                            selectedDiseases.contains(disease);
+                  Wrap(
+                    spacing: 10,
+                    runSpacing: 10,
+                    alignment: WrapAlignment.center,
+                    children: diseases.map((disease) {
+                      final bool isSelected =
+                          selectedDiseases.contains(disease);
 
-                        return TagChipToggle(
-                          label: disease,
-                          initialSelected: isSelected,
-                          onChanged: (v) {
-                            // ✅ ‘없어요’ 선택 시 나머지 해제
-                            if (disease == '없어요' && v) {
-                              selectedDiseases.clear();
-                              selectedDiseases.add(disease);
+                      return TagChipToggle(
+                        key: ValueKey('$disease-$isSelected'),
+                        label: disease,
+                        initialSelected: isSelected,
+                        onChanged: (v) {
+                          setState(() {
+                            if (disease == '건강 질환이 없어요' && v) {
+                              selectedDiseases = {'건강 질환이 없어요'};
                             } else {
-                              if (selectedDiseases.contains('없어요')) {
-                                selectedDiseases.remove('없어요');
+                              if (selectedDiseases
+                                  .contains('건강 질환이 없어요')) {
+                                selectedDiseases
+                                    .remove('건강 질환이 없어요');
                               }
                               if (v) {
                                 selectedDiseases.add(disease);
@@ -94,10 +105,10 @@ class _MyPageDiseaseEditViewState extends State<MyPageDiseaseEditView> {
                                 selectedDiseases.remove(disease);
                               }
                             }
-                          },
-                        );
-                      }).toList(),
-                    ),
+                          });
+                        },
+                      );
+                    }).toList(),
                   ),
 
                   const Spacer(),
@@ -116,11 +127,30 @@ class _MyPageDiseaseEditViewState extends State<MyPageDiseaseEditView> {
                   // 🔹 저장 버튼
                   Padding(
                     padding: const EdgeInsets.only(bottom: 24),
-                    child: BottomButton(
-                      text: '저장하기',
-                      isEnabled: true,
-                      onPressed: controller.goBack,
-                    ),
+                    child: Obx(() {
+                      final isSaving =
+                          myPageController.isUpdatingConditions.value;
+                      return BottomButton(
+                        text: isSaving ? '저장 중...' : '저장하기',
+                        isEnabled: !isSaving,
+                        onPressed: () async {
+                          final selection =
+                              selectedDiseases.toList(growable: false);
+                          final success = await myPageController
+                              .updateConditions(selection);
+                          if (!context.mounted) return;
+                          if (!success) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                content: Text('저장에 실패했어요. 다시 시도해 주세요.'),
+                              ),
+                            );
+                            return;
+                          }
+                          nav.goBack();
+                        },
+                      );
+                    }),
                   ),
                 ],
               ),
@@ -131,7 +161,7 @@ class _MyPageDiseaseEditViewState extends State<MyPageDiseaseEditView> {
               top: 20,
               left: 16,
               child: GestureDetector(
-                onTap: controller.goBack,
+                onTap: nav.goBack,
                 child: const Icon(
                   Icons.arrow_back_ios_new,
                   color: AppColors.cloudGray,
