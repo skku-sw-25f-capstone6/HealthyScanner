@@ -93,15 +93,17 @@ class FoodCard extends StatelessWidget {
                     ),
 
                     // 카테고리
-                    Text(
-                      category,
-                      style: context.caption2Regular.copyWith(
-                        color: AppColors.stoneGray,
-                      ),
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                    const SizedBox(height: 17),
+                    // Text(
+                    //   category,
+                    //   style: context.caption2Regular.copyWith(
+                    //     color: AppColors.stoneGray,
+                    //   ),
+                    //   maxLines: 1,
+                    //   overflow: TextOverflow.ellipsis,
+                    // ),
+                    // const SizedBox(height: 17),
+
+                    const SizedBox(height: 30),
 
                     // 신호등
                     Row(

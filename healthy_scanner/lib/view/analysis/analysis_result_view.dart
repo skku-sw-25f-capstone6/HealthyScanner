@@ -117,12 +117,11 @@ class _AnalysisResultViewState extends State<AnalysisResultView> {
     final lightState = _scoreToTrafficLight(scan.score);
 
     // AI 리포트 탭 데이터 구성
-    final labels = ['알레르기', '건강질환', '식습관 유형', '대체 식품'];
+    final labels = ['알레르기', '건강질환', '식습관 유형'];
     final contents = [
       _reportText(scan.reports.allergies),
       _reportText(scan.reports.condition),
       _reportText(scan.reports.vegan),
-      _alternativesText(scan.reports.alternatives),
     ];
 
     // 주의 요소 (caution_factors)
@@ -616,18 +615,6 @@ class _AnalysisResultViewState extends State<AnalysisResultView> {
 
     // brief_report는 보여주지 않도록 삭제
     return report;
-  }
-
-  String _alternativesText(List<AlternativeReport> list) {
-    if (list.isEmpty) return '추천드릴만한 대체 식품이 없어요.';
-
-    return list.map((e) {
-      final brief = e.briefReport.trim();
-      final report = e.report.trim();
-      if (brief.isEmpty) return report.isEmpty ? '-' : report;
-      if (report.isEmpty) return brief;
-      return '• $brief\n$report';
-    }).join('\n\n');
   }
 
   String _fmt(double? v) {
