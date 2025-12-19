@@ -30,6 +30,8 @@ class HomeView extends StatelessWidget {
       extendBody: true,
       body: Obx(() {
         final score = home.todayScore.value;
+        final displayScore = score < 0 ? '-' : score.toString();
+        final progressValue = score < 0 ? 0.0 : (score / 100.0).clamp(0.0, 1.0);
         final items = home.scanItems;
 
         return Column(
@@ -69,7 +71,7 @@ class HomeView extends StatelessWidget {
                               alignment: Alignment.center,
                               children: [
                                 SemiCircularProgress(
-                                  value: (score / 100.0).clamp(0.0, 1.0),
+                                  value: progressValue,
                                   size: 224,
                                   thickness: 12,
                                   offsetY: 50,
@@ -80,7 +82,7 @@ class HomeView extends StatelessWidget {
                                   mainAxisSize: MainAxisSize.min,
                                   children: [
                                     Text(
-                                      '$score',
+                                      displayScore,
                                       style: context.largeTitle.copyWith(
                                           color: AppColors.staticWhite),
                                     ),
