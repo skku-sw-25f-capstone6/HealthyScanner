@@ -39,6 +39,17 @@ class NavigationController extends SuperController {
   @override
   void onHidden() {}
 
+  void resetState() {
+    agreedPolicy.value = false;
+    agreedService.value = false;
+
+    selectedDiet.value = '';
+    selectedDiseases.clear();
+    selectedAllergies.clear();
+
+    isSubmittingProfile.value = false;
+  }
+
   // ------------------------
   // 🔹 Route Observer Hook
   // ------------------------

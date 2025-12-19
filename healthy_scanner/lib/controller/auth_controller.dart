@@ -7,6 +7,9 @@ import 'package:healthy_scanner/core/app_secure_storage.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 import 'package:healthy_scanner/core/api_client.dart';
 import 'package:healthy_scanner/core/onboarding_store.dart';
+import 'package:get_storage/get_storage.dart';
+import 'package:healthy_scanner/controller/home_controller.dart';
+import 'package:healthy_scanner/controller/scan_controller.dart';
 
 class AuthController extends GetxController {
   static String backendLoginURL =
@@ -185,6 +188,7 @@ class AuthController extends GetxController {
     await storage.delete(key: "kakao_token_type");
     await storage.delete(key: "kakao_expires_in");
     await storage.delete(key: "kakao_refresh_expires_in");
+    await storage.delete(key: "user_id");
 
     appAccess.value = null;
     kakaoAccess.value = null;
@@ -231,12 +235,39 @@ class AuthController extends GetxController {
         await OnboardingStore.clear(userKey: uid);
       }
 
+      await GetStorage().erase();
+      _resetPermanentControllers();
+
       await logout();
     } catch (e) {
       debugPrint("❌ Withdraw API failed: $e");
       Get.snackbar("계정 탈퇴 실패", "잠시 후 다시 시도해주세요.",
           snackPosition: SnackPosition.BOTTOM);
     }
+  }
+
+  void _resetPermanentControllers() {
+    if (Get.isRegistered<HomeController>()) {
+      Get.find<HomeController>().resetState();
+    }
+    if (Get.isRegistered<ScanController>()) {
+      Get.find<ScanController>().resetState();
+    }
+    if (Get.isRegistered<NavigationController>()) {
+      Get.find<NavigationController>().resetState();
+    }
+    // AuthController는 지금 this니까 바로 호출해도 됨
+    resetState();
+  }
+
+  void resetState() {
+    appAccess.value = null;
+    kakaoAccess.value = null;
+    kakaoRefresh.value = null;
+    tokenType.value = null;
+    expiresIn.value = null;
+    refreshExpiresIn.value = null;
+    userId.value = null;
   }
 
 // ----------------------------------------------------------

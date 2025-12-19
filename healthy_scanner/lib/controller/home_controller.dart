@@ -41,6 +41,13 @@ class HomeController extends GetxController {
     super.onClose();
   }
 
+  void resetState() {
+    isLoading.value = false;
+    errorMessage.value = null;
+    todayScore.value = 0;
+    scanItems.clear();
+  }
+
   Future<void> fetchHome() async {
     isLoading.value = true;
     errorMessage.value = null;
