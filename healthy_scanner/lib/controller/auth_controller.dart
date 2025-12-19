@@ -158,9 +158,7 @@ class AuthController extends GetxController {
           key: "kakao_refresh_expires_in", value: refreshExpiresIn.toString());
     }
 
-// TODO: 최초가입자 온보딩으로 라우팅
-    // nav.routeAfterLogin();
-    nav.goToOnboardingAgree();
+    nav.routeAfterLogin();
   }
 
   /// ----------------------------------------------------------

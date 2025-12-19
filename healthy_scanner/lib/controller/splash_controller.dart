@@ -17,9 +17,7 @@ class SplashController extends GetxController {
 
     final ok = await _auth.bootstrapAutoLogin();
     if (ok) {
-      // TODO: 최초가입자 온보딩으로 라우팅
-      // _nav.routeAfterLogin();
-      _nav.goToOnboardingAgree();
+      _nav.routeAfterLogin();
     } else {
       _nav.goToLogin();
     }
