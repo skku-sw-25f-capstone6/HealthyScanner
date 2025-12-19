@@ -22,10 +22,72 @@ class AuthController extends GetxController {
   final refreshExpiresIn = RxnInt();
   final userId = RxnString();
 
-  @override
-  void onInit() {
-    super.onInit();
-    _loadStoredTokens();
+  Future<bool> bootstrapAutoLogin() async {
+    appAccess.value = await storage.read(key: "jwt");
+    userId.value = await storage.read(key: "user_id");
+
+    if (appAccess.value == null || appAccess.value!.isEmpty) {
+      debugPrint("🔐 No saved token");
+      return false;
+    }
+
+    debugPrint("🔐 Saved AccessToken exists → validating...");
+
+    final ok = await _tryValidateWithAccessToken(appAccess.value!);
+    if (ok) {
+      debugPrint("✅ Token valid");
+      return true;
+    }
+
+    debugPrint("⛔ Token invalid → try refresh");
+    final newAccess = await refreshAppToken();
+    if (newAccess == null || newAccess.isEmpty) {
+      debugPrint("⛔ Refresh failed");
+      await _clearAuthTokensOnly();
+      return false;
+    }
+
+    debugPrint("✅ Refresh ok → re-validate");
+    final ok2 = await _tryValidateWithAccessToken(newAccess);
+    if (ok2) {
+      debugPrint("✅ Re-validate ok");
+      return true;
+    }
+
+    debugPrint("⛔ Still invalid");
+    await _clearAuthTokensOnly();
+    return false;
+  }
+
+  Future<bool> _tryValidateWithAccessToken(String token) async {
+    try {
+      final res = await ApiClient.dioClient.get(
+        "/v1/home",
+        options: dio.Options(
+          headers: {"Authorization": "Bearer $token"},
+          extra: {"skipRefresh": true},
+        ),
+      );
+
+      return res.statusCode == 200;
+    } on dio.DioException catch (e) {
+      final code = e.response?.statusCode;
+      debugPrint("🔎 validate failed status=$code body=${e.response?.data}");
+      if (code == 401) return false;
+      return false;
+    } catch (e) {
+      debugPrint("🔎 validate failed error=$e");
+      return false;
+    }
+  }
+
+  Future<void> _clearAuthTokensOnly() async {
+    await storage.delete(key: "jwt");
+    await storage.delete(key: "app_refresh_token");
+    await storage.delete(key: "user_id");
+
+    appAccess.value = null;
+    userId.value = null;
   }
 
   Future<void> _loadStoredTokens() async {
@@ -46,8 +108,7 @@ class AuthController extends GetxController {
     }
 
     if (appAccess.value != null && appAccess.value!.isNotEmpty) {
-      debugPrint("🔐 Saved AccessToken found → Auto login");
-      nav.routeAfterLogin();
+      debugPrint("🔐 Saved AccessToken found");
     }
   }
 
@@ -97,7 +158,9 @@ class AuthController extends GetxController {
           key: "kakao_refresh_expires_in", value: refreshExpiresIn.toString());
     }
 
-    nav.routeAfterLogin();
+// TODO: 최초가입자 온보딩으로 라우팅
+    // nav.routeAfterLogin();
+    nav.goToOnboardingAgree();
   }
 
   /// ----------------------------------------------------------

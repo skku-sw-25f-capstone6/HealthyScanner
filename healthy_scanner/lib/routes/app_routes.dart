@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 // import '../controller/navigation_controller.dart';
 import '../controller/scan_waiting_controller.dart';
 import '../controller/mypage_controller.dart';
+import '../controller/splash_controller.dart';
 import 'package:healthy_scanner/data/api_service.dart';
 
 // [view import]
@@ -65,7 +66,13 @@ class AppRoutes {
   // 📍 페이지 목록 등록
   // ----------------------
   static final pages = [
-    GetPage(name: splash, page: () => const SplashView()),
+    GetPage(
+      name: AppRoutes.splash,
+      page: () => const SplashView(),
+      binding: BindingsBuilder(() {
+        Get.put(SplashController());
+      }),
+    ),
     GetPage(
         name: loginMain,
         page: () => const LoginMainView(),

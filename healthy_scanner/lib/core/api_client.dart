@@ -29,16 +29,19 @@ class ApiClient {
     dioClient.interceptors.add(
       dio.InterceptorsWrapper(
         onRequest: (options, handler) async {
-          if (options.path == refreshPath) return handler.next(options);
+          debugPrint(
+              "➡️ ${options.method} ${options.uri} path=${options.path}");
+
+          if (options.path == refreshPath) {
+            return handler.next(options);
+          }
 
           final token = await appSecureStorage.read(key: "jwt");
           if (token != null && token.isNotEmpty) {
             options.headers["Authorization"] = "Bearer $token";
           }
 
-          debugPrint(
-              "➡️ ${options.method} ${options.path} auth=${options.headers["Authorization"]}");
-
+          debugPrint("   auth=${options.headers["Authorization"]}");
           return handler.next(options);
         },
         onError: (e, handler) async {
