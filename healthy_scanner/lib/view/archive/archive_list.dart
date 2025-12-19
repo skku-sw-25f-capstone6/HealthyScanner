@@ -5,12 +5,15 @@ import 'package:healthy_scanner/theme/app_colors.dart';
 import 'package:healthy_scanner/component/food_card.dart';
 import 'package:healthy_scanner/controller/archive_controller.dart';
 import 'package:healthy_scanner/component/traffic_light.dart';
+import 'package:healthy_scanner/controller/navigation_controller.dart';
 
 class ArchiveListView extends StatelessWidget {
   final DateTime selectedDate;
-  const ArchiveListView({super.key, required this.selectedDate});
+  ArchiveListView({super.key, required this.selectedDate});
 
   String _prettyKoreanDate(DateTime d) => '${d.year}년 ${d.month}월 ${d.day}일';
+
+  final NavigationController _nav = Get.find<NavigationController>();
 
   @override
   Widget build(BuildContext context) {
@@ -120,7 +123,13 @@ class ArchiveListView extends StatelessWidget {
                       imageAsset: it.url,
                       warningAsset: 'assets/icons/ic_warning.png',
                       lightState: riskToState(it.riskLevel),
-                      onTap: () {},
+                      onTap: () {
+                        final scanId = it.scanId;
+                        debugPrint('🖱️ [Archive] tapped scanId=$scanId');
+                        if (scanId.isEmpty) return;
+
+                        _nav.goToAnalysisResult(scanId: scanId);
+                      },
                     );
                   },
                 );

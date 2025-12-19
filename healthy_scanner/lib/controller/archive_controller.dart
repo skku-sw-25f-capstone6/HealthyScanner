@@ -28,6 +28,7 @@ class ArchiveListController extends GetxController {
 
       final resolved = result.map((it) {
         return ScanHistoryItem(
+          scanId: it.scanId,
           name: it.name,
           category: it.category,
           summary: it.summary,

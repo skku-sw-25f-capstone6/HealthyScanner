@@ -115,4 +115,14 @@ class OnboardingConstants {
         .whereType<String>()
         .toList();
   }
+
+  static String? conditionCodeToLabel(String? code) {
+    if (code == null || code.isEmpty) return null;
+    return _conditionCodeToLabel[code];
+  }
+
+  static String? allergyCodeToLabel(String? code) {
+    if (code == null || code.isEmpty) return null;
+    return _allergyCodeToLabel[code];
+  }
 }

@@ -31,15 +31,14 @@ class MyPageController extends GetxController {
       if (jwt == null || jwt.isEmpty) {
         profileInfo.value = null;
         errorMessage.value = '로그인이 필요합니다.';
-      } else {
-        fetchMyPageInfo();
       }
     });
+  }
 
-    final jwt = _auth.appAccess.value;
-    if (jwt != null && jwt.isNotEmpty) {
-      fetchMyPageInfo();
-    }
+  @override
+  void onReady() {
+    super.onReady();
+    fetchMyPageInfo();
   }
 
   @override
@@ -60,6 +59,14 @@ class MyPageController extends GetxController {
 
     try {
       final info = await _api.fetchMyPageInfo(jwt: token);
+
+      debugPrint('✅ [MyPage] fetch success raw response:');
+      debugPrint('👤 userName: ${info.name}');
+      debugPrint('📊 totalScanCount: ${info.scanCount}');
+      debugPrint('🍽 habit: ${info.habit}');
+      debugPrint('⚠️ conditions: ${info.conditions}');
+      debugPrint('🚫 allergies: ${info.allergies}');
+
       profileInfo.value = info;
       final habitLabel = OnboardingConstants.habitCodeToLabel(info.habit);
       if (habitLabel != null && habitLabel.isNotEmpty) {

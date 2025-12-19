@@ -10,7 +10,9 @@ import 'package:healthy_scanner/view/home/home_progress_bar.dart';
 import 'package:healthy_scanner/view/home/home_curved_clipper.dart';
 
 class HomeView extends StatelessWidget {
-  const HomeView({super.key});
+  HomeView({super.key});
+
+  final NavigationController _nav = Get.find<NavigationController>();
 
   @override
   Widget build(BuildContext context) {
@@ -30,6 +32,8 @@ class HomeView extends StatelessWidget {
       extendBody: true,
       body: Obx(() {
         final score = home.todayScore.value;
+        final displayScore = score < 0 ? '-' : score.toString();
+        final progressValue = score < 0 ? 0.0 : (score / 100.0).clamp(0.0, 1.0);
         final items = home.scanItems;
 
         return Column(
@@ -69,7 +73,7 @@ class HomeView extends StatelessWidget {
                               alignment: Alignment.center,
                               children: [
                                 SemiCircularProgress(
-                                  value: (score / 100.0).clamp(0.0, 1.0),
+                                  value: progressValue,
                                   size: 224,
                                   thickness: 12,
                                   offsetY: 50,
@@ -80,7 +84,7 @@ class HomeView extends StatelessWidget {
                                   mainAxisSize: MainAxisSize.min,
                                   children: [
                                     Text(
-                                      '$score',
+                                      displayScore,
                                       style: context.largeTitle.copyWith(
                                           color: AppColors.staticWhite),
                                     ),
@@ -181,7 +185,12 @@ class HomeView extends StatelessWidget {
                             imageAsset: items[0].url,
                             warningAsset: 'assets/icons/ic_warning.png',
                             lightState: items[0].riskLevel,
-                            onTap: () {},
+                            onTap: () {
+                              final scanId = items[0].scanId;
+                              debugPrint("Tapped! $scanId");
+                              if (scanId.isEmpty) return;
+                              _nav.goToAnalysisResult(scanId: scanId);
+                            },
                           ),
                           const SizedBox(height: 15),
                           if (items.length > 1)
@@ -192,7 +201,11 @@ class HomeView extends StatelessWidget {
                               imageAsset: items[1].url,
                               warningAsset: 'assets/icons/ic_warning.png',
                               lightState: items[1].riskLevel,
-                              onTap: () {},
+                              onTap: () {
+                                final scanId = items[1].scanId;
+                                if (scanId.isEmpty) return;
+                                _nav.goToAnalysisResult(scanId: scanId);
+                              },
                             ),
                         ],
                       ],

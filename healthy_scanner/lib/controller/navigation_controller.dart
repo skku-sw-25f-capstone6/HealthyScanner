@@ -11,6 +11,7 @@ import 'package:healthy_scanner/controller/scan_controller.dart';
 import 'package:healthy_scanner/controller/home_controller.dart';
 import 'package:healthy_scanner/controller/mypage_controller.dart';
 import 'package:healthy_scanner/view/login/kakao_login_webview.dart';
+import 'package:healthy_scanner/core/onboarding_store.dart';
 
 /// 📍 모든 페이지 전환을 중앙에서 관리하는 컨트롤러
 class NavigationController extends SuperController {
@@ -37,6 +38,17 @@ class NavigationController extends SuperController {
 
   @override
   void onHidden() {}
+
+  void resetState() {
+    agreedPolicy.value = false;
+    agreedService.value = false;
+
+    selectedDiet.value = '';
+    selectedDiseases.clear();
+    selectedAllergies.clear();
+
+    isSubmittingProfile.value = false;
+  }
 
   // ------------------------
   // 🔹 Route Observer Hook
@@ -115,16 +127,22 @@ class NavigationController extends SuperController {
         conditions: conditionPayload,
         allergies: allergyPayload,
       );
+
+      final auth = Get.find<AuthController>();
+      final userKey = auth.userId.value;
+      await OnboardingStore.setCompleted(true, userKey: userKey);
+
       if (Get.isRegistered<MyPageController>()) {
         final myPage = Get.find<MyPageController>();
         myPage.currentHabitKorean.value = selectedDiet.value;
         myPage.fetchMyPageInfo();
       }
+
       finishOnboarding();
     } catch (e) {
       debugPrint('❌ [ONBOARDING] submit failed: $e');
       Get.snackbar(
-        '저장에 실패했어요',
+        '등록에 실패했어요',
         '네트워크 상태를 확인한 뒤 다시 시도해 주세요.',
         snackPosition: SnackPosition.BOTTOM,
       );
@@ -195,8 +213,8 @@ class NavigationController extends SuperController {
         arguments: payload.toArgs(),
       );
 
-  /// ✅ 홈(로그인 등)으로 돌아가기
-  void backToHome() => Get.offAllNamed(AppRoutes.loginMain);
+  /// ✅ 로그인 화면으로 돌아가기
+  void backToLoginMain() => Get.offAllNamed(AppRoutes.loginMain);
 
   /// ✅ 홈 → 마이페이지
   void goToMyPage() => Get.toNamed(AppRoutes.myPage);
@@ -227,9 +245,31 @@ class NavigationController extends SuperController {
   }
 
   void goToAnalysisResult({required String scanId}) {
-    Get.offNamed(
-      AppRoutes.analysisResult,
-      arguments: {'scanId': scanId},
-    );
+    Get.offAllNamed(AppRoutes.home);
+
+    Future.microtask(() {
+      Get.toNamed(
+        AppRoutes.analysisResult,
+        arguments: {'scanId': scanId},
+      );
+    });
+
+    Future.microtask(() {
+      if (Get.isRegistered<HomeController>()) {
+        Get.find<HomeController>().fetchHome();
+      }
+    });
+  }
+
+  void routeAfterLogin() {
+    final auth = Get.find<AuthController>();
+    final userKey = auth.userId.value;
+    final completed = OnboardingStore.isCompleted(userKey: userKey);
+
+    if (completed) {
+      goToHome();
+    } else {
+      goToOnboardingAgree();
+    }
   }
 }

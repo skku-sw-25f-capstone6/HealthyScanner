@@ -20,6 +20,7 @@ class HomeResponse {
 }
 
 class ScanItem {
+  final String scanId;
   final String name;
   final String category;
   final TrafficLightState riskLevel;
@@ -27,6 +28,7 @@ class ScanItem {
   final String url;
 
   ScanItem({
+    required this.scanId,
     required this.name,
     required this.category,
     required this.riskLevel,
@@ -39,7 +41,12 @@ class ScanItem {
     final rawCategory = json['category'] as String?;
     final level = (json['riskLevel'] ?? 'green').toString().toLowerCase();
 
+    final scanId = (json['scanID'] ?? json['scan_id'] ?? json['scanId'] ?? '')
+        .toString()
+        .trim();
+
     return ScanItem(
+      scanId: scanId,
       name: (rawName == null || rawName.trim().isEmpty)
           ? '식품${index != null ? ' ${index + 1}' : ''}'
           : rawName,

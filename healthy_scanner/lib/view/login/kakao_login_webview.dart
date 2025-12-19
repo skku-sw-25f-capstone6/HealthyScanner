@@ -66,6 +66,7 @@ class _KakaoLoginWebViewState extends State<KakaoLoginWebView> {
 
       final appAccessToken = data["app_access_token"] as String?;
       final appRefreshToken = data["app_refresh_token"] as String?;
+      final userId = data["user_id"]?.toString();
 
       final kakaoAccessToken = data["kakao_access_token"] as String?;
       final kakaoRefreshToken = data["kakao_refresh_token"] as String?;
@@ -76,7 +77,9 @@ class _KakaoLoginWebViewState extends State<KakaoLoginWebView> {
       if (appAccessToken != null &&
           appRefreshToken != null &&
           kakaoAccessToken != null &&
-          kakaoRefreshToken != null) {
+          kakaoRefreshToken != null &&
+          userId != null &&
+          userId.isNotEmpty) {
         await auth.onKakaoLoginCompleted(
           appAccessToken: appAccessToken,
           appRefreshToken: appRefreshToken,
@@ -85,6 +88,7 @@ class _KakaoLoginWebViewState extends State<KakaoLoginWebView> {
           tokenType: tokenType,
           expiresIn: expiresIn,
           refreshExpiresIn: refreshExpiresIn,
+          userId: userId,
         );
       } else {
         debugPrint("⚠️ Missing required fields in login response: $data");

@@ -130,6 +130,18 @@ class ScanController extends GetxController {
     super.onClose();
   }
 
+  void resetState() {
+    try {
+      cameraController?.dispose();
+    } catch (_) {}
+    cameraController = null;
+    initializeControllerFuture = null;
+
+    mode.value = ScanMode.ingredient;
+    isTakingPicture.value = false;
+    lastImagePath.value = null;
+  }
+
   /// 🔹 크롭된 이미지를 받아서 모드에 따라 분석 + 다음 화면 이동
   Future<void> handleCroppedImage(
     Uint8List imageBytes, {

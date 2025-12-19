@@ -41,6 +41,13 @@ class HomeController extends GetxController {
     super.onClose();
   }
 
+  void resetState() {
+    isLoading.value = false;
+    errorMessage.value = null;
+    todayScore.value = 0;
+    scanItems.clear();
+  }
+
   Future<void> fetchHome() async {
     isLoading.value = true;
     errorMessage.value = null;
@@ -60,6 +67,7 @@ class HomeController extends GetxController {
 
       final normalized = res.scan.take(2).map((it) {
         return ScanItem(
+          scanId: it.scanId,
           name: it.name,
           category: it.category,
           riskLevel: it.riskLevel,

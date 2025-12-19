@@ -6,6 +6,10 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:healthy_scanner/core/app_secure_storage.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 import 'package:healthy_scanner/core/api_client.dart';
+import 'package:healthy_scanner/core/onboarding_store.dart';
+import 'package:get_storage/get_storage.dart';
+import 'package:healthy_scanner/controller/home_controller.dart';
+import 'package:healthy_scanner/controller/scan_controller.dart';
 
 class AuthController extends GetxController {
   static String backendLoginURL =
@@ -19,11 +23,74 @@ class AuthController extends GetxController {
   final tokenType = RxnString();
   final expiresIn = RxnInt();
   final refreshExpiresIn = RxnInt();
+  final userId = RxnString();
 
-  @override
-  void onInit() {
-    super.onInit();
-    _loadStoredTokens();
+  Future<bool> bootstrapAutoLogin() async {
+    appAccess.value = await storage.read(key: "jwt");
+    userId.value = await storage.read(key: "user_id");
+
+    if (appAccess.value == null || appAccess.value!.isEmpty) {
+      debugPrint("🔐 No saved token");
+      return false;
+    }
+
+    debugPrint("🔐 Saved AccessToken exists → validating...");
+
+    final ok = await _tryValidateWithAccessToken(appAccess.value!);
+    if (ok) {
+      debugPrint("✅ Token valid");
+      return true;
+    }
+
+    debugPrint("⛔ Token invalid → try refresh");
+    final newAccess = await refreshAppToken();
+    if (newAccess == null || newAccess.isEmpty) {
+      debugPrint("⛔ Refresh failed");
+      await _clearAuthTokensOnly();
+      return false;
+    }
+
+    debugPrint("✅ Refresh ok → re-validate");
+    final ok2 = await _tryValidateWithAccessToken(newAccess);
+    if (ok2) {
+      debugPrint("✅ Re-validate ok");
+      return true;
+    }
+
+    debugPrint("⛔ Still invalid");
+    await _clearAuthTokensOnly();
+    return false;
+  }
+
+  Future<bool> _tryValidateWithAccessToken(String token) async {
+    try {
+      final res = await ApiClient.dioClient.get(
+        "/v1/home",
+        options: dio.Options(
+          headers: {"Authorization": "Bearer $token"},
+          extra: {"skipRefresh": true},
+        ),
+      );
+
+      return res.statusCode == 200;
+    } on dio.DioException catch (e) {
+      final code = e.response?.statusCode;
+      debugPrint("🔎 validate failed status=$code body=${e.response?.data}");
+      if (code == 401) return false;
+      return false;
+    } catch (e) {
+      debugPrint("🔎 validate failed error=$e");
+      return false;
+    }
+  }
+
+  Future<void> _clearAuthTokensOnly() async {
+    await storage.delete(key: "jwt");
+    await storage.delete(key: "app_refresh_token");
+    await storage.delete(key: "user_id");
+
+    appAccess.value = null;
+    userId.value = null;
   }
 
   Future<void> _loadStoredTokens() async {
@@ -34,6 +101,7 @@ class AuthController extends GetxController {
     final expiresInStr = await storage.read(key: "kakao_expires_in");
     final refreshExpiresInStr =
         await storage.read(key: "kakao_refresh_expires_in");
+    userId.value = await storage.read(key: "user_id");
 
     if (expiresInStr != null) {
       expiresIn.value = int.tryParse(expiresInStr);
@@ -43,8 +111,7 @@ class AuthController extends GetxController {
     }
 
     if (appAccess.value != null && appAccess.value!.isNotEmpty) {
-      debugPrint("🔐 Saved AccessToken found → Auto login");
-      nav.goToOnboardingAgree();
+      debugPrint("🔐 Saved AccessToken found");
     }
   }
 
@@ -63,6 +130,7 @@ class AuthController extends GetxController {
     required String appRefreshToken,
     required String kakaoAccessToken,
     required String kakaoRefreshToken,
+    required String userId,
     String? tokenType,
     int? expiresIn,
     int? refreshExpiresIn,
@@ -73,6 +141,7 @@ class AuthController extends GetxController {
     appAccess.value = appAccessToken;
     await storage.write(key: "jwt", value: appAccessToken);
     await storage.write(key: "app_refresh_token", value: appRefreshToken);
+    await storage.write(key: "user_id", value: userId);
     kakaoAccess.value = kakaoAccessToken;
     kakaoRefresh.value = kakaoRefreshToken;
     this.tokenType.value = tokenType;
@@ -92,7 +161,7 @@ class AuthController extends GetxController {
           key: "kakao_refresh_expires_in", value: refreshExpiresIn.toString());
     }
 
-    nav.goToOnboardingAgree();
+    nav.routeAfterLogin();
   }
 
   /// ----------------------------------------------------------
@@ -119,6 +188,7 @@ class AuthController extends GetxController {
     await storage.delete(key: "kakao_token_type");
     await storage.delete(key: "kakao_expires_in");
     await storage.delete(key: "kakao_refresh_expires_in");
+    await storage.delete(key: "user_id");
 
     appAccess.value = null;
     kakaoAccess.value = null;
@@ -155,15 +225,49 @@ class AuthController extends GetxController {
   /// 5) 계정 탈퇴(연동 해제)
   /// ----------------------------------------------------------
   Future<void> withdrawAccount() async {
+    final uid = userId.value;
+
     try {
       final res = await ApiClient.dioClient.delete("/auth/unlink");
       debugPrint("🗑️ Withdraw API ok: ${res.statusCode}, body=${res.data}");
+
+      if (uid != null && uid.isNotEmpty) {
+        await OnboardingStore.clear(userKey: uid);
+      }
+
+      await GetStorage().erase();
+      _resetPermanentControllers();
+
       await logout();
     } catch (e) {
       debugPrint("❌ Withdraw API failed: $e");
       Get.snackbar("계정 탈퇴 실패", "잠시 후 다시 시도해주세요.",
           snackPosition: SnackPosition.BOTTOM);
     }
+  }
+
+  void _resetPermanentControllers() {
+    if (Get.isRegistered<HomeController>()) {
+      Get.find<HomeController>().resetState();
+    }
+    if (Get.isRegistered<ScanController>()) {
+      Get.find<ScanController>().resetState();
+    }
+    if (Get.isRegistered<NavigationController>()) {
+      Get.find<NavigationController>().resetState();
+    }
+    // AuthController는 지금 this니까 바로 호출해도 됨
+    resetState();
+  }
+
+  void resetState() {
+    appAccess.value = null;
+    kakaoAccess.value = null;
+    kakaoRefresh.value = null;
+    tokenType.value = null;
+    expiresIn.value = null;
+    refreshExpiresIn.value = null;
+    userId.value = null;
   }
 
 // ----------------------------------------------------------

@@ -2,6 +2,9 @@
 import 'package:get/get.dart';
 // import '../controller/navigation_controller.dart';
 import '../controller/scan_waiting_controller.dart';
+import '../controller/mypage_controller.dart';
+import '../controller/splash_controller.dart';
+import 'package:healthy_scanner/data/api_service.dart';
 
 // [view import]
 import '../view/splash/splash_view.dart';
@@ -63,7 +66,13 @@ class AppRoutes {
   // 📍 페이지 목록 등록
   // ----------------------
   static final pages = [
-    GetPage(name: splash, page: () => const SplashView()),
+    GetPage(
+      name: AppRoutes.splash,
+      page: () => const SplashView(),
+      binding: BindingsBuilder(() {
+        Get.put(SplashController());
+      }),
+    ),
     GetPage(
         name: loginMain,
         page: () => const LoginMainView(),
@@ -114,7 +123,16 @@ class AppRoutes {
         name: onboardingComplete, page: () => const OnboardingCompleteView()),
 
     // ✅ 마이페이지 편집 화면
-    GetPage(name: myPage, page: () => const MyPageView()),
+    GetPage(
+      name: myPage,
+      page: () => const MyPageView(),
+      binding: BindingsBuilder(() {
+        Get.lazyPut<MyPageController>(
+          () => MyPageController(Get.find<ApiService>()),
+          fenix: true,
+        );
+      }),
+    ),
     GetPage(name: myPageDietEdit, page: () => const MyPageDietEditView()),
     GetPage(name: myPageDiseaseEdit, page: () => const MyPageDiseaseEditView()),
     GetPage(name: myPageAllergyEdit, page: () => const MyPageAllergyEditView()),
