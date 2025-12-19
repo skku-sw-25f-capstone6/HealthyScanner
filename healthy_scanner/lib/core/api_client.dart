@@ -15,7 +15,7 @@ class ApiClient {
     dio.BaseOptions(
       baseUrl: baseUrl,
       connectTimeout: const Duration(seconds: 10),
-      receiveTimeout: const Duration(seconds: 20),
+      receiveTimeout: const Duration(seconds: 30),
       headers: {"Content-Type": "application/json"},
     ),
   );

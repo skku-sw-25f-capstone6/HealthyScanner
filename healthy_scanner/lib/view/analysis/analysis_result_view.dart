@@ -35,7 +35,9 @@ class _AnalysisResultViewState extends State<AnalysisResultView> {
               // 로딩
               if (result.isLoading.value) {
                 return const Center(
-                  child: CircularProgressIndicator(),
+                  child: CircularProgressIndicator(
+                    color: AppColors.mainRed,
+                  ),
                 );
               }
 

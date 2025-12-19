@@ -10,7 +10,9 @@ import 'package:healthy_scanner/view/home/home_progress_bar.dart';
 import 'package:healthy_scanner/view/home/home_curved_clipper.dart';
 
 class HomeView extends StatelessWidget {
-  const HomeView({super.key});
+  HomeView({super.key});
+
+  final NavigationController _nav = Get.find<NavigationController>();
 
   @override
   Widget build(BuildContext context) {
@@ -183,7 +185,12 @@ class HomeView extends StatelessWidget {
                             imageAsset: items[0].url,
                             warningAsset: 'assets/icons/ic_warning.png',
                             lightState: items[0].riskLevel,
-                            onTap: () {},
+                            onTap: () {
+                              final scanId = items[0].scanId;
+                              debugPrint("Tapped! $scanId");
+                              if (scanId.isEmpty) return;
+                              _nav.goToAnalysisResult(scanId: scanId);
+                            },
                           ),
                           const SizedBox(height: 15),
                           if (items.length > 1)
@@ -194,7 +201,11 @@ class HomeView extends StatelessWidget {
                               imageAsset: items[1].url,
                               warningAsset: 'assets/icons/ic_warning.png',
                               lightState: items[1].riskLevel,
-                              onTap: () {},
+                              onTap: () {
+                                final scanId = items[1].scanId;
+                                if (scanId.isEmpty) return;
+                                _nav.goToAnalysisResult(scanId: scanId);
+                              },
                             ),
                         ],
                       ],

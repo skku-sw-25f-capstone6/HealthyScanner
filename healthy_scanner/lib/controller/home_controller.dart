@@ -60,6 +60,7 @@ class HomeController extends GetxController {
 
       final normalized = res.scan.take(2).map((it) {
         return ScanItem(
+          scanId: it.scanId,
           name: it.name,
           category: it.category,
           riskLevel: it.riskLevel,
