@@ -12,6 +12,7 @@ class ScanHistoryResponse {
 }
 
 class ScanHistoryItem {
+  final String scanId;
   final String name;
   final String category;
   final String riskLevel;
@@ -19,6 +20,7 @@ class ScanHistoryItem {
   final String url;
 
   ScanHistoryItem({
+    required this.scanId,
     required this.name,
     required this.category,
     required this.riskLevel,
@@ -27,7 +29,11 @@ class ScanHistoryItem {
   });
 
   factory ScanHistoryItem.fromJson(Map<String, dynamic> json) {
+    final scanId =
+        (json['scanID'] ?? json['scanId'] ?? json['scan_id'] ?? '').toString();
+
     return ScanHistoryItem(
+      scanId: scanId,
       name: json['name'] ?? '',
       category: json['category'] ?? '',
       riskLevel: json['riskLevel'] ?? 'green',
