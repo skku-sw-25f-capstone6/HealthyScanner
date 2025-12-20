@@ -12,6 +12,7 @@ class FoodCard extends StatelessWidget {
   final TrafficLightState lightState; // 신호등 상태
 
   final VoidCallback? onTap;
+  final VoidCallback? onEditTap;
 
   const FoodCard({
     super.key,
@@ -22,6 +23,7 @@ class FoodCard extends StatelessWidget {
     this.warningAsset,
     this.lightState = TrafficLightState.green,
     this.onTap,
+    this.onEditTap,
   });
 
   @override
@@ -78,6 +80,18 @@ class FoodCard extends StatelessWidget {
 
                         const SizedBox(width: 8),
 
+                        GestureDetector(
+                          onTap: onEditTap,
+                          behavior: HitTestBehavior.opaque,
+                          child: const Padding(
+                            padding: EdgeInsets.all(4),
+                            child: Icon(
+                              Icons.edit_outlined,
+                              color: AppColors.cloudGray,
+                              size: 20,
+                            ),
+                          ),
+                        ),
                         // 경고 아이콘
                         if (warningAsset != null)
                           SizedBox(

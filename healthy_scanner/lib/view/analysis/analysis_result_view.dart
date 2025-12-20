@@ -10,6 +10,7 @@ import 'package:healthy_scanner/data/scan_history_detail_response.dart';
 import 'package:healthy_scanner/core/url_resolver.dart';
 import 'package:healthy_scanner/theme/theme_extensions.dart';
 import 'package:healthy_scanner/constants/onboarding_constants.dart';
+import 'package:healthy_scanner/view/analysis/analysis_edit_view.dart';
 
 class AnalysisResultView extends StatefulWidget {
   const AnalysisResultView({super.key});
@@ -147,6 +148,20 @@ class _AnalysisResultViewState extends State<AnalysisResultView> {
                     : null,
                 lightState: lightState,
                 onTap: () {},
+                onEditTap: () async {
+                  final currentName = product.name;
+
+                  final editedName = await Get.to<String>(
+                    () => AnalysisEditView(
+                      scanId: result.scanId,
+                      initialName: currentName,
+                    ),
+                  );
+
+                  if (editedName == null) return;
+
+                  debugPrint('✅ editedName=$editedName');
+                },
               ),
             ),
           ),
@@ -420,7 +435,7 @@ class _AnalysisResultViewState extends State<AnalysisResultView> {
       _NutrientVM(name: '단백질', value: nutrition.proteinG, unit: 'g', daily: 55),
       _NutrientVM(
           name: '나트륨', value: nutrition.sodiumMg, unit: 'mg', daily: 2000),
-      _NutrientVM(name: '당류', value: nutrition.sugarG, unit: 'g', daily: 50),
+      _NutrientVM(name: '당류', value: nutrition.sugarG, unit: 'g', daily: 100),
       _NutrientVM(name: '지방', value: nutrition.fatG, unit: 'g', daily: 54),
       _NutrientVM(
           name: '트랜스지방', value: nutrition.transFatG, unit: 'g', daily: 2),
