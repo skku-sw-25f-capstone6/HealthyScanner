@@ -418,11 +418,18 @@ class _AnalysisResultViewState extends State<AnalysisResultView> {
     );
   }
 
-  Widget _buildRiskRow(String title, TrafficLightState state,
-      {IconData icon = Icons.warning_rounded}) {
+  Widget _buildRiskRow(
+    String title,
+    TrafficLightState state, {
+    IconData icon = Icons.warning_rounded,
+  }) {
+    final iconColor = (state == TrafficLightState.red)
+        ? AppColors.mainRed
+        : AppColors.charcoleGray;
+
     return Row(
       children: [
-        Icon(icon, color: AppColors.mainRed, size: 22),
+        Icon(icon, color: iconColor, size: 22),
         const SizedBox(width: 10),
         Expanded(
           child: Text(
