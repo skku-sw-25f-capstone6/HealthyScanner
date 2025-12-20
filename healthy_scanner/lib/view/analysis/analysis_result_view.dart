@@ -160,6 +160,7 @@ class _AnalysisResultViewState extends State<AnalysisResultView> {
                     ? 'assets/icons/ic_warning.png'
                     : null,
                 lightState: lightState,
+                showEditIcon: true,
                 onTap: () {},
                 onEditTap: () async {
                   final currentName = product.name;

@@ -8,6 +8,7 @@ import 'package:healthy_scanner/theme/theme_extensions.dart';
 import 'package:healthy_scanner/component/food_card.dart';
 import 'package:healthy_scanner/view/home/home_progress_bar.dart';
 import 'package:healthy_scanner/view/home/home_curved_clipper.dart';
+import 'package:healthy_scanner/component/traffic_light.dart';
 
 class HomeView extends StatelessWidget {
   HomeView({super.key});
@@ -183,11 +184,13 @@ class HomeView extends StatelessWidget {
                             category: items[0].category,
                             message: items[0].summary,
                             imageAsset: items[0].url,
-                            warningAsset: 'assets/icons/ic_warning.png',
+                            warningAsset:
+                                items[0].riskLevel == TrafficLightState.red
+                                    ? 'assets/icons/ic_warning.png'
+                                    : null, // ✅ 빨강 아닐 땐 안 뜸
                             lightState: items[0].riskLevel,
                             onTap: () {
                               final scanId = items[0].scanId;
-                              debugPrint("Tapped! $scanId");
                               if (scanId.isEmpty) return;
                               _nav.goToAnalysisResult(scanId: scanId);
                             },
@@ -199,7 +202,10 @@ class HomeView extends StatelessWidget {
                               category: items[1].category,
                               message: items[1].summary,
                               imageAsset: items[1].url,
-                              warningAsset: 'assets/icons/ic_warning.png',
+                              warningAsset:
+                                  items[1].riskLevel == TrafficLightState.red
+                                      ? 'assets/icons/ic_warning.png'
+                                      : null,
                               lightState: items[1].riskLevel,
                               onTap: () {
                                 final scanId = items[1].scanId;

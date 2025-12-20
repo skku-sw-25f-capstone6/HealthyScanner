@@ -14,6 +14,8 @@ class FoodCard extends StatelessWidget {
   final VoidCallback? onTap;
   final VoidCallback? onEditTap;
 
+  final bool showEditIcon;
+
   const FoodCard({
     super.key,
     required this.title,
@@ -24,6 +26,7 @@ class FoodCard extends StatelessWidget {
     this.lightState = TrafficLightState.green,
     this.onTap,
     this.onEditTap,
+    this.showEditIcon = false,
   });
 
   @override
@@ -79,18 +82,19 @@ class FoodCard extends StatelessWidget {
                                   overflow: TextOverflow.ellipsis,
                                 ),
                               ),
-                              GestureDetector(
-                                onTap: onEditTap,
-                                behavior: HitTestBehavior.opaque,
-                                child: const Padding(
-                                  padding: EdgeInsets.only(left: 2, right: 2),
-                                  child: Icon(
-                                    Icons.edit_outlined,
-                                    color: AppColors.cloudGray,
-                                    size: 20,
+                              if (showEditIcon)
+                                GestureDetector(
+                                  onTap: onEditTap,
+                                  behavior: HitTestBehavior.opaque,
+                                  child: const Padding(
+                                    padding: EdgeInsets.only(left: 2, right: 2),
+                                    child: Icon(
+                                      Icons.edit_outlined,
+                                      color: AppColors.cloudGray,
+                                      size: 20,
+                                    ),
                                   ),
                                 ),
-                              ),
                             ],
                           ),
                         ),
