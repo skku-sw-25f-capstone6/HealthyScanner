@@ -10,6 +10,29 @@ import '../../theme/app_typography.dart';
 class OnboardingAllergyView extends GetView<NavigationController> {
   const OnboardingAllergyView({super.key});
 
+  void _onAllergySelected(
+    NavigationController controller,
+    String allergy,
+    bool isSelected,
+  ) {
+    const noneLabel = OnboardingConstants.noAllergyLabel;
+    if (isSelected) {
+      if (allergy == noneLabel) {
+        controller.selectedAllergies
+          ..clear()
+          ..add(noneLabel);
+      } else {
+        controller.selectedAllergies.remove(noneLabel);
+        if (!controller.selectedAllergies.contains(allergy)) {
+          controller.selectedAllergies.add(allergy);
+        }
+      }
+    } else {
+      controller.selectedAllergies.remove(allergy);
+    }
+  }
+
+
   @override
   Widget build(BuildContext context) {
     final allergies = [
@@ -96,30 +119,11 @@ class OnboardingAllergyView extends GetView<NavigationController> {
                             controller.selectedAllergies.contains(allergy);
 
                         return TagChipToggle(
-                          key: ValueKey(allergy),
+                          key: ValueKey('$allergy-$isSelected'),
                           label: allergy,
                           initialSelected: isSelected,
-                          onChanged: (v) {
-                            // ✅ '없어요' 선택 시 다른 알러지 해제
-                            if (allergy ==
-                                    OnboardingConstants.noAllergyLabel &&
-                                v) {
-                              controller.selectedAllergies.clear();
-                              controller.selectedAllergies
-                                  .add(OnboardingConstants.noAllergyLabel);
-                            } else {
-                              if (controller.selectedAllergies
-                                  .contains(OnboardingConstants.noAllergyLabel)) {
-                                controller.selectedAllergies
-                                    .remove(OnboardingConstants.noAllergyLabel);
-                              }
-                              if (v) {
-                                controller.selectedAllergies.add(allergy);
-                              } else {
-                                controller.selectedAllergies.remove(allergy);
-                              }
-                            }
-                          },
+                          onChanged: (v) =>
+                              _onAllergySelected(controller, allergy, v),
                         );
                       }).toList(),
                     );
@@ -127,7 +131,16 @@ class OnboardingAllergyView extends GetView<NavigationController> {
 
                   const Spacer(),
 
-
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: 15),
+                    child: Text(
+                      '해당 사항이 없으면 “없어요”를 선택해 주세요.',
+                      style: AppTextStyles.caption2Regular.copyWith(
+                        color: AppColors.stoneGray,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                  ),
 
                   // 🔹 다음 버튼
                   Padding(
