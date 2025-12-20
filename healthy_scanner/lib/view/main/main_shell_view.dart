@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:healthy_scanner/controller/navigation_controller.dart';
+import 'package:healthy_scanner/controller/home_controller.dart';
 import 'package:healthy_scanner/view/home/home.dart';
 import 'package:healthy_scanner/view/archive/archive_calendar.dart';
 import 'package:healthy_scanner/theme/app_colors.dart';
@@ -24,6 +25,10 @@ class _MainShellViewState extends State<MainShellView> {
 
   void _onTabTapped(int index) {
     setState(() => _selectedIndex = index);
+
+    if (index == 0 && Get.isRegistered<HomeController>()) {
+      Get.find<HomeController>().fetchHome();
+    }
   }
 
   @override

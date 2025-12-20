@@ -64,43 +64,47 @@ class FoodCard extends StatelessWidget {
                     const SizedBox(height: 7),
 
                     Row(
-                      mainAxisAlignment: MainAxisAlignment.start,
                       children: [
-                        // 식품명
                         Expanded(
-                          child: Text(
-                            title,
-                            style: context.bodyMedium.copyWith(
-                              color: AppColors.staticBlack,
-                            ),
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Expanded(
+                                child: Text(
+                                  title,
+                                  style: context.bodyMedium.copyWith(
+                                    color: AppColors.staticBlack,
+                                  ),
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              ),
+                              GestureDetector(
+                                onTap: onEditTap,
+                                behavior: HitTestBehavior.opaque,
+                                child: const Padding(
+                                  padding: EdgeInsets.only(left: 2, right: 2),
+                                  child: Icon(
+                                    Icons.edit_outlined,
+                                    color: AppColors.cloudGray,
+                                    size: 20,
+                                  ),
+                                ),
+                              ),
+                            ],
                           ),
                         ),
-
-                        const SizedBox(width: 8),
-
-                        GestureDetector(
-                          onTap: onEditTap,
-                          behavior: HitTestBehavior.opaque,
-                          child: const Padding(
-                            padding: EdgeInsets.all(4),
-                            child: Icon(
-                              Icons.edit_outlined,
-                              color: AppColors.cloudGray,
-                              size: 20,
-                            ),
-                          ),
-                        ),
-                        // 경고 아이콘
                         if (warningAsset != null)
-                          SizedBox(
-                            width: 25,
-                            height: 23,
-                            child: Image.asset(
-                              warningAsset!,
+                          Padding(
+                            padding: const EdgeInsets.only(left: 8),
+                            child: SizedBox(
                               width: 25,
                               height: 23,
+                              child: Image.asset(
+                                warningAsset!,
+                                width: 25,
+                                height: 23,
+                              ),
                             ),
                           ),
                       ],
