@@ -101,6 +101,7 @@ class AnalysisEditView extends StatelessWidget {
                       decoration: const InputDecoration(
                         border: InputBorder.none,
                       ),
+                      cursorColor: AppColors.charcoleGray,
                       onSubmitted: (_) => c.save(),
                     ),
                   ),

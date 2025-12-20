@@ -11,6 +11,8 @@ import 'package:healthy_scanner/core/url_resolver.dart';
 import 'package:healthy_scanner/theme/theme_extensions.dart';
 import 'package:healthy_scanner/constants/onboarding_constants.dart';
 import 'package:healthy_scanner/view/analysis/analysis_edit_view.dart';
+import 'package:healthy_scanner/routes/app_routes.dart';
+import 'package:healthy_scanner/controller/home_controller.dart';
 
 class AnalysisResultView extends StatefulWidget {
   const AnalysisResultView({super.key});
@@ -65,7 +67,18 @@ class _AnalysisResultViewState extends State<AnalysisResultView> {
               top: 12,
               left: 12,
               child: GestureDetector(
-                onTap: nav.goBack,
+                onTap: () {
+                  final prev = Get.previousRoute;
+
+                  nav.goBack();
+
+                  if (prev == AppRoutes.home &&
+                      Get.isRegistered<HomeController>()) {
+                    Future.microtask(() {
+                      Get.find<HomeController>().fetchHome();
+                    });
+                  }
+                },
                 child: const Icon(
                   Icons.arrow_back_ios_new,
                   color: AppColors.cloudGray,
