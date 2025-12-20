@@ -223,8 +223,25 @@ class NavigationController extends SuperController {
   void goToMyPageAllergyEdit() => Get.toNamed(AppRoutes.myPageAllergyEdit);
 
   /// ✅ 뒤로가기
-  void goBack() => Get.back();
-  //void goToOnboarding() => Get.offAllNamed(AppRoutes.onboarding);
+  void goBack({bool refreshHomeIfNeeded = true}) {
+    final prev = Get.previousRoute;
+    final curr = Get.currentRoute;
+
+    debugPrint('⬅️ goBack curr=$curr prev=$prev');
+
+    Get.back();
+
+    if (!refreshHomeIfNeeded) return;
+
+    if (prev == AppRoutes.home) {
+      Future.microtask(() {
+        if (Get.isRegistered<HomeController>()) {
+          debugPrint('🏠 back -> home detected. fetchHome()');
+          Get.find<HomeController>().fetchHome();
+        }
+      });
+    }
+  }
 
   void goToHome() {
     Get.offAllNamed(AppRoutes.home);

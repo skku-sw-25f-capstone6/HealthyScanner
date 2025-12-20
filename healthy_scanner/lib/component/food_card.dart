@@ -12,6 +12,9 @@ class FoodCard extends StatelessWidget {
   final TrafficLightState lightState; // 신호등 상태
 
   final VoidCallback? onTap;
+  final VoidCallback? onEditTap;
+
+  final bool showEditIcon;
 
   const FoodCard({
     super.key,
@@ -22,6 +25,8 @@ class FoodCard extends StatelessWidget {
     this.warningAsset,
     this.lightState = TrafficLightState.green,
     this.onTap,
+    this.onEditTap,
+    this.showEditIcon = false,
   });
 
   @override
@@ -62,46 +67,65 @@ class FoodCard extends StatelessWidget {
                     const SizedBox(height: 7),
 
                     Row(
-                      mainAxisAlignment: MainAxisAlignment.start,
                       children: [
-                        // 식품명
                         Expanded(
-                          child: Text(
-                            title,
-                            style: context.bodyMedium.copyWith(
-                              color: AppColors.staticBlack,
-                            ),
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Expanded(
+                                child: Text(
+                                  title,
+                                  style: context.bodyMedium.copyWith(
+                                    color: AppColors.staticBlack,
+                                  ),
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              ),
+                              if (showEditIcon)
+                                GestureDetector(
+                                  onTap: onEditTap,
+                                  behavior: HitTestBehavior.opaque,
+                                  child: const Padding(
+                                    padding: EdgeInsets.only(left: 2, right: 2),
+                                    child: Icon(
+                                      Icons.edit_outlined,
+                                      color: AppColors.cloudGray,
+                                      size: 20,
+                                    ),
+                                  ),
+                                ),
+                            ],
                           ),
                         ),
-
-                        const SizedBox(width: 8),
-
-                        // 경고 아이콘
                         if (warningAsset != null)
-                          SizedBox(
-                            width: 25,
-                            height: 23,
-                            child: Image.asset(
-                              warningAsset!,
+                          Padding(
+                            padding: const EdgeInsets.only(left: 8),
+                            child: SizedBox(
                               width: 25,
                               height: 23,
+                              child: Image.asset(
+                                warningAsset!,
+                                width: 25,
+                                height: 23,
+                              ),
                             ),
                           ),
                       ],
                     ),
 
                     // 카테고리
-                    Text(
-                      category,
-                      style: context.caption2Regular.copyWith(
-                        color: AppColors.stoneGray,
-                      ),
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                    const SizedBox(height: 17),
+                    // Text(
+                    //   category,
+                    //   style: context.caption2Regular.copyWith(
+                    //     color: AppColors.stoneGray,
+                    //   ),
+                    //   maxLines: 1,
+                    //   overflow: TextOverflow.ellipsis,
+                    // ),
+                    // const SizedBox(height: 17),
+
+                    const SizedBox(height: 30),
 
                     // 신호등
                     Row(

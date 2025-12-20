@@ -116,13 +116,17 @@ class ArchiveListView extends StatelessWidget {
                   separatorBuilder: (_, __) => const SizedBox(height: 15),
                   itemBuilder: (context, index) {
                     final it = c.items[index];
+                    final state = riskToState(it.riskLevel);
+
                     return FoodCard(
                       title: it.name,
                       category: it.category,
                       message: it.summary,
                       imageAsset: it.url,
-                      warningAsset: 'assets/icons/ic_warning.png',
-                      lightState: riskToState(it.riskLevel),
+                      warningAsset: (state == TrafficLightState.red)
+                          ? 'assets/icons/ic_warning.png'
+                          : null,
+                      lightState: state,
                       onTap: () {
                         final scanId = it.scanId;
                         debugPrint('🖱️ [Archive] tapped scanId=$scanId');

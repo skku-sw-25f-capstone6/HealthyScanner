@@ -43,7 +43,14 @@ class MyApp extends StatelessWidget {
         GetObserver(
           (routing) {
             if (routing?.current != null) {
-              Get.find<NavigationController>().onPageChanged(routing!.current);
+              final nav = Get.find<NavigationController>();
+              nav.onPageChanged(routing!.current);
+
+              if (routing.isBack == true && routing.current == AppRoutes.home) {
+                if (Get.isRegistered<HomeController>()) {
+                  Get.find<HomeController>().fetchHome();
+                }
+              }
             }
           },
         ),

@@ -8,8 +8,15 @@ Future<List<ScanHistoryItem>> fetchScanHistory({
   required DateTime date,
   required String jwt,
 }) async {
-  final dateStr =
-      '${date.year.toString().padLeft(4, '0')}-${date.month.toString().padLeft(2, '0')}-${date.day.toString().padLeft(2, '0')}';
+  final utcDate = DateTime.utc(
+    date.year,
+    date.month,
+    date.day,
+  );
+
+  final dateStr = '${utcDate.year.toString().padLeft(4, '0')}-'
+      '${utcDate.month.toString().padLeft(2, '0')}-'
+      '${utcDate.day.toString().padLeft(2, '0')}';
 
   final uri = Uri.https(
     baseHost,

@@ -10,6 +10,9 @@ import 'package:healthy_scanner/data/scan_history_detail_response.dart';
 import 'package:healthy_scanner/core/url_resolver.dart';
 import 'package:healthy_scanner/theme/theme_extensions.dart';
 import 'package:healthy_scanner/constants/onboarding_constants.dart';
+import 'package:healthy_scanner/view/analysis/analysis_edit_view.dart';
+import 'package:healthy_scanner/routes/app_routes.dart';
+import 'package:healthy_scanner/controller/home_controller.dart';
 
 class AnalysisResultView extends StatefulWidget {
   const AnalysisResultView({super.key});
@@ -64,7 +67,18 @@ class _AnalysisResultViewState extends State<AnalysisResultView> {
               top: 12,
               left: 12,
               child: GestureDetector(
-                onTap: nav.goBack,
+                onTap: () {
+                  final prev = Get.previousRoute;
+
+                  nav.goBack();
+
+                  if (prev == AppRoutes.home &&
+                      Get.isRegistered<HomeController>()) {
+                    Future.microtask(() {
+                      Get.find<HomeController>().fetchHome();
+                    });
+                  }
+                },
                 child: const Icon(
                   Icons.arrow_back_ios_new,
                   color: AppColors.cloudGray,
@@ -117,12 +131,11 @@ class _AnalysisResultViewState extends State<AnalysisResultView> {
     final lightState = _scoreToTrafficLight(scan.score);
 
     // AI 리포트 탭 데이터 구성
-    final labels = ['알레르기', '건강질환', '식습관 유형', '대체 식품'];
+    final labels = ['알레르기', '건강질환', '식습관 유형'];
     final contents = [
       _reportText(scan.reports.allergies),
       _reportText(scan.reports.condition),
       _reportText(scan.reports.vegan),
-      _alternativesText(scan.reports.alternatives),
     ];
 
     // 주의 요소 (caution_factors)
@@ -147,7 +160,22 @@ class _AnalysisResultViewState extends State<AnalysisResultView> {
                     ? 'assets/icons/ic_warning.png'
                     : null,
                 lightState: lightState,
+                showEditIcon: true,
                 onTap: () {},
+                onEditTap: () async {
+                  final currentName = product.name;
+
+                  final editedName = await Get.to<String>(
+                    () => AnalysisEditView(
+                      scanId: result.scanId,
+                      initialName: currentName,
+                    ),
+                  );
+
+                  if (editedName == null) return;
+
+                  debugPrint('✅ editedName=$editedName');
+                },
               ),
             ),
           ),
@@ -391,11 +419,18 @@ class _AnalysisResultViewState extends State<AnalysisResultView> {
     );
   }
 
-  Widget _buildRiskRow(String title, TrafficLightState state,
-      {IconData icon = Icons.warning_rounded}) {
+  Widget _buildRiskRow(
+    String title,
+    TrafficLightState state, {
+    IconData icon = Icons.warning_rounded,
+  }) {
+    final iconColor = (state == TrafficLightState.red)
+        ? AppColors.mainRed
+        : AppColors.charcoleGray;
+
     return Row(
       children: [
-        Icon(icon, color: AppColors.mainRed, size: 22),
+        Icon(icon, color: iconColor, size: 22),
         const SizedBox(width: 10),
         Expanded(
           child: Text(
@@ -421,7 +456,7 @@ class _AnalysisResultViewState extends State<AnalysisResultView> {
       _NutrientVM(name: '단백질', value: nutrition.proteinG, unit: 'g', daily: 55),
       _NutrientVM(
           name: '나트륨', value: nutrition.sodiumMg, unit: 'mg', daily: 2000),
-      _NutrientVM(name: '당류', value: nutrition.sugarG, unit: 'g', daily: 50),
+      _NutrientVM(name: '당류', value: nutrition.sugarG, unit: 'g', daily: 100),
       _NutrientVM(name: '지방', value: nutrition.fatG, unit: 'g', daily: 54),
       _NutrientVM(
           name: '트랜스지방', value: nutrition.transFatG, unit: 'g', daily: 2),
@@ -616,18 +651,6 @@ class _AnalysisResultViewState extends State<AnalysisResultView> {
 
     // brief_report는 보여주지 않도록 삭제
     return report;
-  }
-
-  String _alternativesText(List<AlternativeReport> list) {
-    if (list.isEmpty) return '추천드릴만한 대체 식품이 없어요.';
-
-    return list.map((e) {
-      final brief = e.briefReport.trim();
-      final report = e.report.trim();
-      if (brief.isEmpty) return report.isEmpty ? '-' : report;
-      if (report.isEmpty) return brief;
-      return '• $brief\n$report';
-    }).join('\n\n');
   }
 
   String _fmt(double? v) {
