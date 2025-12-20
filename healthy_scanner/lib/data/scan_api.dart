@@ -4,6 +4,7 @@ import 'package:dio/dio.dart' as dio;
 import 'package:get/get.dart' hide Response, FormData;
 import 'package:healthy_scanner/controller/auth_controller.dart';
 import 'package:healthy_scanner/data/scan_history_detail_response.dart';
+import 'dart:convert';
 
 class ScanAnalyzeResponse {
   final String scanId;
@@ -207,6 +208,14 @@ class ScanApi {
     return ScanAnalyzeResponse.fromJson((data).cast<String, dynamic>());
   }
 
+  void logLong(String tag, String text) {
+    const chunkSize = 800;
+    for (var i = 0; i < text.length; i += chunkSize) {
+      final end = (i + chunkSize < text.length) ? i + chunkSize : text.length;
+      debugPrint('$tag ${text.substring(i, end)}');
+    }
+  }
+
   Future<ScanHistoryDetailResponse> getScanHistoryDetails({
     required String scanId,
   }) async {
@@ -231,7 +240,11 @@ class ScanApi {
       debugPrint('🔍 status: ${res.statusCode}');
       debugPrint('🔍 headers: ${res.headers}');
       debugPrint('🔍 data runtimeType: ${res.data.runtimeType}');
-      debugPrint('🔍 raw body: ${res.data}');
+      // debugPrint('🔍 raw body: ${res.data}');
+
+      final resData = res.data;
+      final pretty = const JsonEncoder.withIndent('  ').convert(resData);
+      logLong('🔍 raw body:', pretty);
 
       if (res.statusCode != 200) {
         throw dio.DioException(
