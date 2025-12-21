@@ -10,8 +10,11 @@ import '../../theme/app_typography.dart';
 class OnboardingAgreeView extends GetView<NavigationController> {
   const OnboardingAgreeView({super.key});
 
-  final String policyUrl =
-      'https://useful-maxilla-d92.notion.site/2a590ccf2e8180278f0bf9ce95ea8140?source=copy_link';
+    final String serviceTermsUrl =
+      'https://useful-maxilla-d92.notion.site/2cf90ccf2e8180f4baa2f3864eb34725?source=copy_link';
+    final String privacyPolicyUrl =
+      'https://useful-maxilla-d92.notion.site/2cf90ccf2e818093be6be9d4eb9e9979?source=copy_link';
+
 
   Future<void> _openUrl(String url) async {
     final uri = Uri.parse(url);
@@ -126,7 +129,7 @@ class OnboardingAgreeView extends GetView<NavigationController> {
                                     decoration: TextDecoration.underline,
                                   ),
                                   recognizer: TapGestureRecognizer()
-                                    ..onTap = () => _openUrl(policyUrl),
+                                    ..onTap = () => _openUrl(privacyPolicyUrl),
                                 ),
                                 const TextSpan(text: ' )'),
                               ],
@@ -162,7 +165,7 @@ class OnboardingAgreeView extends GetView<NavigationController> {
                                     decoration: TextDecoration.underline,
                                   ),
                                   recognizer: TapGestureRecognizer()
-                                    ..onTap = () => _openUrl(policyUrl),
+                                    ..onTap = () => _openUrl(serviceTermsUrl),
                                 ),
                                 const TextSpan(text: ' )'),
                               ],

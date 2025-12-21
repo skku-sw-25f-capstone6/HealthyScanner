@@ -8,7 +8,7 @@
     <application
         android:label="healthy_scanner"
         android:name="${applicationName}"
-        android:icon="@mipmap/ic_launcher"
+        android:icon="@mipmap/launcher_icon"
         android:usesCleartextTraffic="true">  <!-- 🔥 HTTP 사용 허용 -->
 
         <activity

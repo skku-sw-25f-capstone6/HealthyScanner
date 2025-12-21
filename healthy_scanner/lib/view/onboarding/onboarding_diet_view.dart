@@ -135,6 +135,17 @@ class _OnboardingDietViewState extends State<OnboardingDietView> {
 
               const Spacer(),
 
+              Padding(
+                padding: const EdgeInsets.only(bottom: 15),
+                child: Text(
+                  '선택한 식습관은 언제든 마이페이지에서 변경할 수 있어요.',
+                  style: AppTextStyles.caption2Regular.copyWith(
+                    color: AppColors.stoneGray,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+              ),
+
               // 🔹 다음 버튼
               Padding(
                 padding: const EdgeInsets.only(bottom: 24),

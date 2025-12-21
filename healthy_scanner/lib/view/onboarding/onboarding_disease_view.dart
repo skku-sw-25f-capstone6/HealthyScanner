@@ -43,6 +43,23 @@ class _OnboardingDiseaseViewState extends State<OnboardingDiseaseView> {
     controller.selectedDiseases.assignAll(selectedDiseases.toList());
   }
 
+  void _onDiseaseSelected(String disease, bool isSelected) {
+    if (isSelected) {
+      if (disease == OnboardingConstants.noDiseaseLabel) {
+        selectedDiseases
+          ..clear()
+          ..add(OnboardingConstants.noDiseaseLabel);
+      } else {
+        selectedDiseases.remove(OnboardingConstants.noDiseaseLabel);
+        selectedDiseases.add(disease);
+      }
+    } else {
+      selectedDiseases.remove(disease);
+    }
+    _syncSelection();
+  }
+
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -108,31 +125,14 @@ class _OnboardingDiseaseViewState extends State<OnboardingDiseaseView> {
                       spacing: 12,
                       runSpacing: 12,
                       children: diseaseOptions.map((disease) {
-                        final isSelected = selectedDiseases.contains(disease);
+                        final isSelected =
+                            selectedDiseases.contains(disease);
                         return TagChipToggle(
-                          key: ValueKey(disease),
+                          key: ValueKey('$disease-$isSelected'),
                           label: disease,
                           initialSelected: isSelected,
-                          onChanged: (selected) {
-                            if (selected) {
-                              // ✅ ‘건강 질환이 없어요’ 선택 시 나머지 전부 해제 후 단독 선택
-                              if (disease == OnboardingConstants.noDiseaseLabel) {
-                                selectedDiseases
-                                  ..clear()
-                                  ..add(OnboardingConstants.noDiseaseLabel);
-                              }
-                              // ✅ 다른 질환 선택 시 ‘건강 질환이 없어요’ 해제
-                              else {
-                                selectedDiseases
-                                    .remove(OnboardingConstants.noDiseaseLabel);
-                                selectedDiseases.add(disease);
-                              }
-                            } else {
-                              // ✅ 다시 클릭 시 해당 질환만 해제
-                              selectedDiseases.remove(disease);
-                            }
-                            _syncSelection();
-                          },
+                          onChanged: (selected) =>
+                              _onDiseaseSelected(disease, selected),
                         );
                       }).toList(),
                     );
@@ -144,10 +144,11 @@ class _OnboardingDiseaseViewState extends State<OnboardingDiseaseView> {
                   Padding(
                     padding: const EdgeInsets.only(bottom: 15),
                     child: Text(
-                      '해당하는 항목이 없다면 직접 입력해 주세요.',
+                      '해당 사항이 없으면 “건강 질환이 없어요”를 선택해 주세요.',
                       style: AppTextStyles.caption2Regular.copyWith(
                         color: AppColors.stoneGray,
                       ),
+                      textAlign: TextAlign.center,
                     ),
                   ),
 
